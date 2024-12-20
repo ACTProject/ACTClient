@@ -147,6 +147,12 @@ void AssimpTool::Init()
             converter->ExportMaterialData(L"Enemy/bullet");
             converter->ExportModelData(L"Enemy/bullet");
         }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Enemy/bubble.fbx");
+            converter->ExportMaterialData(L"Enemy/bubble");
+            converter->ExportModelData(L"Enemy/bubble");
+        }
         //MR_Krab
         {
             {

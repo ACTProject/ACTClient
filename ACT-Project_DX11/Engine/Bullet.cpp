@@ -18,26 +18,29 @@ void Bullet::Update()
 
 void Bullet::Shooting()
 {
-    if (FirstTime)
-    {
-        _player = SCENE->GetCurrentScene()->GetPlayer();
-        PlayerPos = _player->GetTransform()->GetPosition();
-    }
 
     _transform = GetTransform();
     float dt = TIME->GetDeltaTime();
     Vec3 pos = _transform->GetPosition();
-    float distance = sqrt(powf(pos.x - PlayerPos.x, 2) + powf(pos.z - PlayerPos.z, 2));
+    if (FirstTime)
+    {
+        _player = SCENE->GetCurrentScene()->GetPlayer();
+        PlayerPos = _player->GetTransform()->GetPosition();
+        direction = PlayerPos - pos;
+        direction.y += 1.f;
+        direction.Normalize();
+    }
+    //float distance = sqrt(powf(pos.x - PlayerPos.x, 2) + powf(pos.z - PlayerPos.z, 2));
     CurForward = _transform->GetLook();
-    direction = PlayerPos - pos;
-    direction.y += 1.f;
-    direction.Normalize();
 
-    if (distance < 0.5f)
+    duration += dt;
+    //auto hitboxCollider = _hitbox->GetCollider();
+    //hitboxCollider->SetActive(true);
+
+    if (duration > 3.0f)
     {
         CUR_SCENE->Remove(GetGameObject());
         OCTREE->RemoveCollider(GetGameObject()->GetCollider());
-        return;
     }
 
     if (FirstTime_2)
@@ -65,5 +68,6 @@ void Bullet::Shooting()
     {
         pos += direction * speed * dt;
         _transform->SetPosition(pos);
+        //_hitbox->GetTransform()->SetPosition(pos);
     }
 }

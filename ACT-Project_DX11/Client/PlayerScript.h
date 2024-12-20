@@ -22,7 +22,7 @@ public:
 	void StartAttack();
 	void ContinueAttack();
 	void PlayAttackAnimation(int stage);
-  void Jump();
+    void Jump();
 	void ResetToIdleState();
 private:
 	float _speed = 5.f;
