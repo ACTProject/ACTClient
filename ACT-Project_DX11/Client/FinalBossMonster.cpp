@@ -141,17 +141,17 @@ void FinalBossMonster::Appear()
 void FinalBossMonster::Walk(Vec3 objPos, Vec3 targetPos, float speed)
 {
     SetAnimationState(AnimationState::Walk);
-    CREATURE->Move(objPos, targetPos, speed);
-    //Vec3 direction = targetPos - objPos;
-    //if (direction.LengthSquared() < 5.f) // EPSILON 사용
-    //{
-    //    SetAnimationState(AnimationState::Combat);
-    //    return;
-    //}
+    //CREATURE->Move(objPos, targetPos, speed);
+    Vec3 direction = targetPos - objPos;
+    if (direction.LengthSquared() < 5.f) // EPSILON 사용
+    {
+        SetAnimationState(AnimationState::Combat);
+        return;
+    }
 
-    //direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
+    direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    //_transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
 }
 
 void FinalBossMonster::Rota(Vec3 objPos, Vec3 targetPos)
