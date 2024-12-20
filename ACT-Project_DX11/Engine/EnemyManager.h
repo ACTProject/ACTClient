@@ -1,7 +1,7 @@
 #pragma once
-#include "../Client/ShootingMonster.h"
-#include "../Client/MelleMonster.h"
-#include "../Client/FinalBossMonster.h"
+#include "../Client/ShootingMonsterController.h"
+#include "../Client/MelleMonsterController.h"
+#include "../Client/FinalBossMonsterContoller.h"
 #include "Rigidbody.h"
 #include "AABBBoxCollider.h"
 
@@ -13,7 +13,7 @@ class EnemyManager
 
 public:
     void CreateMeleeMonster(Vec3 SpawnPos);
-    void CreateShootingMonster(Vec3 SpawnPos);
+    void CreateShootingMonsterController(Vec3 SpawnPos);
     void CreateFinalBoss(Vec3 SpawnPos);
     void CreateFinalPhase(Vec3 SpawnPos);
 

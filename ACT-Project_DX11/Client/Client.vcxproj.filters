@@ -72,13 +72,13 @@
     <ClCompile Include="A_Star.cpp">
       <Filter>Main\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="MelleMonster.cpp">
+    <ClCompile Include="MelleMonsterController.cpp">
       <Filter>Main\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="ShootingMonster.cpp">
+    <ClCompile Include="ShootingMonsterController.cpp">
       <Filter>Main\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="FinalBossMonster.cpp">
+    <ClCompile Include="FinalBossMonsterContoller.cpp">
       <Filter>Main\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
@@ -113,13 +113,13 @@
     <ClInclude Include="A_Star.h">
       <Filter>Main\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="MelleMonster.h">
+    <ClInclude Include="MelleMonsterController.h">
       <Filter>Main\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="ShootingMonster.h">
+    <ClInclude Include="ShootingMonsterController.h">
       <Filter>Main\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="FinalBossMonster.h">
+    <ClInclude Include="FinalBossMonsterContoller.h">
       <Filter>Main\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

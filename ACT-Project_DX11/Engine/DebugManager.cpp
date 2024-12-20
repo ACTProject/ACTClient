@@ -19,5 +19,22 @@ void DebugManager::LogVec3ToConsole(const Vec3& vec, const std::string& label)
 {
     std::cout << label << ": (" << vec.x << ", " << vec.y << ", " << vec.z << ")\n";
 }
+
+void DebugManager::Log(const std::wstring& message, const std::wstring& tag = L"") 
+{
+    std::wcout << L"[" << tag << L"] " << message << std::endl;
+}
+
+void DebugManager::LogMatrixToConsole(const Matrix& matrix, const std::string& tag = "") 
+{
+    std::cout << "[" << tag << "] Matrix:" << std::endl;
+    for (int i = 0; i < 4; ++i) {
+        std::cout << "| ";
+        for (int j = 0; j < 4; ++j) {
+            std::cout << matrix(i, j) << " ";
+        }
+        std::cout << "|" << std::endl;
+    }
+}
 // 예제 코드
 // LogVec3ToConsole(moveDir, "moveDir");

@@ -23,14 +23,14 @@
     <ClInclude Include="BillBoardDemo.h" />
     <ClInclude Include="ButtonDemo.h" />
     <ClInclude Include="CameraScript.h" />
-    <ClInclude Include="FinalBossMonster.h" />
+    <ClInclude Include="FinalBossMonsterContoller.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="OrthographicDemo.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="MelleMonster.h" />
-    <ClInclude Include="ShootingMonster.h" />
+    <ClInclude Include="MelleMonsterController.h" />
+    <ClInclude Include="ShootingMonsterController.h" />
     <ClInclude Include="StaticMeshDemo.h" />
   </ItemGroup>
   <ItemGroup>
@@ -38,7 +38,7 @@
     <ClCompile Include="BillBoardDemo.cpp" />
     <ClCompile Include="ButtonDemo.cpp" />
     <ClCompile Include="CameraScript.cpp" />
-    <ClCompile Include="FinalBossMonster.cpp" />
+    <ClCompile Include="FinalBossMonsterContoller.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OrthographicDemo.cpp" />
     <ClCompile Include="pch.cpp">
@@ -47,8 +47,8 @@
     </ClCompile>
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="MelleMonster.cpp" />
-    <ClCompile Include="ShootingMonster.cpp" />
+    <ClCompile Include="MelleMonsterController.cpp" />
+    <ClCompile Include="ShootingMonsterController.cpp" />
     <ClCompile Include="StaticMeshDemo.cpp" />
   </ItemGroup>
   <ItemGroup>

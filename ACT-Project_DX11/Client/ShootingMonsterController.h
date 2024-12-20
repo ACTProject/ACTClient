@@ -11,7 +11,7 @@ class Model;
 class ModelRenderer;
 class ModelAnimator;
 
-class ShootingMonster : public MonoBehaviour
+class ShootingMonsterController : public MonoBehaviour
 {
     shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 

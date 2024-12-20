@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "MelleMonster.h"
+#include "MelleMonsterController.h"
 
 #define AggroRange 30.0f
 #define AttackRange 5.0f
 
-void MelleMonster::Move(Vec3 objPos, Vec3 targetPos, float speed)
+void MelleMonsterController::Move(Vec3 objPos, Vec3 targetPos, float speed)
 {
 	Vec3 direction = targetPos - objPos;
 	if (direction.LengthSquared() < EPSILON) // EPSILON 사용
@@ -17,7 +17,7 @@ void MelleMonster::Move(Vec3 objPos, Vec3 targetPos, float speed)
 	_transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
 }
 
-void MelleMonster::Rota(Vec3 objPos, Vec3 targetPos)
+void MelleMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 {
 	CurForward = _transform->GetLook();
 	Vec3 direction = targetPos - objPos;
@@ -53,7 +53,7 @@ void MelleMonster::Rota(Vec3 objPos, Vec3 targetPos)
 	_transform->SetRotation(newRotation);
 }
 
-void MelleMonster::Tracking(Vec3 pos, const std::vector<Node3D>& path)
+void MelleMonsterController::Tracking(Vec3 pos, const std::vector<Node3D>& path)
 {
 	if (path.empty()) {
 		return;
@@ -68,7 +68,7 @@ void MelleMonster::Tracking(Vec3 pos, const std::vector<Node3D>& path)
 	}
 }
 
-void MelleMonster::Attack(int type)
+void MelleMonsterController::Attack(int type)
 {
 	_isAnimating = true;
 
@@ -94,7 +94,7 @@ void MelleMonster::Attack(int type)
 
 }
 
-void MelleMonster::Aggro()
+void MelleMonsterController::Aggro()
 {
 	_isAnimating = true;
 
@@ -106,13 +106,13 @@ void MelleMonster::Aggro()
 	currentEnemyCoroutine.resume();
 }
 
-void MelleMonster::Patrol(Vec3 Target)
+void MelleMonsterController::Patrol(Vec3 Target)
 {
     Move(EnemyPos, Target, _speed / 2.f);
     Rota(EnemyPos, Target);
 }
 
-void MelleMonster::Start()
+void MelleMonsterController::Start()
 {
 	_transform = GetTransform();
 	StartPos = _transform->GetPosition();
@@ -124,7 +124,7 @@ void MelleMonster::Start()
 	_aggroDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Aggro));
 }
 
-void MelleMonster::Update()
+void MelleMonsterController::Update()
 {
 	_FPS = static_cast<float>(TIME->GetFps());
 	dt = TIME->GetDeltaTime();
@@ -246,13 +246,13 @@ void MelleMonster::Update()
 }
 
 
-void MelleMonster::SetAnimationState(AnimationState state)
+void MelleMonsterController::SetAnimationState(AnimationState state)
 {
 	_modelAnimator->ChangeAnimation(state);
 	_currentAnimationState = state;
 }
 
-void MelleMonster::ResetToIdleState() {
+void MelleMonsterController::ResetToIdleState() {
 	_isAnimating = false;
 	animPlayingTime = 0.0f;
 	EnemyEndCoroutine();

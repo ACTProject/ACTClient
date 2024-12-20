@@ -28,8 +28,8 @@
 #include "Camera.h"
 #include "Button.h"
 #include "Billboard.h"
-#include "MelleMonster.h"
-#include "ShootingMonster.h"
+#include "MelleMonsterController.h"
+#include "ShootingMonsterController.h"
 #include "EnemyManager.h"
 #include "Rigidbody.h"
 #include "Slider.h"
@@ -279,11 +279,11 @@ void Client::Init()
         ENEMY->CreateMeleeMonster({ 165.0f, 0.f, 165.0f });
         ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f });
 
-        ENEMY->CreateShootingMonster({ 244.0f, 0.f, 195.0f });
-        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
-        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
-        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
-        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f });
+        ENEMY->CreateShootingMonsterController({ 244.0f, 0.f, 195.0f });
+        ENEMY->CreateShootingMonsterController({ 290.0f, 0.f, 100.0f });
+        ENEMY->CreateShootingMonsterController({ 410.0f, 0.f, 60.0f });
+        ENEMY->CreateShootingMonsterController({ 435.0f, 0.f, 100.0f });
+        ENEMY->CreateShootingMonsterController({ 400.0f, 0.f, 130.0f });
 
         ENEMY->CreateFinalPhase({ 50.0f,0.f,50.0f });
     }

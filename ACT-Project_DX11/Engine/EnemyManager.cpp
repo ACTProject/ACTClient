@@ -32,7 +32,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
             rangoon->GetModelAnimator()->SetModel(enemyModel);
             rangoon->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<MelleMonster> rangoonScript = make_shared<MelleMonster>();
+        shared_ptr<MelleMonsterController> rangoonScript = make_shared<MelleMonsterController>();
 
         rangoonScript->SetEnemy(enemyModel);
         rangoonScript->SetModelAnimator(ma2);
@@ -60,7 +60,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
     }
 }
 
-void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
+void EnemyManager::CreateShootingMonsterController(Vec3 SpawnPos)
 {
     auto PistolShrimp = make_shared<GameObject>(); // Pistol_Shrimp
     {
@@ -86,7 +86,7 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
             PistolShrimp->GetModelAnimator()->SetModel(enemyModel);
             PistolShrimp->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<ShootingMonster> ShrimpScript = make_shared<ShootingMonster>();
+        shared_ptr<ShootingMonsterController> ShrimpScript = make_shared<ShootingMonsterController>();
 
         ShrimpScript->SetEnemy(enemyModel);
         ShrimpScript->SetModelAnimator(ma2);
@@ -166,7 +166,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonster> BossScript = make_shared<FinalBossMonster>();
+        shared_ptr<FinalBossMonsterContoller> BossScript = make_shared<FinalBossMonsterContoller>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
@@ -245,7 +245,7 @@ void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonster> BossScript = make_shared<FinalBossMonster>();
+        shared_ptr<FinalBossMonsterContoller> BossScript = make_shared<FinalBossMonsterContoller>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);

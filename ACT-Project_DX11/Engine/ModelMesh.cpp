@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "ModelMesh.h"
 
 
@@ -40,4 +40,3 @@ void ModelMesh::CreateBuffers()
 	indexBuffer = make_shared<IndexBuffer>();
 	indexBuffer->Create(geometry->GetIndices());
 }
-

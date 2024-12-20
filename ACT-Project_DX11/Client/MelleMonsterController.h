@@ -8,7 +8,7 @@
 class Model;
 class ModelAnimator;
 
-class MelleMonster : public MonoBehaviour
+class MelleMonsterController : public MonoBehaviour
 {
 	virtual void Start() override;
 	virtual void Update() override;
