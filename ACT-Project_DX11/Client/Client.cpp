@@ -317,11 +317,18 @@ void Client::Init()
 
 	// Enemy
     {
-        //ENEMY->CreateMeleeMonster({ 30.f, 0.f, 30.f });
+        ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f });
+        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f });
+        ENEMY->CreateMeleeMonster({ 165.0f, 0.f, 165.0f });
+        ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f });
 
-        //ENEMY->CreateShootingMonster({ 40.f, 0.f, 40.f });
+        ENEMY->CreateShootingMonster({ 244.0f, 0.f, 195.0f });
+        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
+        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
+        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
+        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f });
 
-        ENEMY->CreateFinalBoss({ 35.f,0.f,35.f });
+        ENEMY->CreateFinalPhase({ 50.0f,0.f,50.0f });
     }
 
 	// Skybox

@@ -4,20 +4,28 @@
 #include "A_Star.h"
 #include "Model.h"
 #include "ModelAnimator.h"
+#include "ModelRenderer.h"
+#include "HitBox.h"
 
 class Model;
 class ModelAnimator;
+class ModelRenderer;
 
 class FinalBossMonster : public MonoBehaviour
 {
+    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
+
     virtual void Start() override;
     virtual void Update() override;
 
 public:
     shared_ptr<Model> GetEnemy() { return _enemy; }
     void SetEnemy(shared_ptr<Model> enemy) { _enemy = enemy; }
+    shared_ptr<ModelRenderer> GetModelRenderer() { return _modelRenderer; }
     shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
+    void SetModelRenderer(shared_ptr<ModelRenderer> modelRenderer) { _modelRenderer = modelRenderer; }
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
+    void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void SetAnimationState(AnimationState state);
 
     bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
@@ -27,9 +35,12 @@ public:
     void Walk(Vec3 objPos, Vec3 targetPos, float speed);// 타겟 방향으로 이동
     void Rota(Vec3 objPos, Vec3 targetPos);             // 타겟 방향으로 회전
     void Die();                                         // 죽음
-    bool Punch(int atkType);                            // 펀치 공격
+    void Punch();                            // 펀치 공격
     void Fireball();
+    void makeBubble(Vec3 pos, Vec3 dir);
 
+    int patternCnt;
+    float shootTime = 0.0f;
     int comboCnt;
     int randType;                   //랜덤한 타입
     float currentTime = 0.f;            //현재 게임 시간
@@ -47,11 +58,14 @@ public:
     bool postpone = false;              //패턴 끝나고 잠깐의 공백 시간
 
 
-    bool chaseAble = false;             //추격
-    bool punchAble = false;             //펀치 
+    bool chaseState = false;             //추격
+    bool punchState = false;             //펀치 
+    bool shootState = false;
 
 private:
     shared_ptr<Model> _enemy;
+    shared_ptr<GameObject> _hitbox;
+    shared_ptr<ModelRenderer> _modelRenderer;
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;

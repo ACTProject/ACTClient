@@ -93,3 +93,4 @@ using namespace Microsoft::WRL;
 #include "AABBBoxCollider.h"
 #include "SphereCollider.h"
 #include "EnemyManager.h"
+#include "CreatureBase.h"

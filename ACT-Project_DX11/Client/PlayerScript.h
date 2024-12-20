@@ -30,7 +30,7 @@ public:
     void StartDodge();
     void UpdateDodge();
 
-  void Jump();
+    void Jump();
 	void ResetToIdleState();
 private:
 	float _speed = 5.f;
