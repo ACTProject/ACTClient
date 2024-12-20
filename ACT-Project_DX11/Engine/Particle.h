@@ -19,19 +19,17 @@ public:
 
 public:
 
-    void Create(int32 count, shared_ptr<Material> material);
+    void Create(Vec3 screenPos, Vec2 size, shared_ptr<Material> material);
     void Update();
-    void Render(shared_ptr<class InstancingBuffer>& buffer);
 
 private:
-    void ResetParticle(ParticleType& particle);
+    float _elapsedTime = 0.f;
 
-private:
-    vector<ParticleType> _particles;
-    shared_ptr<Mesh> _mesh;
     shared_ptr<Material> _material;
-    shared_ptr<Shader> _shader;
-    shared_ptr<InstancingBuffer> _instanceBuffer;
-    int _particleCount;
+
+    float _lifetime = 10.0f;
+    float _fadeStart = 2.0f;
+
+    
 };
 

@@ -18,6 +18,8 @@ cbuffer TransformBuffer
     matrix W;
 };
 
+
+
 ////////////////
 // VertexData //
 ////////////////

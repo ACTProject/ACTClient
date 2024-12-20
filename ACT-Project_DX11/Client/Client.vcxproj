@@ -23,6 +23,7 @@
     <ClInclude Include="BillBoardDemo.h" />
     <ClInclude Include="ButtonDemo.h" />
     <ClInclude Include="CameraScript.h" />
+    <ClInclude Include="EffectTest.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="OrthographicDemo.h" />
     <ClInclude Include="pch.h" />
@@ -37,6 +38,7 @@
     <ClCompile Include="BillBoardDemo.cpp" />
     <ClCompile Include="ButtonDemo.cpp" />
     <ClCompile Include="CameraScript.cpp" />
+    <ClCompile Include="EffectTest.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OrthographicDemo.cpp" />
     <ClCompile Include="pch.cpp">

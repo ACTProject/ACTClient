@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Pass.h"
 #include "Technique.h"
 #include "BindShaderDesc.h"
@@ -65,6 +65,7 @@ public:
 	void PushTweenData(const TweenDesc& desc);
 	void PushInstancedTweenData(const InstancedTweenDesc& desc);
 	void PushSnowData(const SnowBillboardDesc& desc);
+    void PushParticleData(const ParticleDesc& desc);
 
 private:
 	GlobalDesc _globalDesc;
@@ -102,6 +103,10 @@ private:
 	SnowBillboardDesc _snowDesc;
 	shared_ptr<ConstantBuffer<SnowBillboardDesc>> _snowBuffer;
 	ComPtr<ID3DX11EffectConstantBuffer> _snowEffectBuffer;
+
+    ParticleDesc _particleDesc;
+    shared_ptr<ConstantBuffer<ParticleDesc>> _particleBuffer;
+    ComPtr<ID3DX11EffectConstantBuffer> _particleEffectBuffer;
 };
 
 class ShaderManager

@@ -17,6 +17,7 @@ class Slider;
 class Skybox;
 class HitBox;
 class Ui;
+class Particle;
 
 enum class GameObjectType : uint8
 {
@@ -58,6 +59,7 @@ public:
 	shared_ptr<Ui> GetUI();
 	shared_ptr<Skybox> GetSkybox();
 	shared_ptr<HitBox> GetHitBox();
+    shared_ptr<Particle> GetParticle();
 
 	shared_ptr<Transform> GetOrAddTransform();
 	void AddComponent(shared_ptr<Component> component);

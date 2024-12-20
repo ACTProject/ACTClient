@@ -17,6 +17,7 @@
 #include "Skybox.h"
 #include "HitBox.h"
 #include "Ui.h"
+#include "Particle.h"
 
 GameObject::GameObject(GameObjectType type) : _type(type)
 {
@@ -193,6 +194,12 @@ std::shared_ptr<HitBox> GameObject::GetHitBox()
 {
 	shared_ptr<Component> component = GetFixedComponent(ComponentType::HitBox);
 	return static_pointer_cast<HitBox>(component);
+}
+
+shared_ptr<Particle> GameObject::GetParticle()
+{
+    shared_ptr<Component> component = GetFixedComponent(ComponentType::Particle);
+    return static_pointer_cast<Particle>(component);
 }
 
 std::shared_ptr<Transform> GameObject::GetOrAddTransform()

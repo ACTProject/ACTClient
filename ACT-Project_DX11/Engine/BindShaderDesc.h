@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ConstantBuffer.h"
 
 class Shader;
@@ -103,4 +103,12 @@ struct SnowBillboardDesc
 
 	Vec3 extent = Vec3(0, 0, 0);
 	float time;
+};
+
+struct ParticleDesc
+{
+    float time;
+    float lifetime;
+    float fadeStart;
+    float padding;
 };

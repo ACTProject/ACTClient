@@ -5,7 +5,7 @@
 #include "material.h"
 #include "InstancingManager.h"
 
-Particle::Particle() : Super(ComponentType::Particle), _particleCount(0)
+Particle::Particle() : Super(ComponentType::Particle)
 {
 
 }
@@ -15,61 +15,49 @@ Particle::~Particle()
 
 }
 
-void Particle::Create(int32 count, shared_ptr<Material> material)
+void Particle::Create(Vec3 screenPos, Vec2 size, shared_ptr<Material> material)
 {
-    _material = material;
-    _particleCount = count;
-
-    _particles.resize(count);
-    for (auto& particle : _particles)
-    {
-        ResetParticle(particle);
-    }
-
     auto go = _gameObject.lock();
 
-    go->GetOrAddTransform();
+
+    go->GetOrAddTransform()->SetLocalPosition(screenPos);
+    go->GetOrAddTransform()->SetScale(Vec3(size.x, size.y, 1));
 
     if (go->GetMeshRenderer() == nullptr)
         go->AddComponent(make_shared<MeshRenderer>());
 
-    _mesh = make_shared<Mesh>();
-    _mesh->CreateQuad();
-
-    go->GetMeshRenderer()->SetMesh(_mesh);
-    go->GetMeshRenderer()->SetPass(0);
     go->GetMeshRenderer()->SetMaterial(material);
+    go->GetMeshRenderer()->SetAlphaBlend(true);
+    auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+    go->GetMeshRenderer()->SetMesh(mesh);
+    go->GetMeshRenderer()->SetPass(0);
 
-    _instanceBuffer = make_shared<InstancingBuffer>();
-    _instanceBuffer->CreateBuffer( _particleCount);
+    _material = material;
 }
 
 void Particle::Update()
 {
-    for (auto& particle : _particles)
+    _elapsedTime += DT;
+
+    ParticleDesc desc;
+    desc.time = _elapsedTime;
+    desc.fadeStart = _fadeStart;
+    desc.lifetime = _lifetime;
+
+    auto shader = _material->GetShader();
+    shader->PushParticleData(desc);
+
+    if (_elapsedTime >= _lifetime)
     {
-        particle.age += TIME->GetDeltaTime();
-
-        if (particle.age >= particle.lifetime)
+        auto obj = _gameObject.lock();
+        if (obj)
         {
-            ResetParticle(particle);
+            CUR_SCENE->Remove(obj);
         }
-        else
-        {
-            particle.position += particle.velocity * TIME->GetDeltaTime();
-        }
-    }
-}
-
-void Particle::Render(shared_ptr<class InstancingBuffer>& buffer)
-{
-    if (!_mesh || !_material)
         return;
+    }
 
-    _shader = _material->GetShader();
+    float scaleFactor = 1.0f + _elapsedTime * 0.001f;
+    auto transform = _gameObject.lock()->GetTransform();
+    transform->SetScale(transform->GetScale() * scaleFactor);
 }
-
-void Particle::ResetParticle(ParticleType& particle)
-{
-}
-
