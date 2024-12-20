@@ -172,7 +172,13 @@ void PlayerScript::Update()
 	// 이동 방향의 크기를 기준으로 애니메이션 상태 결정
 	AnimationState targetAnimationState;
 
+    // Shell 찾기
     CheckInteraction();
+
+    if (_isShellEquipped == true && INPUT->GetButton(KEY_TYPE::RBUTTON))
+        _isBlocking = true;
+    else
+        _isBlocking = false;
 
     // Move
 	if (_moveDir.LengthSquared() > 0.0f)  // 이동 벡터가 0이 아니라면 이동 중으로 간주
@@ -188,6 +194,9 @@ void PlayerScript::Update()
         }
 
 		float speed = isRunning ? _speed * 2 : _speed;
+        if (_isBlocking)
+            speed = _crawlSpeed;
+
         Vec3 oldPosition = GetTransform()->GetPosition();
         Vec3 newPosition = oldPosition + _moveDir * speed * dt;
 
@@ -222,7 +231,8 @@ void PlayerScript::Update()
         Vec3 changePosition = _transform->GetPosition();
 
 		targetAnimationState = isRunning ? AnimationState::Run : AnimationState::Walk;
-
+        if (_isBlocking)
+            targetAnimationState = AnimationState::BlockingCrawl;
 
 		// 이동 방향에 따라 회전 설정
 		Vec3 targetForward = _moveDir;					// 캐릭터가 이동하려는 방향
@@ -248,6 +258,8 @@ void PlayerScript::Update()
 	else
 	{
 		targetAnimationState = AnimationState::Idle;
+        if (_isBlocking)
+            targetAnimationState = AnimationState::BlockingIdle;
 	}
 
     // 회피 애니메이션이 재생 중이면 다른 애니메이션 상태로 전환되지 않음
@@ -304,6 +316,12 @@ void PlayerScript::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];
     _player->AddDummyBoneAndAttach(shellModel, L"Shell", L"ShellDummy");
+
+    // Shell 오브젝트 비활성화
+    gameObject->SetActive(false);
+
+    // 플레이어의 상태를 Shell 장착 상태로 변경
+    _isShellEquipped = true;
 }
 
 void PlayerScript::StartAttack()

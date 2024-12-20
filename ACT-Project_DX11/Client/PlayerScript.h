@@ -74,6 +74,11 @@ private:
     float _dodgeDistance = 0.0f;        // 회피 이동 거리
     Vec3 _dodgeDirection = Vec3(0.f);   // 회피 방향 설정
 
+    // Shell
+    bool _isShellEquipped = false;      // 등껍질 장착 상태 여부
+    bool _isBlocking = false;           // 막고 있는 상태인지 여부
+    float _crawlSpeed = 2.f;            // 기어가는 속도       
+
     // 애니메이션 진행 중인지 여부
 	bool _isPlayeringJumpAnimation = false; // 점프 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringAttackAnimation = false; // 공격 애니메이션 재생 중인지 여부 확인

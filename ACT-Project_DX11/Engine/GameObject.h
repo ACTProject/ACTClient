@@ -69,6 +69,7 @@ public:
 	uint8 GetLayerIndex() { return _layerIndex; }
 
     bool IsActive() { return _isActive; }
+    void SetActive(bool isActive) { _isActive = isActive; }
 
     shared_ptr<MonoBehaviour> GetController() { return _controller; }
     void SetController(shared_ptr<MonoBehaviour> controller) { _controller = controller; }
