@@ -1,31 +1,34 @@
 #pragma once
 #include "MonoBehaviour.h"
 #include "EnginePch.h"
-#include "A_Star.h"
+#include "CreatureController.h"
 #include "Model.h"
 #include "ModelAnimator.h"
 
 class Model;
 class ModelAnimator;
 
-class MelleMonster : public MonoBehaviour
+class MelleMonsterController : public CreatureController
 {
 	virtual void Start() override;
 	virtual void Update() override;
 
 public:
+    MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::MelleMonster; }
+
 	shared_ptr<Model> GetEnemy() { return _enemy; }
 	void SetEnemy(shared_ptr<Model> enemy) { _enemy = enemy; }
 	shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
+    void OnDamage(float damage);
 
 private:
     void Aggro();
     void Move(Vec3 objPos, Vec3 targetPos, float speed);
     void Rota(Vec3 objPos, Vec3 targetPos);
     void Attack(int type);
-    void Tracking(Vec3 pos, const std::vector<Node3D>& path);
+    //void Tracking(Vec3 pos, const std::vector<Node3D>& path);
     void ResetToIdleState();
     void Patrol(Vec3 Target);
 

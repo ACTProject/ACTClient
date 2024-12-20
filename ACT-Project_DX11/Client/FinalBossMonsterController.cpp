@@ -1,15 +1,15 @@
 #include "pch.h"
-#include "FinalBossMonster.h"
+#include "FinalBossMonsterController.h"
 
 #define AttackRange 5.0f
 
-void FinalBossMonster::SetAnimationState(AnimationState state)
+void FinalBossMonsterController::SetAnimationState(AnimationState state)
 {
     _modelAnimator->ChangeAnimation(state);
     _currentAnimationState = state;
 }
 
-void FinalBossMonster::Start()
+void FinalBossMonsterController::Start()
 {
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
@@ -18,7 +18,7 @@ void FinalBossMonster::Start()
     patternCnt = 1;
 }
 
-void FinalBossMonster::Update()
+void FinalBossMonsterController::Update()
 {
     if (INPUT->GetButton(KEY_TYPE::KEY_4))
     {
@@ -55,7 +55,7 @@ void FinalBossMonster::Update()
 
 
 
-void FinalBossMonster::Phase_1()
+void FinalBossMonsterController::Phase_1()
 {
     if (!isFirstTime) // 조우 ( 편의상 안되게 해놨음 )
     {
@@ -124,11 +124,11 @@ void FinalBossMonster::Phase_1()
     }
 }
 
-void FinalBossMonster::Phase_2()
+void FinalBossMonsterController::Phase_2()
 {
 }
 
-void FinalBossMonster::Appear()
+void FinalBossMonsterController::Appear()
 {
     if (PlayCheckAnimating(AnimationState::Appear))
     {
@@ -138,7 +138,7 @@ void FinalBossMonster::Appear()
     lastTime = currentTime;
 }
 
-void FinalBossMonster::Walk(Vec3 objPos, Vec3 targetPos, float speed)
+void FinalBossMonsterController::Walk(Vec3 objPos, Vec3 targetPos, float speed)
 {
     SetAnimationState(AnimationState::Walk);
     //CREATURE->Move(objPos, targetPos, speed);
@@ -154,7 +154,7 @@ void FinalBossMonster::Walk(Vec3 objPos, Vec3 targetPos, float speed)
     _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
 }
 
-void FinalBossMonster::Rota(Vec3 objPos, Vec3 targetPos)
+void FinalBossMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 {
     Vec3 CurForward = _transform->GetLook();
     Vec3 direction = targetPos - objPos;
@@ -190,19 +190,19 @@ void FinalBossMonster::Rota(Vec3 objPos, Vec3 targetPos)
     _transform->SetRotation(newRotation);
 }
 
-void FinalBossMonster::Die()
+void FinalBossMonsterController::Die()
 {
     CUR_SCENE->Remove(GetGameObject());
     OCTREE->RemoveCollider(GetGameObject()->GetCollider());
     return;
 }
 
-void FinalBossMonster::Punch()
+void FinalBossMonsterController::Punch()
 {
     
 }
 
-void FinalBossMonster::Fireball()
+void FinalBossMonsterController::Fireball()
 {
     Rota(bossPos, playerPos);
     shootTime += dt;
@@ -217,7 +217,7 @@ void FinalBossMonster::Fireball()
     }
 }
 
-void FinalBossMonster::makeBubble(Vec3 pos, Vec3 dir)
+void FinalBossMonsterController::makeBubble(Vec3 pos, Vec3 dir)
 {
     auto bullet = make_shared<GameObject>(); // bullet
 
@@ -267,7 +267,7 @@ void FinalBossMonster::makeBubble(Vec3 pos, Vec3 dir)
 }
 
 
-bool FinalBossMonster::PlayCheckAnimating(AnimationState state)
+bool FinalBossMonsterController::PlayCheckAnimating(AnimationState state)
 {
     SetAnimationState(state);
 

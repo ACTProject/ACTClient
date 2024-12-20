@@ -28,17 +28,11 @@
     <Filter Include="Shaders\Week4">
       <UniqueIdentifier>{d710bac0-106e-41c1-bec4-b6617dffa0b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Week3">
-      <UniqueIdentifier>{2fdb1f5a-3acc-42cd-9246-38c59b84284e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Week5">
       <UniqueIdentifier>{77cd58ab-88ab-4291-96c0-9fdfd6129558}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Main\Player">
-      <UniqueIdentifier>{223b823f-8b72-48ad-834c-5526751cb204}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Main\Enemy">
-      <UniqueIdentifier>{30402a1a-b00f-48c0-9f11-b8cb54fa628c}</UniqueIdentifier>
+    <Filter Include="Main\Creature">
+      <UniqueIdentifier>{4b7cc959-f605-4abf-98f8-e5dcc93ec03f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,38 +42,26 @@
     <ClCompile Include="Main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="OrthographicDemo.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="ButtonDemo.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="BillBoardDemo.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Client.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="StaticMeshDemo.cpp">
-      <Filter>Game\Week3</Filter>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Main\Creature</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerScript.cpp">
-      <Filter>Main\Player</Filter>
+    <ClCompile Include="FinalBossMonsterController.cpp">
+      <Filter>Main\Creature</Filter>
     </ClCompile>
-    <ClCompile Include="CameraScript.cpp">
+    <ClCompile Include="MelleMonsterController.cpp">
+      <Filter>Main\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="ShootingMonsterController.cpp">
+      <Filter>Main\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
       <Filter>Main\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="A_Star.cpp">
-      <Filter>Main\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="MelleMonster.cpp">
-      <Filter>Main\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="ShootingMonster.cpp">
-      <Filter>Main\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="FinalBossMonster.cpp">
-      <Filter>Main\Enemy</Filter>
+    <ClCompile Include="CreatureController.cpp">
+      <Filter>Main\Creature</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,38 +71,26 @@
     <ClInclude Include="Main.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="CameraScript.h">
-      <Filter>Main\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="OrthographicDemo.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="ButtonDemo.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="BillBoardDemo.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Client.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="StaticMeshDemo.h">
-      <Filter>Game\Week3</Filter>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Main\Creature</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerScript.h">
-      <Filter>Main\Player</Filter>
+    <ClInclude Include="ShootingMonsterController.h">
+      <Filter>Main\Creature</Filter>
     </ClInclude>
-    <ClInclude Include="A_Star.h">
-      <Filter>Main\Enemy</Filter>
+    <ClInclude Include="FinalBossMonsterController.h">
+      <Filter>Main\Creature</Filter>
     </ClInclude>
-    <ClInclude Include="MelleMonster.h">
-      <Filter>Main\Enemy</Filter>
+    <ClInclude Include="MelleMonsterController.h">
+      <Filter>Main\Creature</Filter>
     </ClInclude>
-    <ClInclude Include="ShootingMonster.h">
-      <Filter>Main\Enemy</Filter>
+    <ClInclude Include="CameraController.h">
+      <Filter>Main\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="FinalBossMonster.h">
-      <Filter>Main\Enemy</Filter>
+    <ClInclude Include="CreatureController.h">
+      <Filter>Main\Creature</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

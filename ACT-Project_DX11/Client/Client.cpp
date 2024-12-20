@@ -6,8 +6,8 @@
 #include "GeometryHelper.h"
 #include "Camera.h"
 #include "GameObject.h"
-#include "CameraScript.h"
-#include "PlayerScript.h"
+#include "CameraController.h"
+#include "PlayerController.h"
 #include "MeshRenderer.h"
 #include "Mesh.h"
 #include "Material.h"
@@ -28,8 +28,8 @@
 #include "Camera.h"
 #include "Button.h"
 #include "Billboard.h"
-#include "MelleMonster.h"
-#include "ShootingMonster.h"
+#include "MelleMonsterController.h"
+#include "ShootingMonsterController.h"
 #include "EnemyManager.h"
 #include "Rigidbody.h"
 #include "Slider.h"
@@ -52,7 +52,7 @@ void Client::Init()
 		{
 			camera->GetCamera()->SetCameraOffset(Vec3(0.f, 7.f, -14.f));
 		}
-		camera->AddComponent(make_shared<CameraScript>());
+		camera->AddComponent(make_shared<CameraController>());
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, true);
         camera->GetCamera()->SetMainCamera(true);
 
@@ -302,7 +302,7 @@ void Client::Init()
 	CUR_SCENE->Add(hitboxGO);
 
 	// Player::PlayerScript
-	shared_ptr<PlayerScript> playerScript = make_shared<PlayerScript>();
+	shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
@@ -319,10 +319,10 @@ void Client::Init()
     {
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f });
         ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f });
-        ENEMY->CreateMeleeMonster({ 165.0f, 0.f, 165.0f });
+        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f });
         ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f });
 
-        ENEMY->CreateShootingMonster({ 244.0f, 0.f, 195.0f });
+        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f });
         ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
         ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
         ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });

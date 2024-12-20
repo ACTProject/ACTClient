@@ -1,30 +1,42 @@
 #pragma once
 #include "MonoBehaviour.h"
 #include "Camera.h"
+#include "CreatureController.h"
 
 class Model;
 class ModelAnimator;
 
-class PlayerScript : public MonoBehaviour
+class PlayerController : public CreatureController
 {
 	virtual void Start() override;
 	virtual void Update() override;
 
 public:
+    MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::Player; }
+
 	shared_ptr<Model> GetPlayer() { return _player; }
 	void SetPlayer(shared_ptr<Model> player) { _player = player; }	
 	shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
-	void CheckInteraction();
 	void InteractWithShell(shared_ptr<GameObject> gameObject);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
+
+    // Handle
+    void HandleInput();         // 입력 처리
+    void HandleAnimations();    // 애니메이션 관리
+    void HandleAttack();        // 공격 처리
+    void HandleDodge();         // 회피 처리
+    void HandleJump();          // 점프 처리
+    void HandleMovement();      // 이동 처리
+    void HandleInteraction();   // 상호작용 처리
 
     // Attack
 	void StartAttack();
 	void ContinueAttack();
 	void PlayAttackAnimation(int stage);
+    void UpdateHitBox();
 
     // Dodge
     void StartDodge();
@@ -86,5 +98,8 @@ private:
 
 	AnimationState _currentAnimationState = AnimationState::Idle;
 
+    // Stats (Temp)
+    const float _hp = 100.f; // 플레이어 체력
+    const float _damage = 10.f; // 플레이어 공격력
 };
 

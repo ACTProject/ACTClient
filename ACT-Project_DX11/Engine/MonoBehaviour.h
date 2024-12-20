@@ -3,6 +3,16 @@
 #include "MyCoroutine.h"
 #include <coroutine>
 
+enum class MonoBehaviourType : uint8
+{
+    None,
+    Player,
+    Camera,
+    MelleMonster,
+    ShootingMonster,
+    FinalBossMonster,
+};
+
 constexpr float EPSILON = 0.01f;
 class MonoBehaviour : public Component
 {
@@ -14,7 +24,7 @@ public:
 
     virtual void Awake() override;
     virtual void Update() override;
-
+    virtual MonoBehaviourType GetMonoBehaviourType() const { return MonoBehaviourType::None; }
 
     // Coroutine
     std::coroutine_handle<MyCoroutine::promise_type> currentEnemyCoroutine;

@@ -1,7 +1,7 @@
 #pragma once
 #include "MonoBehaviour.h"
 #include "EnginePch.h"
-#include "A_Star.h"
+#include "CreatureController.h"
 #include "Model.h"
 #include "ModelRenderer.h"
 #include "ModelAnimator.h"
@@ -11,7 +11,7 @@ class Model;
 class ModelRenderer;
 class ModelAnimator;
 
-class ShootingMonster : public MonoBehaviour
+class ShootingMonsterController : public CreatureController
 {
     shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 
@@ -19,6 +19,8 @@ class ShootingMonster : public MonoBehaviour
     virtual void Update() override;
 
 public:
+    MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::ShootingMonster; }
+
     shared_ptr<Model> GetEnemy() { return _enemy; }
     void SetEnemy(shared_ptr<Model> enemy) { _enemy = enemy; }
     shared_ptr<ModelRenderer> GetModelRenderer() { return _modelRenderer; }
@@ -34,7 +36,7 @@ public:
     void Move(Vec3 objPos, Vec3 targetPos, float speed);
     void Rota(Vec3 objPos, Vec3 targetPos);
     void Shoot();
-    void Tracking(Vec3 pos, const std::vector<Node3D>& path);
+    //void Tracking(Vec3 pos, const std::vector<Node3D>& path);
     void ResetToIdleState();
     void Patrol(Vec3 Target);
     void AddBullet(Vec3 Pos, Vec3 dir);

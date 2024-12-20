@@ -6,12 +6,12 @@
 #include "ModelRenderer.h"
 #include "ModelAnimation.h"
 
-void CameraScript::Start()
+void CameraController::Start()
 {
 
 }
 
-void CameraScript::Update()
+void CameraController::Update()
 {
 	float dt = TIME->GetDeltaTime();
 

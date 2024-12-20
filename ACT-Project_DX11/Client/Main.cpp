@@ -1,10 +1,6 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Main.h"
 #include "Engine/Game.h"
-#include "OrthographicDemo.h"
-#include "ButtonDemo.h"
-#include "BillBoardDemo.h"
-#include "StaticMeshDemo.h"
 #include "Client.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

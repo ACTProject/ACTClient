@@ -166,6 +166,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AABBBoxCollider.h" />
+    <ClInclude Include="A_Star.h" />
     <ClInclude Include="BaseCollider.h" />
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="Bullet.h" />
@@ -174,7 +175,6 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
-    <ClInclude Include="CreatureBase.h" />
     <ClInclude Include="DebugManager.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="HitBox.h" />
@@ -250,6 +250,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABBBoxCollider.cpp" />
+    <ClCompile Include="A_Star.cpp" />
     <ClCompile Include="BaseCollider.cpp" />
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="Bullet.cpp" />
@@ -258,7 +259,6 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
-    <ClCompile Include="CreatureBase.cpp" />
     <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="HitBox.cpp" />

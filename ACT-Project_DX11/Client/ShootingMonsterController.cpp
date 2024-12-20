@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "ShootingMonster.h"
+#include "ShootingMonsterController.h"
 #include <string>
 #include "Bullet.h"
 
 #define AggroRange 30.0f
 #define ShootingRange 15.0f
 
-void ShootingMonster::Move(Vec3 objPos, Vec3 targetPos, float speed)
+void ShootingMonsterController::Move(Vec3 objPos, Vec3 targetPos, float speed)
 {
     Vec3 direction = targetPos - objPos;
     if (direction.LengthSquared() < EPSILON) // EPSILON 사용
@@ -20,7 +20,7 @@ void ShootingMonster::Move(Vec3 objPos, Vec3 targetPos, float speed)
     _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
 }
 
-void ShootingMonster::Rota(Vec3 objPos, Vec3 targetPos)
+void ShootingMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 {
     CurForward = _transform->GetLook();
     Vec3 direction = targetPos - objPos;
@@ -57,22 +57,22 @@ void ShootingMonster::Rota(Vec3 objPos, Vec3 targetPos)
 
 }
 
-void ShootingMonster::Tracking(Vec3 pos, const std::vector<Node3D>& path)
-{
-    if (path.empty()) {
-        return;
-    }
+//void ShootingMonsterController::Tracking(Vec3 pos, const std::vector<Node3D>& path)
+//{
+//    if (path.empty()) {
+//        return;
+//    }
+//
+//    // 경로 상의 각 노드를 따라 이동
+//    for (size_t i = 0; i < path.size(); ++i) {
+//        // 현재 위치가 목표 노드에 도달했다면 다음 노드로 이동
+//        if (i + 1 < path.size()) {
+//            //Move(path[i + 1].pos);
+//        }
+//    }
+//}
 
-    // 경로 상의 각 노드를 따라 이동
-    for (size_t i = 0; i < path.size(); ++i) {
-        // 현재 위치가 목표 노드에 도달했다면 다음 노드로 이동
-        if (i + 1 < path.size()) {
-            //Move(path[i + 1].pos);
-        }
-    }
-}
-
-void ShootingMonster::Shoot()
+void ShootingMonsterController::Shoot()
 {
     _isAnimating = true;
 
@@ -88,7 +88,7 @@ void ShootingMonster::Shoot()
 
 }
 
-void ShootingMonster::AddBullet(Vec3 Pos, Vec3 dir)
+void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
 {
     auto bullet = make_shared<GameObject>(); // bullet
 
@@ -120,7 +120,7 @@ void ShootingMonster::AddBullet(Vec3 Pos, Vec3 dir)
     CUR_SCENE->Add(bullet);
 }
 
-void ShootingMonster::Aggro()
+void ShootingMonsterController::Aggro()
 {
     _isAnimating = true;
 
@@ -132,13 +132,13 @@ void ShootingMonster::Aggro()
     currentEnemyCoroutine.resume();
 }
 
-void ShootingMonster::Patrol(Vec3 Target)
+void ShootingMonsterController::Patrol(Vec3 Target)
 {
     Move(EnemyPos, Target, _speed / 2.f);
     Rota(EnemyPos, Target);
 }
 
-void ShootingMonster::Start()
+void ShootingMonsterController::Start()
 {
     _transform = GetTransform();
     StartPos = _transform->GetPosition();
@@ -148,7 +148,7 @@ void ShootingMonster::Start()
     _aggroDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Aggro));
 }
 
-void ShootingMonster::Update()
+void ShootingMonsterController::Update()
 {
     _FPS = static_cast<float>(TIME->GetFps());
     dt = TIME->GetDeltaTime();
@@ -275,13 +275,13 @@ void ShootingMonster::Update()
     }
 }
 
-void ShootingMonster::SetAnimationState(AnimationState state)
+void ShootingMonsterController::SetAnimationState(AnimationState state)
 {
     _modelAnimator->ChangeAnimation(state);
     _currentAnimationState = state;
 }
 
-void ShootingMonster::ResetToIdleState() {
+void ShootingMonsterController::ResetToIdleState() {
     _isAnimating = false;
     animPlayingTime = 0.0f;
     EnemyEndCoroutine();

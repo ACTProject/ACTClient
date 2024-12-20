@@ -1,7 +1,7 @@
 #pragma once
 #include "MonoBehaviour.h"
 #include "EnginePch.h"
-#include "A_Star.h"
+#include "CreatureController.h"
 #include "Model.h"
 #include "ModelAnimator.h"
 #include "ModelRenderer.h"
@@ -11,7 +11,7 @@ class Model;
 class ModelAnimator;
 class ModelRenderer;
 
-class FinalBossMonster : public MonoBehaviour
+class FinalBossMonsterController : public CreatureController
 {
     shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 
@@ -19,6 +19,8 @@ class FinalBossMonster : public MonoBehaviour
     virtual void Update() override;
 
 public:
+    MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::FinalBossMonster; }
+
     shared_ptr<Model> GetEnemy() { return _enemy; }
     void SetEnemy(shared_ptr<Model> enemy) { _enemy = enemy; }
     shared_ptr<ModelRenderer> GetModelRenderer() { return _modelRenderer; }
