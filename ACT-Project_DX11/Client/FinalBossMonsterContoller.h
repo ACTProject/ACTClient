@@ -65,7 +65,7 @@ private:
 
     float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
     int myPhase = 1;                    //1페이즈 2페이즈 구분용
-    int patternCnt = 4;
+    int patternCnt = 1;
     float shootTime = 0.0f;
     int randType;                       //랜덤한 타입
     int randPunchType;                  //랜덤한 펀치 타입

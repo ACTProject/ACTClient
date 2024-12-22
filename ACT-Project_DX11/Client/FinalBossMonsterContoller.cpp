@@ -64,14 +64,6 @@ void FinalBossMonsterContoller::Update()
 
     if (myPhase == 1)
     {
-        if (distance < AttackRange)
-        {
-            punchState = true;
-        }
-        else
-        {
-            chaseState = true;
-        }
         Phase_1();
     }
     else if (myPhase == 2)
@@ -107,6 +99,12 @@ void FinalBossMonsterContoller::Phase_1()
     {
         if (patternCnt < 4)
         {
+            Walk();
+            Rota(bossPos, playerPos);
+            if (distance < AttackRange)
+            {
+                punchState = true;
+            }
             if (punchState)
             {
                 if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + randPunchType)))
@@ -121,40 +119,21 @@ void FinalBossMonsterContoller::Phase_1()
                     punchState = false;
                 }
             }
-            else if (chaseState)
-            {
-                Walk();
-                Rota(bossPos, playerPos);
-            }
         }
 
         if (patternCnt == 4)
         {
-            if (distance < AttackRange)
-            {
-                if (PlayCheckAnimating(AnimationState::Skill9))
-                {
-                    Hurricane();
-                    return;
-                }
-                else
-                {
-                    lastTime = currentTime;
-                    shootTime = 0.0f;
-                    patternCnt = 4;
-                }
-            }
-            else
-            {
-                Rota(bossPos, playerPos);
-                ResetToIdleState();
-                Walk();
-            }
-            /*if (PlayCheckAnimating(AnimationState::Skill2))
+            if (PlayCheckAnimating(AnimationState::Skill2))
             {
                 Fireball();
                 return;
-            }*/
+            }
+            else
+            {
+                lastTime = currentTime;
+                Rota(bossPos, playerPos);
+                ResetToIdleState();
+            }
         }
     }
     else
@@ -339,11 +318,6 @@ void FinalBossMonsterContoller::Phase_2()
             }
             break;
         case 9:
-            if (!isExecuted_3)
-            {
-                lastPos = playerPos;
-                isExecuted_3 = true;
-            }
             if (PlayCheckAnimating(AnimationState::Skill9))
             {
                 Hurricane();
@@ -367,13 +341,13 @@ void FinalBossMonsterContoller::Appear()
 
 void FinalBossMonsterContoller::Walk()
 {
-    SetAnimationState(AnimationState::Walk);
     Move(bossPos, playerPos, speed);
 }
 
 void FinalBossMonsterContoller::Move(Vec3 objPos, Vec3 targetPos, float speed)
 {
-    //CREATURE->Move(objPos, targetPos, speed);
+    SetAnimationState(AnimationState::Walk);
+
     Vec3 direction = targetPos - objPos;
     if (direction.LengthSquared() < 5.f) // EPSILON 사용
     {
@@ -586,7 +560,7 @@ void FinalBossMonsterContoller::Choke_lift()
 
 void FinalBossMonsterContoller::GrabSlam()
 {
-    vector<AnimTransform> animTransforms = _modelAnimator->GetTransform()->
+    //vector<AnimTransform> animTransforms = _modelAnimator->GetTransform()->
 
     Matrix worldTransform = CalculateWorldTransform(rightHand);
 
@@ -608,5 +582,5 @@ Matrix FinalBossMonsterContoller::CalculateWorldTransform(shared_ptr<ModelBone> 
 
 void FinalBossMonsterContoller::Hurricane()
 {
-    Move(bossPos, lastPos, 8.0f);
+    Move(bossPos, playerPos, 8.0f);
 }
