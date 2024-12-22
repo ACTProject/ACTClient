@@ -2,7 +2,7 @@
 #define _GLOBAL_FX_
 
 Texture2D ShadowDepthTexture;
-Texture2D ShadowColorTexture;
+//Texture2D ShadowColorTexture;
 
 /////////////////
 // ConstBuffer //
@@ -28,7 +28,7 @@ cbuffer WaveBuffer
 
 cbuffer ShadowBuffer
 {
-    matrix Shadow;
+    matrix S;
 };
 
 ////////////////
@@ -84,6 +84,7 @@ struct VertexTextureNormalTangentBlend
 struct VSOutput
 {
     float4 position : SV_POSITION;
+
 };
 
 struct VertexOutput
@@ -97,10 +98,10 @@ struct MeshOutput
 {
     float4 position : SV_POSITION;
     float3 worldPosition : POSITION1;
-    float2 uv : TEXCOORD;
+    float2 uv : TEXCOORD0;
+    float4 TexShadow : TEXCOORD1;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float4 TexShadow : TEXCOORD1;
 };
 
 //////////////////
@@ -121,6 +122,17 @@ SamplerState PointSampler
     AddressV = Wrap;
 };
 
+SamplerComparisonState SamComShadowMap
+{
+    Filter = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+    AddressU = BORDER;
+    AddressV = BORDER;
+    AddressW = BORDER;
+    BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    ComparisonFunc = LESS_EQUAL;
+};
+
+
 /////////////////////
 // RasterizerState //
 /////////////////////
@@ -135,9 +147,11 @@ RasterizerState FrontCounterClockwiseTrue
     FrontCounterClockwise = true;
 };
 
-RasterizerState SlopeScaledDepthBias
+RasterizerState Depth
 {
-    SlopeScaledDepthBias = true;
+    DepthBias = 5000000;
+    DepthBiasClamp = 0.0f;
+    SlopeScaledDepthBias = 1.0f;
 };
 ////////////////////////
 // DepthStencillState //

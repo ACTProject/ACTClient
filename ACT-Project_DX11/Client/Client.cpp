@@ -36,6 +36,7 @@
 #include "Skybox.h"
 #include "HitBox.h"
 #include "Frustum.h"
+#include "Shadow.h"
 
 void Client::Init()
 {
@@ -446,6 +447,8 @@ void Client::Init()
 
     MAP->ImportMapObj();
 
+
+    
 
 
     //// MapSubTexture

@@ -37,6 +37,10 @@ void MeshRenderer::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
 	if (lightObj)
 		_shader->PushLightData(lightObj->GetLight()->GetLightDesc());
 
+    _shader->PushShadowData(SHADOW->GetShadowDesc());
+    _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
+    //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
+
 	// Light
 	_material->Update();
 
@@ -76,6 +80,8 @@ void MeshRenderer::RenderSingle()
 	auto lightObj = SCENE->GetCurrentScene()->GetLight();
 	if (lightObj)
 		_shader->PushLightData(lightObj->GetLight()->GetLightDesc());
+
+    _shader->PushShadowData(SHADOW->GetShadowDesc());
 
 	// Light
 	_material->Update();
@@ -119,9 +125,9 @@ void MeshRenderer::RenderShadowMap(Matrix view, Matrix proj)
     // Light
     auto lightObj = SCENE->GetCurrentScene()->GetLight();
     if (lightObj)
-        _shader->PushLightData(lightObj->GetLight()->GetLightDesc());\
+        _shader->PushLightData(lightObj->GetLight()->GetLightDesc());
 
-
+    _shader->PushShadowData(SHADOW->GetShadowDesc());
 
     // Light
     _material->Update();

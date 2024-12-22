@@ -7,17 +7,25 @@ class Shadow
 public:
     void Init();
     void Update();
+    void updatelightPos();
 
-    ShadowDesc& GetShadowDesc() { return _shadowDesc; };
+
+
+    ShadowDesc& GetShadowDesc() { 
+        int a = 0;
+        return _shadowDesc; 
+    };
 
     void SetLight(Vec3 light) { _lightPos = light; };
-private:
+    void DebugShadow();
     void RenderShadow();
+private:
 private:
     wstring _shaderName = L"DepthMapShadow.fx";
     //wstring _shaderName = L"23. RenderDemo.fx";
 
     shared_ptr<Shader> shadowShader;
+    shared_ptr<Shader> testShadowShader;
 
     // lightPos 는 Client에서 얻어옴.
     Vec3 _lightPos = { 0,0,0 };

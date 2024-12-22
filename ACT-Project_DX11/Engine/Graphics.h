@@ -24,9 +24,9 @@ public:
 
 
     // 섀도우 함수.
-    ComPtr<ID3D11RenderTargetView> GetShadowRTV() { return _shadowRenderTargetView; }
+    //ComPtr<ID3D11RenderTargetView> GetShadowRTV() { return _shadowRenderTargetView; }
     ComPtr<ID3D11DepthStencilView> GetShadowDSV() { return _shadowDepthStencilView; }
-    ComPtr<ID3D11ShaderResourceView> GetShadowColorSRV() { return _SRV; }
+    //ComPtr<ID3D11ShaderResourceView> GetShadowColorSRV() { return _SRV; }
     ComPtr<ID3D11ShaderResourceView> GetShadowSRV() { return _DsvSRV; }
 
 
@@ -68,10 +68,10 @@ private:
 
 
 
-    // 그림자맵텍스처 그리기 위한 변수들
-    ComPtr<ID3D11RenderTargetView> _shadowRenderTargetView;
-    ComPtr<ID3D11ShaderResourceView> _SRV; // 깊이값 텍스처 쉐이더리소스뷰
-    ComPtr<ID3D11Texture2D> _shadowColorTexture;
+    //// 그림자맵텍스처 그리기 위한 변수들
+    //ComPtr<ID3D11RenderTargetView> _shadowRenderTargetView;
+    //ComPtr<ID3D11ShaderResourceView> _SRV; //
+    //ComPtr<ID3D11Texture2D> _shadowColorTexture;
 
     ComPtr<ID3D11DepthStencilView> _shadowDepthStencilView;
     ComPtr<ID3D11ShaderResourceView> _DsvSRV; 

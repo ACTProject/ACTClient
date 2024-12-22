@@ -55,9 +55,10 @@ void ModelRenderer::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
 	}
 	_shader->PushBoneData(boneDesc);
 
-     _shader->PushShadowData(SHADOW->GetShadowDesc());
+    // Shadow
+     _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
      _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
-     _shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
+     //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
 
 	const auto& meshes = _model->GetMeshes();
 	for (auto& mesh : meshes)
@@ -99,6 +100,11 @@ void ModelRenderer::RenderSingle()
 	auto lightObj = SCENE->GetCurrentScene()->GetLight();
 	if (lightObj)
 		_shader->PushLightData(lightObj->GetLight()->GetLightDesc());
+    
+    // Shadow
+    _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
+    _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
+    //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
 
 	// Bones
 	BoneDesc boneDesc;
@@ -143,7 +149,7 @@ void ModelRenderer::RenderShadowMap(Matrix view, Matrix proj)
         return;
 
     // GlobalData
-    _shader->PushGlobalData(Camera::S_MatView, Camera::S_MatProjection);
+    _shader->PushGlobalData(view, proj);
 
     // Light
     auto lightObj = SCENE->GetCurrentScene()->GetLight();
@@ -161,8 +167,8 @@ void ModelRenderer::RenderShadowMap(Matrix view, Matrix proj)
     }
     _shader->PushBoneData(boneDesc);
 
-
-    _shader->PushShadowData(SHADOW->GetShadowDesc());
+    // Shadow
+    _shader->PushShadowData(ShadowDesc{SHADOW->GetShadowDesc()});
     //_shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
     //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
 

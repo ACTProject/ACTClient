@@ -19,7 +19,7 @@ struct InstnaceingVertex
 
 VSOutput VS_Collision(InstnaceingVertex input)
 {
-    VSOutput output;
+    VSOutput output = (VSOutput)0;
     float4 worldPosition = mul(input.position, input.world); // 로컬 -> 월드 변환
     output.position = mul(worldPosition, VP); // 월드 -> 클립 공간 변환
     return output;
@@ -27,7 +27,7 @@ VSOutput VS_Collision(InstnaceingVertex input)
 
 VSOutput VS_Octree(Vertex input)
 {
-    VSOutput output;
+    VSOutput output = (VSOutput) 0;
     output.position = mul(input.position, VP);
     return output;
 }
@@ -51,6 +51,7 @@ MeshOutput VS_InstancingMesh(InstancingVertexMesh input)
 
 	output.position = mul(input.position, input.world); // W
 	output.worldPosition = output.position;
+    output.TexShadow = mul(float4(output.worldPosition.xyz, 1.0f), S);
 	output.position = mul(output.position, VP);
 	output.uv = input.uv;
 	output.normal = input.normal;
@@ -62,10 +63,11 @@ MeshOutput VS_InstancingMesh(InstancingVertexMesh input)
 
 MeshOutput VS_Mesh(VertexTextureNormal input)
 {
-    MeshOutput output;
+    MeshOutput output = (MeshOutput) 0;
 
     output.position = mul(input.position, W); // W
     output.worldPosition = output.position;
+    output.TexShadow = mul(output.position, S);
     output.position = mul(output.position, VP);
     output.uv = input.uv;
     output.normal = input.normal;
@@ -75,11 +77,12 @@ MeshOutput VS_Mesh(VertexTextureNormal input)
 
 MeshOutput VS_MeshColor(VertexColor input)
 {
-    MeshOutput output;
+    MeshOutput output = (MeshOutput) 0;
     output.position = input.position;
 
     return output;
 }
+
 
 // ************** InstancingModelRender ****************
 
@@ -109,11 +112,11 @@ MeshOutput VS_InstancingModel(InstancingVertexModel input)
 
 	output.position = mul(input.position, BoneTransforms[BoneIndex]); // Model Global
 	output.position = mul(output.position, input.world); // W
+    output.TexShadow = mul(output.position, S);
 	output.worldPosition = output.position;
 	output.position = mul(output.position, VP);
 	output.uv = input.uv;
 	output.normal = input.normal;
-    output.TexShadow = mul(input.position, Shadow);
 
 	return output;
 }
@@ -121,10 +124,11 @@ MeshOutput VS_InstancingModel(InstancingVertexModel input)
 // ************** SingleModelRender ****************
 MeshOutput VS_Model(VertexTextureNormalTangent input)
 {
-    MeshOutput output;
+    MeshOutput output = (MeshOutput) 0;;
 
     output.position = mul(input.position, BoneTransforms[BoneIndex]); // Model Global
     output.position = mul(output.position, W); // W
+    output.TexShadow = mul(output.position, S);
     output.worldPosition = output.position;
     output.position = mul(output.position, VP);
     output.uv = input.uv;
@@ -245,6 +249,7 @@ MeshOutput VS_InstancingAnimation(InstancingVertexModel input)
 
 	output.position = mul(input.position, m);	// 정점 위치 변환
 	output.position = mul(output.position, input.world); // 월드 변환 적용
+    output.TexShadow = mul(output.position, S);
 	output.worldPosition = output.position;	// 월드 좌표 설정
 	output.position = mul(output.position, VP);	// 뷰-프로젝션 변환 적용
 	output.uv = input.uv;	// UV 좌표는 변경 없음
@@ -311,7 +316,7 @@ matrix GetAnimationMatrix(VertexTextureNormalTangentBlend input)
 
 MeshOutput VS_Animation(VertexTextureNormalTangentBlend input)
 {
-    MeshOutput output;
+    MeshOutput output = (MeshOutput)0;
 
 	//output.position = mul(input.position, BoneTransforms[BoneIndex]); // Model Global
 	matrix m = GetAnimationMatrix(input);
@@ -319,6 +324,7 @@ MeshOutput VS_Animation(VertexTextureNormalTangentBlend input)
 
 	output.position = mul(input.position, m);
 	output.position = mul(output.position, W); // W
+    output.TexShadow = mul(output.position, S);
 	output.worldPosition = output.position;
 	output.position = mul(output.position, VP);
 	output.uv = input.uv;

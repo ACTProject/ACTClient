@@ -16,6 +16,8 @@ public:
     
     shared_ptr<Shader> GetShader() { return _shader; }
     const shared_ptr<Material> GetMaterial() { return _material; }
+    uint8 GetTech() { return _technique; }
+    uint8 GetPass() { return _pass; }
 
 	void SetMesh(shared_ptr<Mesh> mesh) { _mesh = mesh; }
 	void SetMaterial(shared_ptr<Material> material) { _material = material; }
