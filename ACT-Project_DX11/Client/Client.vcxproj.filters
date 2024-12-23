@@ -78,7 +78,7 @@
     <ClCompile Include="ShootingMonsterController.cpp">
       <Filter>Main\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="FinalBossMonsterContoller.cpp">
+    <ClCompile Include="FinalBossMonsterController.cpp">
       <Filter>Main\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,7 +119,7 @@
     <ClInclude Include="ShootingMonsterController.h">
       <Filter>Main\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="FinalBossMonsterContoller.h">
+    <ClInclude Include="FinalBossMonsterController.h">
       <Filter>Main\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

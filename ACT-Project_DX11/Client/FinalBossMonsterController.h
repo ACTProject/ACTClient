@@ -13,7 +13,7 @@ class ModelAnimator;
 class ModelRenderer;
 struct ModelBone;
 
-class FinalBossMonsterContoller : public MonoBehaviour
+class FinalBossMonsterController : public MonoBehaviour
 {
     shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 

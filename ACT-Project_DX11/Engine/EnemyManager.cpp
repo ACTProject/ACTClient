@@ -168,7 +168,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonsterContoller> BossScript = make_shared<FinalBossMonsterContoller>();
+        shared_ptr<FinalBossMonsterController> BossScript = make_shared<FinalBossMonsterController>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
@@ -247,7 +247,7 @@ void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonsterContoller> BossScript = make_shared<FinalBossMonsterContoller>();
+        shared_ptr<FinalBossMonsterController> BossScript = make_shared<FinalBossMonsterController>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);

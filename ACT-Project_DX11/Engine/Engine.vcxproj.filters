@@ -235,9 +235,6 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>02. Manager</Filter>
     </ClCompile>
-    <ClCompile Include="CreatureBase.cpp">
-      <Filter>00. Engine\Resource</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelMesh.h">
@@ -485,9 +482,6 @@
     </ClInclude>
     <ClInclude Include="Frustum.h">
       <Filter>02. Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="CreatureBase.h">
-      <Filter>00. Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

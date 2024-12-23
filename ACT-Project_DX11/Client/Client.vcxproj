@@ -23,7 +23,7 @@
     <ClInclude Include="BillBoardDemo.h" />
     <ClInclude Include="ButtonDemo.h" />
     <ClInclude Include="CameraScript.h" />
-    <ClInclude Include="FinalBossMonsterContoller.h" />
+    <ClInclude Include="FinalBossMonsterController.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="OrthographicDemo.h" />
     <ClInclude Include="pch.h" />
@@ -38,7 +38,7 @@
     <ClCompile Include="BillBoardDemo.cpp" />
     <ClCompile Include="ButtonDemo.cpp" />
     <ClCompile Include="CameraScript.cpp" />
-    <ClCompile Include="FinalBossMonsterContoller.cpp" />
+    <ClCompile Include="FinalBossMonsterController.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OrthographicDemo.cpp" />
     <ClCompile Include="pch.cpp">
