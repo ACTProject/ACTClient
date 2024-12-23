@@ -177,7 +177,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 
         // Collider
         auto collider = make_shared<SphereCollider>();
-        collider->SetRadius(30.0f);
+        collider->SetRadius(2.0f);
         //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(2.0f)));
         collider->SetOffset(Vec3(0.f, 2.5f, 0.f));
         OCTREE->InsertCollider(collider);

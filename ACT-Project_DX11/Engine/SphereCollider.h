@@ -15,11 +15,10 @@ public:
 	virtual void AppendVertices(vector<VertexPosData>& vertexData) const override;
 	virtual bool CalculatePenetraionDepth(shared_ptr<BaseCollider> other, Vec3& penetrationDepth) override;
 
-    void SetRadius(float radius) { _radius = radius; }
+    void SetRadius(float radius) { _boundingSphere.Radius = radius; }
     BoundingSphere GetBoundingSphere() { return _boundingSphere; }
 
 private:
-	float _radius = 1.f;
 	BoundingSphere _boundingSphere;
 };
 

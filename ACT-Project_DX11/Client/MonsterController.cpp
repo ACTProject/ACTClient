@@ -14,5 +14,4 @@ void MonsterController::Update()
     Super::Update();
     // 몬스터 공통 업데이트
     // std::cout << "MonsterController Update()" << std::endl;
-
 }

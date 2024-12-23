@@ -277,7 +277,7 @@ void Client::Init()
 
 	// Collider
 	auto collider = make_shared<SphereCollider>();
-	collider->SetRadius(4.f);
+	collider->SetRadius(1.f);
 	collider->SetOffset(Vec3(0.f, 1.f, 0.f));
     OCTREE->InsertCollider(collider);
 	player->AddComponent(collider);
