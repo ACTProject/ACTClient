@@ -170,6 +170,16 @@ void AssimpTool::Init()
         }
         {
             shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Enemy/pistol_hit.fbx");
+            converter->ExportAnimationData(L"Enemy/pistol_hit");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Enemy/pistol_die.fbx");
+            converter->ExportAnimationData(L"Enemy/pistol_die");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
             converter->ReadAssetFile(L"Enemy/bullet.fbx");
             converter->ExportMaterialData(L"Enemy/bullet");
             converter->ExportModelData(L"Enemy/bullet");
@@ -179,6 +189,12 @@ void AssimpTool::Init()
             converter->ReadAssetFile(L"Enemy/bubble.fbx");
             converter->ExportMaterialData(L"Enemy/bubble");
             converter->ExportModelData(L"Enemy/bubble");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Enemy/money.fbx");
+            converter->ExportMaterialData(L"Enemy/money");
+            converter->ExportModelData(L"Enemy/money");
         }
         //MR_Krab
         {

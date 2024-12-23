@@ -40,4 +40,3 @@ void ModelMesh::CreateBuffers()
 	indexBuffer = make_shared<IndexBuffer>();
 	indexBuffer->Create(geometry->GetIndices());
 }
-

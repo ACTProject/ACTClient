@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Component.h"
 
 class Model;
@@ -34,12 +34,14 @@ public:
 	InstanceID GetInstanceID();
 	TweenDesc& GetTweenDesc() { return _tweenDesc; }
 
+    vector<AnimTransform> GetAnimTransforms() { return _animTransforms; }
+    vector<AnimTransform> _animTransforms;
+
 private:
 	void CreateTexture();
 	void CreateAnimationTransform(uint32 index);
 
 private:
-	vector<AnimTransform> _animTransforms;
 	ComPtr<ID3D11Texture2D> _texture;
 	ComPtr<ID3D11ShaderResourceView> _srv;
 

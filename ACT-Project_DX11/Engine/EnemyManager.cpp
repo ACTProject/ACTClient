@@ -60,7 +60,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
     }
 }
 
-void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
+void EnemyManager::CreateShootingMonsterController(Vec3 SpawnPos)
 {
     auto PistolShrimp = make_shared<GameObject>(); // Pistol_Shrimp
     {
@@ -78,6 +78,8 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
             enemyModel->ReadAnimation(L"Enemy/pistol_Idle", AnimationState::Idle);
             enemyModel->ReadAnimation(L"Enemy/pistol_shoot", AnimationState::Attack1);
             enemyModel->ReadAnimation(L"Enemy/pistol_aggro", AnimationState::Aggro);
+            enemyModel->ReadAnimation(L"Enemy/pistol_hit", AnimationState::Hit1);
+            enemyModel->ReadAnimation(L"Enemy/pistol_die", AnimationState::Die);
 
         }
         shared_ptr<ModelAnimator> ma2 = make_shared<ModelAnimator>(renderShader);

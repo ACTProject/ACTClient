@@ -115,6 +115,8 @@ void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
 
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
+    //bulletComponent->SetSpeed(50.0f);
+    //bulletComponent->SetDirection(dir);
     bullet->AddComponent(bulletComponent);
 
     CUR_SCENE->Add(bullet);
@@ -170,6 +172,17 @@ void ShootingMonsterController::Update()
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
+    if (_hp < 0.f)
+    {
+        animPlayingTime += dt;
+        SetAnimationState(AnimationState::Die);
+        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
+        {
+            Remove(GetGameObject());
+        }
+        return;
+    }
+
     if (_isAnimating)
     {
         animPlayingTime += dt;
@@ -201,6 +214,14 @@ void ShootingMonsterController::Update()
             if (animPlayingTime >= _aggroDuration / _FPS)
             {
                 isFirstAggro = false;
+                ResetToIdleState();
+            }
+            return;
+        }
+        if (_currentAnimationState == AnimationState::Hit1)
+        {
+            if (animPlayingTime >= _enemy->GetAnimationDuration(AnimationState::Hit1) / _FPS)
+            {
                 ResetToIdleState();
             }
             return;
@@ -258,6 +279,10 @@ void ShootingMonsterController::Update()
         //SetAnimationState(AnimationState::Run);
         Move(EnemyPos, PlayerPos, _speed);
         Rota(EnemyPos, PlayerPos);
+    }
+    else if (_hit)
+    {
+        OnHit(30.0f); // 맞는 데미지 입력 필요
     }
     else
     {

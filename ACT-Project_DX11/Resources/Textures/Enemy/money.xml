@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Materials>
+    <Material>
+        <Name>Material.004</Name>
+        <DiffuseFile>Materials Money Pack Basic-01.png</DiffuseFile>
+        <SpecularFile>Materials Money Pack Basic-01.png</SpecularFile>
+        <NormalFile>Materials Money Pack Basic-01.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="87.062126"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+</Materials>

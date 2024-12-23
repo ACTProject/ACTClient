@@ -10,6 +10,8 @@ public:
     void CreateConsoleWindow();
 
     void LogVec3ToConsole(const Vec3& vec, const std::string& label);
+    void Log(const std::wstring& message);
+	void LogMatrixToConsole(const Matrix& matrix, const std::string& tag);
 private:
 	bool _isDebugEnabled = false;
 };
