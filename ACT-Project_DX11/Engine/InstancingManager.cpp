@@ -25,12 +25,26 @@ void InstancingManager::RenderMeshRenderer(vector<shared_ptr<GameObject>>& gameO
 {
 	map<InstanceID, vector<shared_ptr<GameObject>>> cache;
 
+    vector<shared_ptr<GameObject>> alphaObjects;
 	// 분류 단계
 	for (shared_ptr<GameObject>& gameObject : gameObjects)
 	{
 		if (gameObject->GetMeshRenderer() == nullptr)
 			continue;
 
+        if (gameObject->GetUI() != nullptr)
+        {
+            if (gameObject->GetUI()->GetActive() != true)
+            {
+                continue;
+            }
+            
+        }
+        if (gameObject->GetMeshRenderer()->GetAlphaBlend())
+        {
+            alphaObjects.push_back(gameObject);
+            continue;
+        }
 		const InstanceID instanceId = gameObject->GetMeshRenderer()->GetInstanceID();
 		cache[instanceId].push_back(gameObject);
 	}
@@ -60,6 +74,14 @@ void InstancingManager::RenderMeshRenderer(vector<shared_ptr<GameObject>>& gameO
 			vec[0]->GetMeshRenderer()->RenderInstancing(buffer);
 		}
 	}
+    std::sort(alphaObjects.begin(), alphaObjects.end(), [](const auto& a, const auto& b) {
+        return a->GetTransform()->GetPosition().z > b->GetTransform()->GetPosition().z; // z값 기준 내림차순 정렬
+        });
+
+    for (const auto& obj : alphaObjects)
+    {
+        obj->GetMeshRenderer()->RenderSingle(); // 투명 UI 객체는 개별적으로 렌더링
+    }
 }
 
 

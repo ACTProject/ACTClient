@@ -1,5 +1,7 @@
 #pragma once
 
+class Iexecute;
+
 struct GameDesc
 {
 	shared_ptr<class IExecute> app = nullptr;
@@ -15,24 +17,32 @@ struct GameDesc
 
 class Game
 {
-	DECLARE_SINGLE(Game);
+    DECLARE_SINGLE(Game);
 public:
-	WPARAM Run(GameDesc& desc);
-
-	GameDesc& GetGameDesc() { return _desc; }
-    void SetGameDesc(GameDesc desc) { _desc = desc; }
+    WPARAM Run(uint32 num);
+    GameDesc& GetGameDesc() { return _scenes[_num]; }
+    void GameEnd() { _msg.message = WM_QUIT; }
+    void AddScene(GameDesc desc) { _scenes.push_back(desc); }
+    void ChangeScene(uint32 num);
+    GameDesc& GetGameDesc() { return _scenes[_num]; }
+    void GameEnd() { _msg.message = WM_QUIT; }
+    void AddScene(GameDesc desc) { _scenes.push_back(desc); }
+    void ChangeScene(uint32 num);
 
 private:
-	ATOM MyRegisterClass();
-	BOOL InitInstance(int cmdShow);
+    ATOM MyRegisterClass();
+    BOOL InitInstance(int cmdShow);
 
-	void Update();
-	void ShowFps();
+    void Update(uint32 num);
+    void ShowFps();
 
-	static LRESULT CALLBACK WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
-	
-private:
-	GameDesc _desc;
-    bool _init = false;
+    static LRESULT CALLBACK WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
+
+
+    GameDesc _desc;
+    vector<GameDesc> _scenes;
+    MSG _msg = { 0 };
+    bool _changeScene = false;
+    uint32 _num = 0;
 };
 

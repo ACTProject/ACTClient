@@ -2,15 +2,22 @@
 #include "Game.h"
 #include "IExecute.h"
 
+HWND g_hWnd = nullptr;
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-WPARAM Game::Run(GameDesc& desc)
+WPARAM Game::Run(uint32 num)
 {
-	_desc = desc;
-	assert(_desc.app != nullptr);
+    if (num < _scenes.size() && num >= 0)
+    {
+        _num = num;
+    }
+	assert(_scenes[_num].app != nullptr);
 
-	// 1) 윈도우 창 정보 등록
-	MyRegisterClass();
+    if (g_hWnd == nullptr)
+    {
+        // 1) 윈도우 창 정보 등록
+        MyRegisterClass();
 
 	// 2) 윈도우 창 생성
 	if (!InitInstance(SW_SHOWNORMAL))
@@ -33,7 +40,7 @@ WPARAM Game::Run(GameDesc& desc)
 	
 	MAP->Init();
 	SCENE->Awake();
-	_desc.app->Init(); // 게임오브젝트 생성
+    _scenes[_num].app->Init(); // 게임오브젝트 생성
 	SCENE->Start();
 
     SHADOW->Init();
@@ -48,22 +55,30 @@ WPARAM Game::Run(GameDesc& desc)
 
 	while (msg.message != WM_QUIT)
 	{
-		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (::PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
 		{
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
+			::TranslateMessage(&_msg);
+			::DispatchMessage(&_msg);
 		}
 		else
 		{
-			Update();
+            if (_changeScene)
+            {
+                //MAP->ExportMapObj();
+                CUR_SCENE->Clear();
+
+                _changeScene = false;
+                return Run(_num);
+            }
+			Update(_num);
 		}
 	}
 	MAP->ExportMapObj();
 
-	return msg.wParam;
+	return _msg.wParam;
 }
 
-void Game::Update()
+void Game::Update(uint32 _num)
 {
 	TIME->Update();
 	INPUT->Update();
@@ -83,8 +98,8 @@ void Game::Update()
 	SCENE->FixedUpdate();
 	SCENE->Update();
 
-	_desc.app->Update();
-	_desc.app->Render();
+	_scenes[_num].app->Update();
+    _scenes[_num].app->Render();
 	GUI->Render();
 
 	GRAPHICS->RenderEnd();
@@ -103,6 +118,13 @@ void Game::ShowFps()
 
 	::SetWindowText(_desc.hWnd, text);
 
+}
+
+void Game::ChangeScene(uint32 num)
+{
+    _num = num;
+
+    _changeScene = true;
 }
 
 ATOM Game::MyRegisterClass()
@@ -128,17 +150,17 @@ ATOM Game::MyRegisterClass()
 
 BOOL Game::InitInstance(int cmdShow)
 {
-	RECT windowRect = { 0, 0, _desc.width, _desc.height };
+	RECT windowRect = { 0, 0, _scenes[0].width, _scenes[0].height};
 	::AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, false);
+    
+    g_hWnd = CreateWindowW(_scenes[0].appName.c_str(), _scenes[0].appName.c_str(), WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, nullptr, nullptr, _scenes[0].hInstance, nullptr);
 
-	_desc.hWnd = CreateWindowW(_desc.appName.c_str(), _desc.appName.c_str(), WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, nullptr, nullptr, _desc.hInstance, nullptr);
-
-	if (!_desc.hWnd)
+	if (!g_hWnd)
 		return FALSE;
 
-	::ShowWindow(_desc.hWnd, cmdShow);
-	::UpdateWindow(_desc.hWnd);
+	::ShowWindow(g_hWnd, cmdShow);
+	::UpdateWindow(g_hWnd);
 
 	return TRUE;
 }

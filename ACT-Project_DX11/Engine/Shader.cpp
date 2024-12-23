@@ -464,3 +464,16 @@ void Shader::PushShadowData(const ShadowDesc& desc)
     _shadowBuffer->CopyData(_shadowDesc);
     _shadowEffectBuffer->SetConstantBuffer(_shadowBuffer->GetComPtr().Get());
 }
+void Shader::PushParticleData(const ParticleDesc& desc)
+{
+    if (_particleEffectBuffer == nullptr)
+    {
+        _particleBuffer = make_shared<ConstantBuffer<ParticleDesc>>();
+        _particleBuffer->Create();
+        _particleEffectBuffer = GetConstantBuffer("ParticleBuffer");
+    }
+
+    _particleDesc = desc;
+    _particleBuffer->CopyData(_particleDesc);
+    _particleEffectBuffer->SetConstantBuffer(_particleBuffer->GetComPtr().Get());
+}

@@ -32,6 +32,7 @@ public:										\
 #define FRUSTUM		GET_SINGLE(Frustum)
 #define SHADOW      GET_SINGLE(Shadow)
 #define CUR_SCENE	SCENE->GetCurrentScene()
+#define UIMANAGER       GET_SINGLE(UIManager)
 
 
 #define MAX_RENDER_DISTANCE 150.f

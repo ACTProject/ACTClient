@@ -26,6 +26,8 @@ public:
 	void SetAlphaBlend(bool isAlphaBlend) { _isAlphaBlend = isAlphaBlend; }
     void SetShader(shared_ptr<Shader> shader) { _shader = shader; }
 
+    bool GetAlphaBlend() { return _isAlphaBlend; }
+
 	void RenderInstancing(shared_ptr<class InstancingBuffer>& buffer);
 	void RenderSingle();
     void RenderShadowMap(Matrix view, Matrix proj);

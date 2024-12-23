@@ -63,36 +63,40 @@ void MeshRenderer::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
 
 void MeshRenderer::RenderSingle()
 {
-	if (_mesh == nullptr || _material == nullptr)
-		return;
+    if (_mesh == nullptr || _material == nullptr)
+        return;
 
-	_shader = _material->GetShader();
-	if (_shader == nullptr)
-		return;
+    _shader = _material->GetShader();
+    if (_shader == nullptr)
+        return;
 
-	// GlobalData
-	if (GetGameObject()->GetLayerIndex() == LayerMask::Layer_UI)
-		_shader->PushGlobalData(Camera::S_UIMatView, Camera::S_UIMatProjection);
-	else
-		_shader->PushGlobalData(Camera::S_MatView, Camera::S_MatProjection);
+    if (GetGameObject()->GetUI() != nullptr)
+    {
+        if (GetGameObject()->GetUI()->GetActive() != true)
+            return;
+    }
 
-	// Light
-	auto lightObj = SCENE->GetCurrentScene()->GetLight();
-	if (lightObj)
-		_shader->PushLightData(lightObj->GetLight()->GetLightDesc());
+    // GlobalData
+    if (GetGameObject()->GetLayerIndex() == LayerMask::Layer_UI)
+        _shader->PushGlobalData(Camera::S_UIMatView, Camera::S_UIMatProjection);
+    else
+        _shader->PushGlobalData(Camera::S_MatView, Camera::S_MatProjection);
 
     _shader->PushShadowData(SHADOW->GetShadowDesc());
 
 	// Light
 	_material->Update();
 
-	// Transform
-	auto world = GetTransform()->GetWorldMatrix();
-	_shader->PushTransformData(TransformDesc{ world });
+    // Light
+    _material->Update();
 
-	// IA
-	_mesh->GetVertexBuffer()->PushData();
-	_mesh->GetIndexBuffer()->PushData();
+    // Transform
+    auto world = GetTransform()->GetWorldMatrix();
+    _shader->PushTransformData(TransformDesc{ world });
+
+    // IA
+    _mesh->GetVertexBuffer()->PushData();
+    _mesh->GetIndexBuffer()->PushData();
 
     if (GetGameObject()->GetBillboard() != nullptr)
     {
@@ -100,10 +104,10 @@ void MeshRenderer::RenderSingle()
         _shader->PushWaveData(WaveDesc{wave});
     }
 
-	if (Camera::S_IsWireFrame)
-		_technique = 3;
-	else
-		_technique = 1;
+    if (Camera::S_IsWireFrame)
+        _technique = 3;
+    else
+        _technique = 1;
 
 	if (_isAlphaBlend)
 		_technique = 4; 

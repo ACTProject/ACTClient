@@ -1,9 +1,13 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "ImGuiManager.h"
 
 
 void ImGuiManager::Init()
 {
+    if (ImGui::GetCurrentContext() != nullptr)
+    {
+        Shutdown();
+    }
 	// Imgui 초기화
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -33,4 +37,12 @@ void ImGuiManager::Render()
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiManager::Shutdown()
+{
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+
+    ImGui::DestroyContext();
 }

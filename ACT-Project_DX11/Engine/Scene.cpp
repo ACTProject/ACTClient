@@ -39,6 +39,7 @@ void Scene::Update()
 	UpdateUI();
 
 	MAP->Update();
+
 }
 
 void Scene::FixedUpdate()
@@ -119,6 +120,23 @@ void Scene::Remove(shared_ptr<GameObject> object)
 	_lights.erase(object);
 }
 
+void Scene::Clear()
+{
+    std::vector<std::shared_ptr<GameObject>> objectsToRemove(_objects.begin(), _objects.end());
+
+    for (const auto& object : objectsToRemove)
+    {
+        if (object)
+        {
+            Remove(object);
+        }
+    }
+
+    _objects.clear();
+    _cameras.clear();
+    _lights.clear();
+}
+
 std::shared_ptr<GameObject> Scene::GetMainCamera()
 {
     for (auto& camera : _cameras)
@@ -146,19 +164,20 @@ void Scene::UpdateUI()
 	if (GetUICamera() == nullptr)
 		return;
 
+
+    UIMANAGER->Update();
 	// Slider
 	const auto gameObjects = GetObjects();
 
 	for (auto& gameObject : gameObjects)
 	{
-		if (gameObject->GetSlider() == nullptr)
+		if (gameObject->GetUI() == nullptr)
 			continue;
 	}
 
 
 	// PickUI
-	if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON) == false)
-		return;
+	
 
 	POINT screenPt = INPUT->GetMousePos();
 
@@ -166,11 +185,18 @@ void Scene::UpdateUI()
 
 	for (auto& gameObject : gameObjects)
 	{
-		if (gameObject->GetButton() == nullptr)
-			continue;
+        if (gameObject->GetButton() == nullptr)
+            continue;
 
-		if (gameObject->GetButton()->Picked(screenPt))
-			gameObject->GetButton()->InvokeOnClicked();
+        gameObject->GetButton()->CheckHover(screenPt);
+		
+        if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
+        {
+            if (gameObject->GetButton()->Picked(screenPt))
+                gameObject->GetButton()->InvokeOnClicked();
+        }
+
+        gameObject->GetButton()->CheckKeyInput();
 	}
 }
 

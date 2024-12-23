@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Button.h"
 #include "MeshRenderer.h"
 #include "Material.h"
@@ -19,7 +19,7 @@ bool Button::Picked(POINT screenPos)
 	return ::PtInRect(&_rect, screenPos);
 }
 
-void Button::Create(Vec2 screenPos, Vec2 size, shared_ptr<class Material> material)
+void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> material)
 {
 	auto go = _gameObject.lock();
 
@@ -60,4 +60,56 @@ void Button::InvokeOnClicked()
 {
 	if (_onClicked)
 		_onClicked();
+}
+
+void Button::AddOnHoverEvent(std::function<void(void)> func)
+{
+    _onHover = func;
+}
+
+void Button::AddOnHoverEndEvent(std::function<void(void)> func)
+{
+    _onHoverEnd = func;
+}
+
+void Button::CheckHover(POINT screenPos)
+{
+    if (Picked(screenPos))
+    {
+        if (!_isHoverd)
+        {
+            _isHoverd = true;
+            if (_onHover)
+                _onHover();
+        }
+    }
+    else if (_isHoverd)
+    {
+        _isHoverd = false;
+        if (_onHoverEnd)
+            _onHoverEnd();
+    }
+}
+
+void Button::AddOnKeyPressEvent(KEY_TYPE key, std::function<void(void)> func)
+{
+    _onKeyPress[key] = func;
+}
+
+void Button::InvokeOnKeyPress(KEY_TYPE key)
+{
+    if (_onKeyPress.find(key) != _onKeyPress.end())
+    {
+        if (_onKeyPress[key])
+            _onKeyPress[key]();
+    }
+}
+
+void Button::CheckKeyInput()
+{
+    for (const auto& [key, callback] : _onKeyPress) {
+        if (INPUT->GetButtonDown(key)) {
+            InvokeOnKeyPress(key);
+        }
+    }
 }

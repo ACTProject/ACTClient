@@ -14,6 +14,7 @@ public:
 
 	virtual void Add(shared_ptr<GameObject> object);
 	virtual void Remove(shared_ptr<GameObject> object);
+    virtual void Clear();
 
 	void SetPlayer(shared_ptr<GameObject> player) { _player = player; }
 	void SetEnemy(shared_ptr<GameObject> enemy) { _enemy = enemy; }

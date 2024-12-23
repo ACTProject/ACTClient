@@ -76,6 +76,8 @@ using namespace Microsoft::WRL;
 #include "CollisionManager.h"
 #include "Octree.h"
 #include "Shadow.h"
+#include "OctreeManager.h"
+#include "UIManager.h"
 
 // Engine
 #include "VertexData.h"

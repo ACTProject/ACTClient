@@ -116,3 +116,11 @@ struct ShadowDesc
     Matrix Shadow = Matrix::Identity;
     //Vec4 bias = { 1,0,0,0 };
 };
+
+struct ParticleDesc
+{
+    float time;
+    float lifetime;
+    float fadeStart;
+    float padding;
+};

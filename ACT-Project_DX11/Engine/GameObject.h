@@ -25,6 +25,8 @@ enum class ObjectType
     Player,
     Terrain,
     Shell,
+    Environment
+    Ui,
     // ...
 
     Unknown,
@@ -33,7 +35,7 @@ enum class ObjectType
 class GameObject : public enable_shared_from_this<GameObject>
 {
 public:
-	GameObject();
+    GameObject();
 	~GameObject();
 
 	void Awake();
@@ -55,7 +57,7 @@ public:
 	shared_ptr<Billboard> GetBillboard();
 	shared_ptr<SnowBillboard> GetSnowBillboard();
 	shared_ptr<Rigidbody> GetRigidbody();
-	shared_ptr<Slider> GetSlider();
+	shared_ptr<Ui> GetUI();
 	shared_ptr<Skybox> GetSkybox();
 	shared_ptr<HitBox> GetHitBox();
 	shared_ptr<Bullet> GetBullet();

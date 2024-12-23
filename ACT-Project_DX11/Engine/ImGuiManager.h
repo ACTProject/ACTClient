@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 class ImGuiManager
 {
@@ -8,6 +8,6 @@ public:
 	void Init();
 	void Update();
 	void Render();
-
+    void Shutdown();
 };
 
