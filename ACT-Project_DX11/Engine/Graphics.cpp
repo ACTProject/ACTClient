@@ -32,7 +32,7 @@ void Graphics::RenderShadowBegin()
     viewPortNum = 1;
 
     _oldVp.Set(_vp.GetWidth(), _vp.GetHeight());
-    SetViewport(2048, 2048);
+    SetViewport(4096, 4096);
 
     _deviceContext->OMSetRenderTargets(0, nullptr, _shadowDepthStencilView.Get());
 
@@ -171,8 +171,8 @@ void Graphics::CreateShadowDepthStencilView()
     {
         D3D11_TEXTURE2D_DESC DescDepth;
         ZeroMemory(&DescDepth, sizeof(D3D11_TEXTURE2D_DESC));
-        DescDepth.Width = 2048;//static_cast<uint32>(GAME->GetGameDesc().width);
-        DescDepth.Height = 2048;// static_cast<uint32>(GAME->GetGameDesc().height);
+        DescDepth.Width = 4096;//static_cast<uint32>(GAME->GetGameDesc().width);
+        DescDepth.Height = 4096;// static_cast<uint32>(GAME->GetGameDesc().height);
         DescDepth.MipLevels = 1;
         DescDepth.ArraySize = 1;
         DescDepth.SampleDesc.Count = 1;

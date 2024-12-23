@@ -17,10 +17,13 @@ float4 PS(MeshOutput input) : SV_TARGET
     float4 color = DiffuseMap.Sample(LinearSampler, input.uv);
     
     //Shadow
-    float4 ShadowAmount = 0.0f;
+    float ShadowAmount = 0.0f;
+    //float4 shadowDepth = float4(input.TexShadow.xy, input.TexShadow.z + Bias.x,1.0f);
+    //float3 ShadowTexColor = shadowDepth.xyz / shadowDepth.w;
     float3 ShadowTexColor = input.TexShadow.xyz / input.TexShadow.w;
-    
-    const float delta = 1.0f / 2048;
+    //float4 tex = ShadowDepthTexture.Sample(LinearSampler, ShadowTexColor.xy);
+    //tex == 
+    const float delta = 1.0f / 4096;
     const int g_iNumKernel = 3;
     int iHalf = (g_iNumKernel - 1) / 2;
     
@@ -30,10 +33,17 @@ float4 PS(MeshOutput input) : SV_TARGET
         {
             float2 vOffset = float2(u * delta, v * delta);
             ShadowAmount += ShadowDepthTexture.SampleCmpLevelZero(SamComShadowMap,
-									ShadowTexColor.xy + vOffset, ShadowTexColor.z).r;
+									ShadowTexColor.xy + vOffset, ShadowTexColor.z);
         }
     }
     ShadowAmount /= g_iNumKernel * g_iNumKernel;
+    float4 fColor = float4(ShadowAmount, ShadowAmount, ShadowAmount, 1.0f);
+    
+    
+    
+    
+    //ShadowAmount = ShadowDepthTexture.SampleCmpLevelZero(SamComShadowMap,
+	//								ShadowTexColor.xy, ShadowTexColor.z).r;
     float4 FinalColor = color * max(0.5f, ShadowAmount);
     FinalColor.a = 1.0f;
     

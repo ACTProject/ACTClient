@@ -72,7 +72,6 @@ void Game::Update()
     // SHADOW RENDER //
     GRAPHICS->RenderShadowBegin();
     SHADOW->Update();
-    SHADOW->RenderShadow();
     ///////////////////
 
     GRAPHICS->RenderBegin();

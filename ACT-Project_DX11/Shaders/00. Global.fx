@@ -28,6 +28,7 @@ cbuffer WaveBuffer
 
 cbuffer ShadowBuffer
 {
+    //matrix SVP;
     matrix S;
 };
 
@@ -149,7 +150,7 @@ RasterizerState FrontCounterClockwiseTrue
 
 RasterizerState Depth
 {
-    DepthBias = 5000000;
+    DepthBias = 20000;
     DepthBiasClamp = 0.0f;
     SlopeScaledDepthBias = 1.0f;
 };

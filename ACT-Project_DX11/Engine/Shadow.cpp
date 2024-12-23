@@ -22,6 +22,8 @@ void Shadow::Init()
     float offset = 60;
     _shadowProjMat = ::XMMatrixOrthographicOffCenterLH(-fMaxViewDistance / 2+ offset, fMaxViewDistance / 2 - offset, -fMaxViewDistance / 2 + offset, fMaxViewDistance / 2 - offset, 0.1f, 100000.0f);
 
+    //_shadowProjMat = XMMatrixOrthographicLH(724,724, 0, 100000);
+
     //_shadowProjMat = ::XMMatrixPerspectiveFovLH(3.141592 , 1, 0.1f, 3000.f);
 
     _texture = Matrix(
@@ -30,7 +32,9 @@ void Shadow::Init()
         , 0.0f, 0.0f, 1.0f, 0.0f
         , 0.5f, 0.5f, 0.0f, 1.0f);
 
+    //_shadowDesc.ShadowVP = _shadowViewMat * _shadowProjMat;
     _shadowDesc.Shadow = _shadowViewMat * _shadowProjMat * _texture;
+    //_shadowDesc.bias = Vec4(_bias, 0, 0, 0);
 
     DebugShadow();
 }
@@ -41,12 +45,16 @@ void Shadow::updatelightPos()
     ImGui::DragFloat("1", &_lightPos.x,5.0f);
     ImGui::DragFloat("2", &_lightPos.y,5.0f);
     ImGui::DragFloat("3", &_lightPos.z, 5.0f);
+    ImGui::DragFloat("4", &_bias, 10.0f);
 }
 
 void Shadow::Update()
 {
     _shadowViewMat = ::XMMatrixLookAtLH(_lightPos, _lookVec, _upVec);
+    //_shadowDesc.ShadowVP = _shadowViewMat * _shadowProjMat;
     _shadowDesc.Shadow = _shadowViewMat * _shadowProjMat * _texture;
+    //_shadowDesc.bias = Vec4(_bias, 0, 0, 0);
+    RenderShadow();
 }
 
 void Shadow::DebugShadow()

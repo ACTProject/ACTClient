@@ -20,7 +20,6 @@ public:
     void DebugShadow();
     void RenderShadow();
 private:
-private:
     wstring _shaderName = L"DepthMapShadow.fx";
     //wstring _shaderName = L"23. RenderDemo.fx";
 
@@ -39,5 +38,7 @@ private:
 
     // 그림자텍스처변환 행렬
     ShadowDesc _shadowDesc;
+
+    float _bias = 0;
 };
 

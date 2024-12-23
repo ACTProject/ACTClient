@@ -112,5 +112,7 @@ struct WaveDesc
 
 struct ShadowDesc
 {
+    //Matrix ShadowVP = Matrix::Identity;
     Matrix Shadow = Matrix::Identity;
+    //Vec4 bias = { 1,0,0,0 };
 };

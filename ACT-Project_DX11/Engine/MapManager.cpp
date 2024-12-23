@@ -79,6 +79,8 @@ void MapManager::Init()
         MAP->AddMapObj(src);
         src = make_shared<MapObjDesc>(L"MapObject/Urock05", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
+        src = make_shared<MapObjDesc>(L"MapObject/Urock06", L"23. RenderDemo.fx");
+        MAP->AddMapObj(src);
         src = make_shared<MapObjDesc>(L"MapObject/Udrock01", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
         src = make_shared<MapObjDesc>(L"MapObject/Udrock02", L"23. RenderDemo.fx");
@@ -102,6 +104,7 @@ void MapManager::Init()
         MAP->AddMapObj(src);
         src = make_shared<MapObjDesc>(L"MapObject/CastleKit_Tower_01", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
+
 
         // 바닥텍스처
         src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", true, true);

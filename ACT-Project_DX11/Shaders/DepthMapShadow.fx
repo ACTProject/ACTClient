@@ -23,11 +23,13 @@ ShadowDebugPS VS_ShadowMesh(VertexTextureNormalTangent input)
 
 ShadowDebugPS VS_ShadowModel(VertexTextureNormalTangentBlend input)
 {
-    ShadowDebugPS output = (ShadowDebugPS)0;
-    output.p = mul(float4(input.position.xyz, 1.0f), W);
-    output.TexShadow = mul(float4(output.p.xyz, 1.0f), S);
+    ShadowDebugPS output = (ShadowDebugPS) 0;
+    output.p = mul(input.position, BoneTransforms[BoneIndex]); // Model Global
+    output.p = mul(output.p, W);
     output.p = mul(output.p, V);
     output.p = mul(output.p, P);
+    //output.p = mul(output.p, SVP);
+    output.TexShadow = mul(float4(output.p.xyz, 1.0f), S);
     
     return output;
 }

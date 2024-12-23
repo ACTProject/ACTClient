@@ -124,12 +124,12 @@ MeshOutput VS_InstancingModel(InstancingVertexModel input)
 // ************** SingleModelRender ****************
 MeshOutput VS_Model(VertexTextureNormalTangent input)
 {
-    MeshOutput output = (MeshOutput) 0;;
+    MeshOutput output = (MeshOutput) 0;
 
     output.position = mul(input.position, BoneTransforms[BoneIndex]); // Model Global
     output.position = mul(output.position, W); // W
     output.TexShadow = mul(output.position, S);
-    output.worldPosition = output.position;
+    output.worldPosition = output.position; 
     output.position = mul(output.position, VP);
     output.uv = input.uv;
     output.normal = input.normal;

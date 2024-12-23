@@ -149,6 +149,7 @@ void ModelRenderer::RenderShadowMap(Matrix view, Matrix proj)
         return;
 
     // GlobalData
+    //_shader->PushGlobalData(view, proj);
     _shader->PushGlobalData(view, proj);
 
     // Light
