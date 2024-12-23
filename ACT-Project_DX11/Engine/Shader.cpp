@@ -450,3 +450,17 @@ void Shader::PushWaveData(const WaveDesc& desc)
     _waveBuffer->CopyData(_waveDesc);
     _waveEffectBuffer->SetConstantBuffer(_waveBuffer->GetComPtr().Get());
 }
+
+void Shader::PushShadowData(const ShadowDesc& desc)
+{
+    if (_shadowEffectBuffer == nullptr)
+    {
+        _shadowBuffer = make_shared<ConstantBuffer<ShadowDesc>>();
+        _shadowBuffer->Create();
+        _shadowEffectBuffer = GetConstantBuffer("ShadowBuffer");
+    }
+
+    _shadowDesc = desc;
+    _shadowBuffer->CopyData(_shadowDesc);
+    _shadowEffectBuffer->SetConstantBuffer(_shadowBuffer->GetComPtr().Get());
+}

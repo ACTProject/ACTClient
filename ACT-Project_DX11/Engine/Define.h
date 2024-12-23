@@ -30,7 +30,9 @@ public:										\
 #define ENEMY   	GET_SINGLE(EnemyManager)
 #define OCTREE		GET_SINGLE(Octree)
 #define FRUSTUM		GET_SINGLE(Frustum)
+#define SHADOW      GET_SINGLE(Shadow)
 #define CUR_SCENE	SCENE->GetCurrentScene()
+
 
 #define MAX_RENDER_DISTANCE 150.f
 #define FRUSTUM_PADDING 5.0f

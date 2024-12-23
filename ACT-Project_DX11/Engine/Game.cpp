@@ -36,7 +36,13 @@ WPARAM Game::Run(GameDesc& desc)
 	_desc.app->Init(); // 게임오브젝트 생성
 	SCENE->Start();
 
+    SHADOW->Init();
+
+
+
     _init = true;
+
+
 
 	MSG msg = { 0 };
 
@@ -63,9 +69,16 @@ void Game::Update()
 	INPUT->Update();
 	ShowFps();
 
-	GRAPHICS->RenderBegin();
+    // SHADOW RENDER //
+    GRAPHICS->RenderShadowBegin();
+    SHADOW->Update();
+    ///////////////////
 
+    GRAPHICS->RenderBegin();
 	GUI->Update();
+
+
+    SHADOW->updatelightPos();
 
 	SCENE->FixedUpdate();
 	SCENE->Update();
@@ -75,6 +88,10 @@ void Game::Update()
 	GUI->Render();
 
 	GRAPHICS->RenderEnd();
+
+
+
+
 }
 
 void Game::ShowFps()

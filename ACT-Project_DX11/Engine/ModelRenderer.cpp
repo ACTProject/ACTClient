@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "ModelRenderer.h"
 #include "Material.h"
 #include "ModelMesh.h"
@@ -55,6 +55,11 @@ void ModelRenderer::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
 	}
 	_shader->PushBoneData(boneDesc);
 
+    // Shadow
+     _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
+     _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
+     //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
+
 	const auto& meshes = _model->GetMeshes();
 	for (auto& mesh : meshes)
 	{
@@ -95,6 +100,11 @@ void ModelRenderer::RenderSingle()
 	auto lightObj = SCENE->GetCurrentScene()->GetLight();
 	if (lightObj)
 		_shader->PushLightData(lightObj->GetLight()->GetLightDesc());
+    
+    // Shadow
+    _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
+    _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
+    //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
 
 	// Bones
 	BoneDesc boneDesc;
@@ -131,6 +141,58 @@ void ModelRenderer::RenderSingle()
 
 		_shader->DrawIndexed(_technique, _pass, mesh->indexBuffer->GetCount(), 0, 0);
 	}
+}
+
+void ModelRenderer::RenderShadowMap(Matrix view, Matrix proj)
+{
+    if (_model == nullptr)
+        return;
+
+    // GlobalData
+    //_shader->PushGlobalData(view, proj);
+    _shader->PushGlobalData(view, proj);
+
+    // Light
+    auto lightObj = SCENE->GetCurrentScene()->GetLight();
+    if (lightObj)
+        _shader->PushLightData(lightObj->GetLight()->GetLightDesc());
+
+    // Bones
+    BoneDesc boneDesc;
+
+    const uint32 boneCount = _model->GetBoneCount();
+    for (uint32 i = 0; i < boneCount; i++)
+    {
+        shared_ptr<ModelBone> bone = _model->GetBoneByIndex(i);
+        boneDesc.transforms[i] = bone->transform;
+    }
+    _shader->PushBoneData(boneDesc);
+
+    // Shadow
+    _shader->PushShadowData(ShadowDesc{SHADOW->GetShadowDesc()});
+    //_shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
+    //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
+
+
+    const auto& meshes = _model->GetMeshes();
+    for (auto& mesh : meshes)
+    {
+        if (mesh->material)
+            mesh->material->Update();
+
+        // BoneIndex
+        _shader->GetScalar("BoneIndex")->SetInt(mesh->boneIndex);
+
+        // Transform
+        auto world = GetTransform()->GetWorldMatrix();
+        _shader->PushTransformData(TransformDesc{ world });
+
+        // IA
+        mesh->vertexBuffer->PushData();
+        mesh->indexBuffer->PushData();
+
+        _shader->DrawIndexed(_technique, _pass, mesh->indexBuffer->GetCount(), 0, 0);
+    }
 }
 
 InstanceID ModelRenderer::GetInstanceID()

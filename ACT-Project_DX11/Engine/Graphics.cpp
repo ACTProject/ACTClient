@@ -9,6 +9,7 @@ void Graphics::Init(HWND hwnd)
 	CreateDeviceAndSwapChain();
 	CreateRenderTargetView();
 	CreateDepthStencilView();
+    CreateShadowDepthStencilView();
 	SetViewport(GAME->GetGameDesc().width, GAME->GetGameDesc().height);
 }
 
@@ -17,6 +18,7 @@ void Graphics::RenderBegin()
 	_deviceContext->OMSetRenderTargets(1, _renderTargetView.GetAddressOf(), _depthStencilView.Get());
 	_deviceContext->ClearRenderTargetView(_renderTargetView.Get(), (float*)(&GAME->GetGameDesc().clearColor));
 	_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+    SetViewport(_oldVp.GetWidth(), _oldVp.GetHeight());
 	_vp.RSSetViewport();
 }
 
@@ -24,6 +26,18 @@ void Graphics::RenderEnd()
 {
 	HRESULT hr = _swapChain->Present(1, 0);
 	CHECK(hr);
+}
+void Graphics::RenderShadowBegin()
+{
+    viewPortNum = 1;
+
+    _oldVp.Set(_vp.GetWidth(), _vp.GetHeight());
+    SetViewport(4096, 4096);
+
+    _deviceContext->OMSetRenderTargets(0, nullptr, _shadowDepthStencilView.Get());
+
+    //렌타뷰, 뎁스뷰, 뷰포트 초기화
+    Clear();
 }
 void Graphics::CreateDeviceAndSwapChain()
 {
@@ -74,6 +88,7 @@ void Graphics::CreateRenderTargetView()
 
 	hr = _device->CreateRenderTargetView(backBuffer.Get(), nullptr, _renderTargetView.GetAddressOf());
 	CHECK(hr);
+
 }
 
 void Graphics::CreateDepthStencilView()
@@ -110,6 +125,99 @@ void Graphics::CreateDepthStencilView()
 
 }
 
+void Graphics::CreateShadowDepthStencilView()
+{
+    // 렌더타겟, 텍스처 생성
+    ////Texture2D
+    //{
+    //    D3D11_TEXTURE2D_DESC desc = { 0 };
+    //    ZeroMemory(&desc, sizeof(desc));
+    //    desc.Width = 1024;//static_cast<uint32>(GAME->GetGameDesc().width);
+    //    desc.Height =1024;// static_cast<uint32>(GAME->GetGameDesc().height);
+    //    desc.MipLevels = 1;
+    //    desc.ArraySize = 1;
+    //    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    //    desc.SampleDesc.Count = 1;
+    //    desc.SampleDesc.Quality = 0;
+    //    desc.Usage = D3D11_USAGE_DEFAULT;
+    //    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    //    desc.CPUAccessFlags = 0;
+    //    desc.MiscFlags = 0;
+
+    //    HRESULT hr = DEVICE->CreateTexture2D(&desc, nullptr, _shadowColorTexture.GetAddressOf());
+    //    CHECK(hr);
+    //}
+    ////SRV
+    //{
+    //    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    //    ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+    //    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    //    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    //    srvDesc.Texture2D.MipLevels = 1;
+
+    //    HRESULT hr = DEVICE->CreateShaderResourceView(_shadowColorTexture.Get(), NULL, _SRV.GetAddressOf());
+    //    CHECK(hr);
+    //}
+    ////RTV
+    //{
+    //    HRESULT hr = DEVICE->CreateRenderTargetView(_shadowColorTexture.Get(), NULL, _shadowRenderTargetView.GetAddressOf());
+    //    CHECK(hr);
+    //}
+
+
+    // DepthStencilView 생성
+    // Texture2D
+    ComPtr<ID3D11Texture2D> pDSTexture = nullptr;
+    {
+        D3D11_TEXTURE2D_DESC DescDepth;
+        ZeroMemory(&DescDepth, sizeof(D3D11_TEXTURE2D_DESC));
+        DescDepth.Width = 4096;//static_cast<uint32>(GAME->GetGameDesc().width);
+        DescDepth.Height = 4096;// static_cast<uint32>(GAME->GetGameDesc().height);
+        DescDepth.MipLevels = 1;
+        DescDepth.ArraySize = 1;
+        DescDepth.SampleDesc.Count = 1;
+        DescDepth.SampleDesc.Quality = 0;
+        DescDepth.CPUAccessFlags = 0;
+        DescDepth.MiscFlags = 0;
+        DescDepth.Format = DXGI_FORMAT_R32_TYPELESS;
+        DescDepth.Usage = D3D11_USAGE_DEFAULT;
+
+        DescDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+        HRESULT hr = DEVICE->CreateTexture2D(&DescDepth, NULL, _shadowTexture.GetAddressOf());
+        CHECK(hr);
+    }
+    //DSV
+    {
+        D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+        ZeroMemory(&dsvDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+        dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
+        dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+        HRESULT hr = DEVICE->CreateDepthStencilView(_shadowTexture.Get(), &dsvDesc, _shadowDepthStencilView.ReleaseAndGetAddressOf());
+        CHECK(hr);
+    }
+    //SRV
+    {
+        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+        ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+        srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+        srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Texture2D.MipLevels = 1;
+        HRESULT hr = DEVICE->CreateShaderResourceView(_shadowTexture.Get(), &srvDesc, _DsvSRV.ReleaseAndGetAddressOf());
+        CHECK(hr);
+    }
+}
+
+
+bool Graphics::Clear()
+{
+    _deviceContext->ClearDepthStencilView(_shadowDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0, 0);
+
+    _vp.RSSetViewport();
+    return true;
+}
+
 void Graphics::SetViewport(float width, float height, float x /*= 0*/, float y /*= 0*/, float minDepth /*= 0*/, float maxDepth /*= 1*/)
 {
 	_vp.Set(width, height, x, y, minDepth, maxDepth);
@@ -121,6 +229,12 @@ void Graphics::OnResize(float width, float height)
     if (_renderTargetView) _renderTargetView.Reset();
     if (_depthStencilView) _depthStencilView.Reset();
     if (_depthStencilTexture) _depthStencilTexture.Reset();
+
+    // 섀도우 렌타뷰 깊이 스텐실 해제
+    //if (_shadowRenderTargetView) _shadowRenderTargetView.Reset();
+    if (_shadowDepthStencilView) _shadowDepthStencilView.Reset();
+    if (_shadowTexture) _shadowTexture.Reset();
+    //if (_SRV) _SRV.Reset();
 
     GameDesc desc = GAME->GetGameDesc();
     desc.width = width;
@@ -140,6 +254,9 @@ void Graphics::OnResize(float width, float height)
 
     // 깊이 스텐실 뷰 다시 생성
     CreateDepthStencilView();
+
+    // 섀도우 렌타뷰 깊이스탠실 다시 생성
+    CreateShadowDepthStencilView();
 
     // 뷰포트 업데이트
     SetViewport(width, height);

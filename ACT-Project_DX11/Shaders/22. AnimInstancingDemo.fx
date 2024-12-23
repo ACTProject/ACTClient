@@ -102,7 +102,7 @@ matrix GetAnimationMatrix(VS_IN input)
 
 		matrix result = lerp(curr, next, ratio[0]);
 
-		// ´ÙÀ½ ¾Ö´Ï¸ÞÀÌ¼Ç
+		// ë‹¤ìŒ ì• ë‹ˆë©”ì´ì…˜
 		if (animIndex[1] >= 0)
 		{
 			c0 = TransformMap.Load(int4(indices[i] * 4 + 0, currFrame[1], animIndex[1], 0));

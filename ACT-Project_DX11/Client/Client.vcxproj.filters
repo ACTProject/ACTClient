@@ -202,5 +202,11 @@
     <FxCompile Include="..\Shaders\23. RenderDemoUI.fx">
       <Filter>Shaders\Week3</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shaders\DepthMapShadow.fx">
+      <Filter>Shaders\Week5</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\test.fx">
+      <Filter>Shaders\Week5</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

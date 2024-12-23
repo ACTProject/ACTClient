@@ -73,7 +73,7 @@ void Scene::Render()
             mainCamera = camera->GetCamera();
 
 		camera->GetCamera()->SortGameObject();
-		camera->GetCamera()->Render_Forward();
+ 		camera->GetCamera()->Render_Forward();
 	}
     if (DEBUG->IsDebugEnabled() || INPUT->GetButton(KEY_TYPE::CAPSLOCK))
     {

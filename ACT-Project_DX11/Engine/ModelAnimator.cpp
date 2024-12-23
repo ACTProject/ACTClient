@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "ModelAnimator.h"
 #include "Material.h"
 #include "ModelMesh.h"

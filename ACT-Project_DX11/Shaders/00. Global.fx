@@ -1,6 +1,9 @@
 #ifndef _GLOBAL_FX_
 #define _GLOBAL_FX_
 
+Texture2D ShadowDepthTexture;
+//Texture2D ShadowColorTexture;
+
 /////////////////
 // ConstBuffer //
 /////////////////
@@ -22,6 +25,13 @@ cbuffer WaveBuffer
 {
     matrix Wave;
 };
+
+cbuffer ShadowBuffer
+{
+    //matrix SVP;
+    matrix S;
+};
+
 ////////////////
 // VertexData //
 ////////////////
@@ -75,6 +85,7 @@ struct VertexTextureNormalTangentBlend
 struct VSOutput
 {
     float4 position : SV_POSITION;
+
 };
 
 struct VertexOutput
@@ -88,7 +99,8 @@ struct MeshOutput
 {
     float4 position : SV_POSITION;
     float3 worldPosition : POSITION1;
-    float2 uv : TEXCOORD;
+    float2 uv : TEXCOORD0;
+    float4 TexShadow : TEXCOORD1;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
 };
@@ -111,6 +123,17 @@ SamplerState PointSampler
     AddressV = Wrap;
 };
 
+SamplerComparisonState SamComShadowMap
+{
+    Filter = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+    AddressU = BORDER;
+    AddressV = BORDER;
+    AddressW = BORDER;
+    BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    ComparisonFunc = LESS_EQUAL;
+};
+
+
 /////////////////////
 // RasterizerState //
 /////////////////////
@@ -125,6 +148,15 @@ RasterizerState FrontCounterClockwiseTrue
     FrontCounterClockwise = true;
 };
 
+RasterizerState Depth
+{
+    DepthBias = 20000;
+    DepthBiasClamp = 0.0f;
+    SlopeScaledDepthBias = 1.0f;
+};
+////////////////////////
+// DepthStencillState //
+////////////////////////
 
 ////////////////
 // BlendState //
@@ -221,6 +253,14 @@ pass name											\
     SetPixelShader(CompileShader(ps_5_0, ps()));	\
 }
 
+#define PASS_SHADOW(name, bs, rs,vs)				\
+pass name											\
+{					                                \
+	SetBlendState(bs, float4(0, 0, 0, 0), 0xFF);    \
+	SetRasterizerState(rs);                         \
+    SetVertexShader(CompileShader(vs_5_0, vs()));	\
+}
+ //SetPixelShader(CompileShader(ps_5_0, ps()));	\
 //////////////
 // Function //
 //////////////

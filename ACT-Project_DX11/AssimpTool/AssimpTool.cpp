@@ -559,6 +559,12 @@ void AssimpTool::Init()
             converter->ExportMaterialData(L"MapObject/CastleKit_Tower_01");
             converter->ExportModelData(L"MapObject/CastleKit_Tower_01");
         }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Urock06.fbx");
+            converter->ExportMaterialData(L"MapObject/Urock06");
+            converter->ExportModelData(L"MapObject/Urock06");
+        }
 
 
 	}

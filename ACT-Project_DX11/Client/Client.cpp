@@ -36,6 +36,7 @@
 #include "Skybox.h"
 #include "HitBox.h"
 #include "Frustum.h"
+#include "Shadow.h"
 
 void Client::Init()
 {
@@ -184,8 +185,10 @@ void Client::Init()
 		lightDesc.ambient = Vec4(0.4f);
 		lightDesc.diffuse = Vec4(1.f);
 		lightDesc.specular = Vec4(0.1f);
-		lightDesc.direction = Vec3(1.f, 0.f, 1.f);
+        // 일단 디렉션 임시로 사용.
+		lightDesc.direction = Vec3(40.f, 40.f, 0.f);
 		light->GetLight()->SetLightDesc(lightDesc);
+        SHADOW->SetLight(lightDesc.direction);
 		CUR_SCENE->Add(light);
 	}
 
@@ -490,6 +493,9 @@ void Client::Init()
     }
 
     MAP->ImportMapObj();
+
+
+    
 
 
     //// MapSubTexture

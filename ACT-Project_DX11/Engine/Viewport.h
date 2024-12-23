@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 class Viewport
 {
@@ -15,6 +15,8 @@ public:
 
 	Vec3 Project(const Vec3& pos, const Matrix& W, const Matrix& V, const Matrix& P);
 	Vec3 Unproject(const Vec3& pos, const Matrix& W, const Matrix& V, const Matrix& P);
+
+    D3D11_VIEWPORT& GetViewPort() { return _vp; };
 
 private:
 	D3D11_VIEWPORT _vp;
