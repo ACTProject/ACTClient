@@ -82,6 +82,7 @@ private:
 
     // 히트 상태
     bool _hit = false;
+    bool _isDead = false;
 
     shared_ptr<Model> _enemy;
     shared_ptr<ModelRenderer> _modelRenderer;
