@@ -237,6 +237,7 @@
     </ClCompile>
     <ClCompile Include="A_Star.cpp">
       <Filter>98. Utils</Filter>
+    </ClCompile>
     <ClCompile Include="Shadow.cpp">
       <Filter>02. Manager</Filter>
     </ClCompile>
@@ -490,6 +491,7 @@
     </ClInclude>
     <ClInclude Include="A_Star.h">
       <Filter>98. Utils</Filter>
+    </ClInclude>
     <ClInclude Include="Shadow.h">
       <Filter>02. Manager</Filter>
     </ClInclude>
