@@ -58,6 +58,18 @@ void FinalBossMonsterController::Update()
         int a = 0;
     }
 
+    if (_isDead)
+    {
+        animPlayingTime += dt;
+        SetAnimationState(AnimationState::Die);
+        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
+        {
+            Super::OnDeath();
+            std::cout << "Shooting Monster has been defeated!" << std::endl;
+        }
+        return;
+    }
+
     dt = DT;
     _FPS = static_cast<float>(TIME->GetFps());
 
@@ -589,8 +601,8 @@ void FinalBossMonsterController::makeBubble(Vec3 pos, Vec3 dir)
 
 void FinalBossMonsterController::OnDeath()
 {
-    Super::OnDeath();
-    std::cout << "FinalBossMonster has been eliminated!" << std::endl;
+    _isDead = true;
+    animPlayingTime = 0.0f;
 }
 void FinalBossMonsterController::makeCash(Vec3 pos, Vec3 dir)
 {

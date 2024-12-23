@@ -98,6 +98,7 @@ public:
     bool punchState = false;             //펀치 
     bool shootState = false;
     bool attackState = false;
+    bool _isDead = false;
 
     shared_ptr<Model> _enemy;
     shared_ptr<GameObject> _hitbox;

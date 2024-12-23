@@ -163,6 +163,18 @@ void ShootingMonsterController::Update()
 {
     Super::Update();
 
+    if (_isDead)
+    {
+        animPlayingTime += dt;
+        SetAnimationState(AnimationState::Die);
+        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
+        {
+            Super::OnDeath();
+            std::cout << "Shooting Monster has been defeated!" << std::endl;
+        }
+        return;
+    }
+
     _FPS = static_cast<float>(TIME->GetFps());
     dt = TIME->GetDeltaTime();
     // 플레이어 위치 계산
@@ -326,6 +338,6 @@ void ShootingMonsterController::ResetToIdleState() {
 
 void ShootingMonsterController::OnDeath()
 {
-    Super::OnDeath();
-    std::cout << "Shooting Monster has been eliminated!" << std::endl;
+    _isDead = true;
+    animPlayingTime = 0.0f;
 }
