@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "FinalBossMonsterContoller.h"
 
-#define AttackRange 10.0f
+#define AttackRange 7.0f
 
 void FinalBossMonsterContoller::SetAnimationState(AnimationState state)
 {
@@ -90,6 +90,17 @@ void FinalBossMonsterContoller::Phase_1()
         }
     }
 
+    if (hp < 0.0f)
+    {
+        if (PlayCheckAnimating(AnimationState::Down2))
+        {
+            return;
+        }
+        Die();
+        hp = 500.0f;
+        myPhase = 2;
+    }
+
     if (currentTime - lastTime > 2.0f)
     {
         postpone = true;
@@ -99,8 +110,7 @@ void FinalBossMonsterContoller::Phase_1()
     {
         if (patternCnt < 4)
         {
-            Walk();
-            Rota(bossPos, playerPos);
+
             if (distance < AttackRange)
             {
                 punchState = true;
@@ -119,6 +129,18 @@ void FinalBossMonsterContoller::Phase_1()
                     punchState = false;
                 }
             }
+            else
+            {
+                Rota(bossPos, playerPos);
+                if (distance < 12.0f)
+                {
+                    Run(8.0f);
+                }
+                else
+                {
+                    Move(bossPos, playerPos, speed);
+                }
+            }
         }
 
         if (patternCnt == 4)
@@ -131,8 +153,9 @@ void FinalBossMonsterContoller::Phase_1()
             else
             {
                 lastTime = currentTime;
-                Rota(bossPos, playerPos);
-                ResetToIdleState();
+                shootTime = 0.0f;
+                patternCnt = 4;
+                
             }
         }
     }
@@ -141,6 +164,7 @@ void FinalBossMonsterContoller::Phase_1()
         Rota(bossPos, playerPos);
         ResetToIdleState();
     }
+
 }
 
 void FinalBossMonsterContoller::Phase_2()
@@ -169,10 +193,22 @@ void FinalBossMonsterContoller::Phase_2()
         isFirstTime = false; // 플래그
     }
 
+    if (hp < 0.0f)
+    {
+        if (PlayCheckAnimating(AnimationState::Die))
+        {
+            return;
+        }
+        else
+        {
+            Die();
+        }
+    }
+
     switch (randType)
     {
         case 1: // 펀치 두 번
-            Walk();
+            Move(bossPos, playerPos, speed);
             Rota(bossPos, playerPos);
             if (distance < AttackRange)
             {
@@ -202,7 +238,7 @@ void FinalBossMonsterContoller::Phase_2()
             }
             break;
         case 2: // 초크
-            Walk();
+            Move(bossPos, playerPos, speed);
             Rota(bossPos, playerPos);
             if (distance < 5.f)
             {
@@ -245,7 +281,7 @@ void FinalBossMonsterContoller::Phase_2()
             }
             break;
         case 5: // 큰 펀치(slash)
-            Walk();
+            Move(bossPos, playerPos, speed);
             Rota(bossPos, playerPos);
             if (distance < AttackRange)
             {
@@ -265,7 +301,7 @@ void FinalBossMonsterContoller::Phase_2()
             }
             break;
         case 6: // 어퍼컷
-            Walk();
+            Move(bossPos, playerPos, speed);
             Rota(bossPos, playerPos);
             if (distance < AttackRange)
             {
@@ -285,7 +321,7 @@ void FinalBossMonsterContoller::Phase_2()
             }
             break;
         case 7:
-            Walk();
+            Move(bossPos, playerPos, speed);
             Rota(bossPos, playerPos);
             if (distance < 10.0f)
             {
@@ -339,10 +375,6 @@ void FinalBossMonsterContoller::Appear()
     lastTime = currentTime;
 }
 
-void FinalBossMonsterContoller::Walk()
-{
-    Move(bossPos, playerPos, speed);
-}
 
 void FinalBossMonsterContoller::Move(Vec3 objPos, Vec3 targetPos, float speed)
 {
@@ -351,7 +383,7 @@ void FinalBossMonsterContoller::Move(Vec3 objPos, Vec3 targetPos, float speed)
     Vec3 direction = targetPos - objPos;
     if (direction.LengthSquared() < 5.f) // EPSILON 사용
     {
-        SetAnimationState(AnimationState::Combat);
+        ResetToIdleState();
         return;
     }
 
@@ -396,6 +428,55 @@ void FinalBossMonsterContoller::Rota(Vec3 objPos, Vec3 targetPos)
     _transform->SetRotation(newRotation);
 }
 
+void FinalBossMonsterContoller::Sprint()
+{
+    SetAnimationState(AnimationState::Run2);
+
+    Vec3 direction = playerPos - bossPos;
+    if (direction.LengthSquared() < 5.f) // EPSILON 사용
+    {
+        ResetToIdleState();
+        return;
+    }
+
+    direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
+
+    _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * dt);  // 일정 거리만큼 이동
+
+}
+
+void FinalBossMonsterContoller::BackSprint()
+{
+    SetAnimationState(AnimationState::Run3);
+
+    Vec3 direction = bossPos - playerPos;
+    if (distance > 20.f) //
+    {
+        ResetToIdleState();
+        return;
+    }
+
+    direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
+
+    _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * dt);  // 일정 거리만큼 이동
+}
+
+void FinalBossMonsterContoller::Run(float speed)
+{
+    SetAnimationState(AnimationState::Run);
+
+    Vec3 direction = playerPos - bossPos;
+    if (direction.LengthSquared() < 5.f) // EPSILON 사용
+    {
+        ResetToIdleState();
+        return;
+    }
+
+    direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
+
+    _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
+}
+
 void FinalBossMonsterContoller::Die()
 {
     CUR_SCENE->Remove(GetGameObject());
@@ -437,7 +518,6 @@ void FinalBossMonsterContoller::FireMoney()
         rightVec.Normalize();
         upVec.Normalize();
 
-        DEBUG->LogVec3ToConsole({1,1,1}, "a");
         Vec3 dir = playerPos - bossPos;
         dir.y -= 0.5f;
         makeCash({ bossPos.x, bossPos.y + upVec.y , bossPos.z },   dir);
@@ -483,16 +563,15 @@ void FinalBossMonsterContoller::makeBubble(Vec3 pos, Vec3 dir)
 
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
-    bulletComponent->SetSpeed(50.0f);
     bullet->AddComponent(bulletComponent);
 
     // HitBox
-    /*shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+    shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
     shared_ptr<HitBox> hitbox = make_shared<HitBox>();
     hitboxGO->AddComponent(hitbox);
     hitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
     hitbox->Craete(bullet, Vec3(0.3f));
-    CUR_SCENE->Add(hitboxGO);*/
+    CUR_SCENE->Add(hitboxGO);
 
     /*COLLISION->AddRigidbody(rigidBody);
     COLLISION->AddCollider(collider);*/
@@ -533,8 +612,8 @@ void FinalBossMonsterContoller::makeCash(Vec3 pos, Vec3 dir)
 
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
-    bulletComponent->SetSpeed(10.0f);
-    bulletComponent->SetDirection(dir);
+    //bulletComponent->SetSpeed(30.0f);
+    //bulletComponent->SetDirection(dir);
     bullet->AddComponent(bulletComponent);
 
     // HitBox
@@ -550,8 +629,6 @@ void FinalBossMonsterContoller::makeCash(Vec3 pos, Vec3 dir)
 
     CUR_SCENE->Add(bullet);
 }
-
-
 
 void FinalBossMonsterContoller::Choke_lift()
 {
@@ -582,5 +659,13 @@ Matrix FinalBossMonsterContoller::CalculateWorldTransform(shared_ptr<ModelBone> 
 
 void FinalBossMonsterContoller::Hurricane()
 {
-    Move(bossPos, playerPos, 8.0f);
+    Vec3 direction = playerPos - bossPos;
+    if (direction.LengthSquared() < 5.f) // EPSILON 사용
+    {
+        return;
+    }
+
+    direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
+
+    _transform->SetPosition(_transform->GetPosition() + direction * 8.0f * dt);  // 일정 거리만큼 이동
 }

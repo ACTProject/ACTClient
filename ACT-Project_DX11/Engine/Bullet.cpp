@@ -22,16 +22,15 @@ void Bullet::Shooting()
     _transform = GetTransform();
     float dt = TIME->GetDeltaTime();
     Vec3 pos = _transform->GetPosition();
-    /*if (FirstTime)
+    if (FirstTime)
     {
         _player = SCENE->GetCurrentScene()->GetPlayer();
         PlayerPos = _player->GetTransform()->GetPosition();
         direction = PlayerPos - pos;
         direction.y += 1.f;
         direction.Normalize();
-    }*/
+    }
     //float distance = sqrt(powf(pos.x - PlayerPos.x, 2) + powf(pos.z - PlayerPos.z, 2));
-    direction.Normalize();
     CurForward = _transform->GetLook();
 
     duration += dt;

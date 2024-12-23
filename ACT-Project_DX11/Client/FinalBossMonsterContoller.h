@@ -36,10 +36,14 @@ private:
     bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
     void Phase_1();                                     // 1페이즈
     void Phase_2();                                     // 2페이즈
+
     void Appear();                                      // 조우시 모션용 어그로와 같음
     void Move(Vec3 objPos, Vec3 targetPos, float speed);// 타겟 방향으로 이동
-    void Walk();
     void Rota(Vec3 objPos, Vec3 targetPos);             // 타겟 방향으로 회전
+    void BackSprint();
+    void Sprint();
+    void Run(float speed);
+
     void Die();                                         // 죽음
     void Punch();                            // 펀치 공격
     void Fireball();
@@ -55,6 +59,7 @@ private:
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float _FPS;                         //게임 FPS = 60
     float dt;                           //deltaTime = 프레임당 시간
+    float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
 
     Vec3 bossPos;                       //보스 위치
     Vec3 playerPos;                     //플레이어 위치
@@ -63,9 +68,8 @@ private:
     float hp = 100.f;                  //보스 hp
     float speed = 5.0f;
 
-    float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
     int myPhase = 1;                    //1페이즈 2페이즈 구분용
-    int patternCnt = 1;
+    int patternCnt = 4;
     float shootTime = 0.0f;
     int randType;                       //랜덤한 타입
     int randPunchType;                  //랜덤한 펀치 타입

@@ -28,6 +28,7 @@ private:
     void Tracking(Vec3 pos, const std::vector<Node3D>& path);
     void ResetToIdleState();
     void Patrol(Vec3 Target);
+    void OnHit(float dmg);
 
 	float _speed = 10.f;
 	float _hp = 100.0f;

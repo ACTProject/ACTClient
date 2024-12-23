@@ -37,6 +37,7 @@ public:
     void Tracking(Vec3 pos, const std::vector<Node3D>& path);
     void ResetToIdleState();
     void Patrol(Vec3 Target);
+    void OnHit(float dmg);
     void AddBullet(Vec3 Pos, Vec3 dir);
 
     float distance;

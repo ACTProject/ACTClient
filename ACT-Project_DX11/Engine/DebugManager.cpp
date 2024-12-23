@@ -20,9 +20,9 @@ void DebugManager::LogVec3ToConsole(const Vec3& vec, const std::string& label)
     std::cout << label << ": (" << vec.x << ", " << vec.y << ", " << vec.z << ")\n";
 }
 
-void DebugManager::Log(const std::wstring& message, const std::wstring& tag = L"") 
+void DebugManager::Log(const std::wstring& message) 
 {
-    std::wcout << L"[" << tag << L"] " << message << std::endl;
+    std::wcout << L"[" << message << L"] " << std::endl;
 }
 
 void DebugManager::LogMatrixToConsole(const Matrix& matrix, const std::string& tag = "") 

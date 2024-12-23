@@ -112,6 +112,13 @@ void MelleMonsterController::Patrol(Vec3 Target)
     Rota(EnemyPos, Target);
 }
 
+void MelleMonsterController::OnHit(float dmg)
+{
+    _isAnimating = true;
+    _hp -= dmg;
+    SetAnimationState(AnimationState::Hit1);
+}
+
 void MelleMonsterController::Start()
 {
 	_transform = GetTransform();
@@ -135,6 +142,17 @@ void MelleMonsterController::Update()
 
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
+
+    if (_hp < 0.f)
+    {
+        animPlayingTime += dt;
+        SetAnimationState(AnimationState::Die);
+        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
+        {
+            Remove(GetGameObject());
+        }
+        return;
+    }
 
 	if (_isAnimating)
 	{
@@ -165,6 +183,15 @@ void MelleMonsterController::Update()
 			}
 			return;
 		}
+
+        if (_currentAnimationState == AnimationState::Hit1)
+        {
+            if (animPlayingTime >= _enemy->GetAnimationDuration(AnimationState::Hit1) / _FPS)
+            {
+                ResetToIdleState();
+            }
+            return;
+        }
 	}
 
 	Vec3 EnemyToPlayerdir = PlayerPos - EnemyPos;
@@ -218,6 +245,10 @@ void MelleMonsterController::Update()
 		Move(EnemyPos, PlayerPos, _speed);
 		Rota(EnemyPos, PlayerPos);
 	}
+    else if (_hit)
+    {
+        OnHit(30.0f); // 맞는 데미지 입력 필요
+    }
 	else
 	{
         SetAnimationState(AnimationState::Idle);
@@ -238,11 +269,6 @@ void MelleMonsterController::Update()
         }
 	}
 
-    if (_hp < 0.f)
-    {
-        SetAnimationState(AnimationState::Die);
-        Remove(GetGameObject());
-    }
 }
 
 

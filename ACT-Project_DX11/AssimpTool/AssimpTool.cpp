@@ -143,6 +143,16 @@ void AssimpTool::Init()
         }
         {
             shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Enemy/pistol_hit.fbx");
+            converter->ExportAnimationData(L"Enemy/pistol_hit");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Enemy/pistol_die.fbx");
+            converter->ExportAnimationData(L"Enemy/pistol_die");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
             converter->ReadAssetFile(L"Enemy/bullet.fbx");
             converter->ExportMaterialData(L"Enemy/bullet");
             converter->ExportModelData(L"Enemy/bullet");
