@@ -2,6 +2,7 @@
 #include "MonoBehaviour.h"
 #include "EnginePch.h"
 #include "CreatureController.h"
+#include "MonsterController.h"
 #include "Model.h"
 #include "ModelAnimator.h"
 #include "ModelRenderer.h"
@@ -11,12 +12,17 @@ class Model;
 class ModelAnimator;
 class ModelRenderer;
 
-class FinalBossMonsterController : public CreatureController
+/*
+    각 몬스터의 개별 동작을 추가로 정의.
+*/
+class FinalBossMonsterController : public MonsterController
 {
+    using Super = MonsterController;
+
     shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 
-    virtual void Start() override;
-    virtual void Update() override;
+    void Start() override;
+    void Update() override;
 
 public:
     MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::FinalBossMonster; }
@@ -40,6 +46,9 @@ public:
     void Punch();                            // 펀치 공격
     void Fireball();
     void makeBubble(Vec3 pos, Vec3 dir);
+
+public:
+    void OnDeath() override;
 
     int patternCnt;
     float shootTime = 0.0f;

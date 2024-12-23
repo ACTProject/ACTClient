@@ -140,16 +140,27 @@ void ShootingMonsterController::Patrol(Vec3 Target)
 
 void ShootingMonsterController::Start()
 {
+    Super::Start();
+
+    // 원거리 몬스터 스탯 초기화
+    _maxHp = 50.0f;
+    _hp = 50.0f;
+    _atk = 25.0f;
+
     _transform = GetTransform();
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
     _attackDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Attack1));
 
     _aggroDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Aggro));
+
+    std::cout << "ShootingMonsterController Start()" << std::endl;
 }
 
 void ShootingMonsterController::Update()
 {
+    Super::Update();
+
     _FPS = static_cast<float>(TIME->GetFps());
     dt = TIME->GetDeltaTime();
     // 플레이어 위치 계산
@@ -286,4 +297,10 @@ void ShootingMonsterController::ResetToIdleState() {
     animPlayingTime = 0.0f;
     EnemyEndCoroutine();
     SetAnimationState(AnimationState::Idle);
+}
+
+void ShootingMonsterController::OnDeath()
+{
+    Super::OnDeath();
+    std::cout << "Shooting Monster has been eliminated!" << std::endl;
 }

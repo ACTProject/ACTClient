@@ -114,6 +114,13 @@ void MelleMonsterController::Patrol(Vec3 Target)
 
 void MelleMonsterController::Start()
 {
+    Super::Start();
+
+    // 근접 몬스터 스탯 초기화
+    _maxHp = 80.0f;
+    _hp = 80.0f;
+    _atk = 15.0f;
+
 	_transform = GetTransform();
 	StartPos = _transform->GetPosition();
 	patrolTarget = StartPos;
@@ -122,10 +129,14 @@ void MelleMonsterController::Start()
 		_attackDuration[i] = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Attack1 + i));
 	}
 	_aggroDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Aggro));
+
+    std::cout << "MelleMonsterController Start()" << std::endl;
 }
 
 void MelleMonsterController::Update()
 {
+    Super::Update();
+
 	_FPS = static_cast<float>(TIME->GetFps());
 	dt = TIME->GetDeltaTime();
 	// 플레이어 위치 계산4
@@ -252,14 +263,16 @@ void MelleMonsterController::SetAnimationState(AnimationState state)
 	_currentAnimationState = state;
 }
 
-void MelleMonsterController::OnDamage(float damage)
-{
-
-}
 
 void MelleMonsterController::ResetToIdleState() {
 	_isAnimating = false;
 	animPlayingTime = 0.0f;
 	EnemyEndCoroutine();
 	SetAnimationState(AnimationState::Idle);
+}
+
+void MelleMonsterController::OnDeath()
+{
+    Super::OnDeath();
+    std::cout << "Melle Monster has been defeated!" << std::endl;
 }

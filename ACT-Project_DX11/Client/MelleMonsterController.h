@@ -2,16 +2,21 @@
 #include "MonoBehaviour.h"
 #include "EnginePch.h"
 #include "CreatureController.h"
+#include "MonsterController.h"
 #include "Model.h"
 #include "ModelAnimator.h"
 
 class Model;
 class ModelAnimator;
-
-class MelleMonsterController : public CreatureController
+/*
+    각 몬스터의 개별 동작을 추가로 정의.
+*/
+class MelleMonsterController : public MonsterController
 {
-	virtual void Start() override;
-	virtual void Update() override;
+    using Super = MonsterController;
+
+	void Start() override;
+	void Update() override;
 
 public:
     MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::MelleMonster; }
@@ -21,7 +26,9 @@ public:
 	shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
-    void OnDamage(float damage);
+
+public:
+    void OnDeath() override;
 
 private:
     void Aggro();

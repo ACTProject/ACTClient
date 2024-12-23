@@ -287,7 +287,7 @@ void Client::Init()
 	// Rigidbody
 	shared_ptr<Rigidbody> rigidBody = make_shared<Rigidbody>();
 	rigidBody->SetUseGravity(true);
-	rigidBody->SetMass(10.0f);
+	rigidBody->SetMass(5.0f);
 	player->AddComponent(rigidBody);
 
 	COLLISION->AddCollider(collider);

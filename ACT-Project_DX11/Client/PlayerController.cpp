@@ -9,6 +9,8 @@
 #include "BaseCollider.h"
 #include "Rigidbody.h"
 #include "MelleMonsterController.h"
+#include "ShootingMonsterController.h"
+#include "FinalBossMonsterController.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -29,13 +31,24 @@ MyCoroutine PlayAttackCoroutine(PlayerController* playerScript, float animationD
 
 void PlayerController::Start()
 {
+    Super::Start();
+
+    // 플레이어 스탯 초기화
+    _maxHp = 150.0f;
+    _hp = 150.0f;
+    _atk = 20.0f;
+
     for (int i = 0; i < 4; ++i) {
         _attackDurations[i] = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Attack1 + i));
     }
+
+    std::cout << "PlayerController Start()" << std::endl;
 }
 
 void PlayerController::Update()
 {
+    Super::Update();
+
     if (DEBUG->IsDebugEnabled())
         return;
 
@@ -183,6 +196,8 @@ void PlayerController::HandleAttack()
 {
     if (!_isAttacking)
     {
+        _isHit = false;
+
         if (_hitbox)
             _hitbox->GetCollider()->SetActive(false);
         return;
@@ -266,6 +281,7 @@ void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 void PlayerController::StartAttack()
 {
 	_isAttacking = true;
+    _isHit = false;
 	_attackStage = 1;
 	_attackTimer = 0.0f;
 
@@ -287,6 +303,7 @@ void PlayerController::ContinueAttack()
 
 		float duration = _attackDurations[_attackStage - 1] / _FPS;
         _attackMoveDistance = 1.0f;
+        _isHit = false;
 
 		// 다음 공격 애니메이션 재생
 		PlayAttackAnimation(_attackStage);
@@ -320,7 +337,7 @@ void PlayerController::PlayAttackAnimation(int stage)
 
 void PlayerController::UpdateHitBox()
 {
-    if (!_hitbox)
+    if (!_hitbox || _isHit)
         return;
 
     auto hitboxCollider = _hitbox->GetCollider();
@@ -351,12 +368,27 @@ void PlayerController::UpdateHitBox()
             {
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
-                    melleMonster->OnDamage(_damage);
+                    melleMonster->OnDamage(_atk);
+                break;
+            }
+            case MonoBehaviourType::ShootingMonster:
+            {
+                auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
+                if (shootingMonster)
+                    shootingMonster->OnDamage(_atk);
+                break;
+            }
+            case MonoBehaviourType::FinalBossMonster:
+            {
+                auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterController>(controller);
+                if (FinalBossMonster)
+                    FinalBossMonster->OnDamage(_atk);
                 break;
             }
             default:
                 break;
             }
+            _isHit = true;
         }
     }
 }
@@ -428,4 +460,9 @@ void PlayerController::ResetToIdleState() {
 	_isPlayeringAttackAnimation = false;
 	EndAttackCoroutine();
 	SetAnimationState(AnimationState::Idle);
+}
+
+void PlayerController::OnDeath()
+{
+    std::cout << "Player has died! Game Over!" << std::endl;
 }

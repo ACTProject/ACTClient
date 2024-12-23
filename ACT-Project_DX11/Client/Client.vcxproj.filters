@@ -63,6 +63,9 @@
     <ClCompile Include="CreatureController.cpp">
       <Filter>Main\Creature</Filter>
     </ClCompile>
+    <ClCompile Include="MonsterController.cpp">
+      <Filter>Main\Creature</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -90,6 +93,9 @@
       <Filter>Main\Camera</Filter>
     </ClInclude>
     <ClInclude Include="CreatureController.h">
+      <Filter>Main\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterController.h">
       <Filter>Main\Creature</Filter>
     </ClInclude>
   </ItemGroup>

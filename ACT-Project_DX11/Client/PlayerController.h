@@ -5,11 +5,15 @@
 
 class Model;
 class ModelAnimator;
-
+/*
+    PlayerController는 플레이어의 고유 동작을 담당
+*/
 class PlayerController : public CreatureController
 {
-	virtual void Start() override;
-	virtual void Update() override;
+    using Super = CreatureController;
+
+	void Start() override;
+	void Update() override;
 
 public:
     MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::Player; }
@@ -44,6 +48,10 @@ public:
 
     void Jump();
 	void ResetToIdleState();
+
+public:
+    void OnDeath() override;
+
 private:
 	float _speed = 5.f;
 	shared_ptr<Model> _player;
@@ -65,13 +73,13 @@ private:
     float _jumpTimer = 0.0f;   // 점프 애니메이션 시간 추적
 
 	// Attack
-	int _attackStage = 0; // 현재 공격 단계 (0: Idle, 1~4: 연속 공격 단계)
-	bool _isAttacking = false; // 공격 중인지 여부
-	float _attackCooldown = 0.f; // 공격 애니메이션 최소 실행 시간
-	float _attackTimer = 0.0f; // 현재 공격 단계의 경과 시간
-
-	float _attackDurations[4]; // 각 공격 애니메이션 지속 시간 (초)
+	int _attackStage = 0;           // 현재 공격 단계 (0: Idle, 1~4: 연속 공격 단계)
+	bool _isAttacking = false;      // 공격 중인지 여부
+	float _attackCooldown = 0.f;    // 공격 애니메이션 최소 실행 시간
+	float _attackTimer = 0.0f;      // 현재 공격 단계의 경과 시간
+	float _attackDurations[4];      // 각 공격 애니메이션 지속 시간 (초)
 	float _currentDuration = 0.f;
+    bool _isHit = false;            // 공격을 Hit 시켰는지 여부
 
     // AttackMove
     float _attackMoveDistance = 1.0f;  // 공격 시 이동할 거리
@@ -97,9 +105,5 @@ private:
 	bool _isPlayeringDodgeAnimation = false; // 회피 애니메이션 재생 중인지 여부 확인
 
 	AnimationState _currentAnimationState = AnimationState::Idle;
-
-    // Stats (Temp)
-    const float _hp = 100.f; // 플레이어 체력
-    const float _damage = 10.f; // 플레이어 공격력
 };
 

@@ -170,6 +170,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
+        FinalBoss->SetController(BossScript);
         FinalBoss->AddComponent(BossScript);
 
         // Collider

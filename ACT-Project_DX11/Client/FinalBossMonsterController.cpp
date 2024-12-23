@@ -11,6 +11,11 @@ void FinalBossMonsterController::SetAnimationState(AnimationState state)
 
 void FinalBossMonsterController::Start()
 {
+    Super::Start();
+    _maxHp = 500.f;
+    _hp = 500.0f;
+    _atk = 50.0f;
+
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
     SetAnimationState(AnimationState::Idle);
@@ -20,6 +25,8 @@ void FinalBossMonsterController::Start()
 
 void FinalBossMonsterController::Update()
 {
+    Super::Update();
+
     if (INPUT->GetButton(KEY_TYPE::KEY_4))
     {
         int a = 0;
@@ -75,7 +82,6 @@ void FinalBossMonsterController::Phase_1()
         postpone = true;
     }
 
-    DEBUG->LogVec3ToConsole({ (float)patternCnt , 0, 0 }, "patternCnt");
     if (postpone)
     {
         if (patternCnt < 4)
@@ -287,4 +293,10 @@ bool FinalBossMonsterController::PlayCheckAnimating(AnimationState state)
     currentEnemyCoroutine.resume();
 
     return true; // 플레이 중
+}
+
+void FinalBossMonsterController::OnDeath()
+{
+    Super::OnDeath();
+    std::cout << "FinalBossMonster has been eliminated!" << std::endl;
 }
