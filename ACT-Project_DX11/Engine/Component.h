@@ -22,6 +22,7 @@ enum class ComponentType : uint8
 	HitBox,
     Bullet,
     Raycast,
+    Particle,
 	// ...
 	Script,
 

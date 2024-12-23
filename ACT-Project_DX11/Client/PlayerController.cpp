@@ -11,6 +11,8 @@
 #include "MelleMonsterController.h"
 #include "ShootingMonsterController.h"
 #include "FinalBossMonsterController.h"
+#include "Material.h"
+#include "Particle.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -460,6 +462,20 @@ void PlayerController::ResetToIdleState() {
 	_isPlayeringAttackAnimation = false;
 	EndAttackCoroutine();
 	SetAnimationState(AnimationState::Idle);
+}
+
+void PlayerController::SetDust(shared_ptr<Material> dustMaterial)
+{
+    RESOURCES->Add(L"Dust", dustMaterial);
+}
+
+void PlayerController::CreateDustEffect()
+{
+    /*auto obj = make_shared<GameObject>();
+    obj->AddComponent(make_shared<Particle>());
+    Vec3 dustPosition = _transform->GetPosition();
+    obj->GetParticle()->Create(dustPosition, Vec2(2.0f, 2.0f), RESOURCES->Get<Material>(L"Dust"));
+    CUR_SCENE->Add(obj);*/
 }
 
 void PlayerController::OnDeath()

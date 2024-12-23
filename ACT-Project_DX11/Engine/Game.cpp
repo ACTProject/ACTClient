@@ -19,9 +19,16 @@ WPARAM Game::Run(uint32 num)
         // 1) 윈도우 창 정보 등록
         MyRegisterClass();
 
-	// 2) 윈도우 창 생성
-	if (!InitInstance(SW_SHOWNORMAL))
-		return FALSE;
+        // 2) 윈도우 창 생성
+        if (!InitInstance(SW_SHOWNORMAL))
+            return FALSE;
+
+        GRAPHICS->Init(g_hWnd);
+        TIME->Init();
+        INPUT->Init(g_hWnd);
+    }
+
+    _scenes[_num].hWnd = g_hWnd;
 	
     DEBUG->CreateConsoleWindow();
     // Octree
@@ -31,29 +38,17 @@ WPARAM Game::Run(uint32 num)
         int maxDepth = 4;
         OCTREE->Init(worldBounds, maxDepth);
     }
-
-	GRAPHICS->Init(_desc.hWnd);
-	TIME->Init();
-	INPUT->Init(_desc.hWnd);
 	GUI->Init();
 	RESOURCES->Init();
-	
 	MAP->Init();
 	SCENE->Awake();
     _scenes[_num].app->Init(); // 게임오브젝트 생성
 	SCENE->Start();
-
     SHADOW->Init();
-
-
 
     _init = true;
 
-
-
-	MSG msg = { 0 };
-
-	while (msg.message != WM_QUIT)
+	while (_msg.message != WM_QUIT)
 	{
 		if (::PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
 		{

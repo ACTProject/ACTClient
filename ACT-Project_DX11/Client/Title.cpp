@@ -20,7 +20,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "Billboard.h"
-#include "CameraScript.h"
+#include "CameraController.h"
 #include "Client.h"
 
 

@@ -66,6 +66,12 @@
     <ClCompile Include="MonsterController.cpp">
       <Filter>Main\Creature</Filter>
     </ClCompile>
+    <ClCompile Include="EffectTest.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Title.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -97,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="MonsterController.h">
       <Filter>Main\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectTest.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Title.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -212,6 +212,12 @@ std::shared_ptr<Raycast> GameObject::GetRaycast()
     return static_pointer_cast<Raycast>(component);
 }
 
+shared_ptr<Particle> GameObject::GetParticle()
+{
+    shared_ptr<Component> component = GetFixedComponent(ComponentType::Particle);
+    return static_pointer_cast<Particle>(component);
+}
+
 std::shared_ptr<Transform> GameObject::GetOrAddTransform()
 {
 	if (GetTransform() == nullptr)

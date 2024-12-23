@@ -21,10 +21,7 @@ class Game
 public:
     WPARAM Run(uint32 num);
     GameDesc& GetGameDesc() { return _scenes[_num]; }
-    void GameEnd() { _msg.message = WM_QUIT; }
-    void AddScene(GameDesc desc) { _scenes.push_back(desc); }
-    void ChangeScene(uint32 num);
-    GameDesc& GetGameDesc() { return _scenes[_num]; }
+    void SetGameDesc(GameDesc desc) { _scenes[_num] = desc; }
     void GameEnd() { _msg.message = WM_QUIT; }
     void AddScene(GameDesc desc) { _scenes.push_back(desc); }
     void ChangeScene(uint32 num);
@@ -38,11 +35,12 @@ private:
 
     static LRESULT CALLBACK WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
-
+private:
     GameDesc _desc;
     vector<GameDesc> _scenes;
     MSG _msg = { 0 };
     bool _changeScene = false;
     uint32 _num = 0;
+    bool _init = false;
 };
 

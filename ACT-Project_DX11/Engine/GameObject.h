@@ -18,6 +18,7 @@ class Skybox;
 class HitBox;
 class Bullet;
 class Raycast;
+class Particle;
 
 enum class ObjectType
 {
@@ -25,8 +26,8 @@ enum class ObjectType
     Player,
     Terrain,
     Shell,
-    Environment
-    Ui,
+    Environment,
+    UI,
     // ...
 
     Unknown,
@@ -62,6 +63,7 @@ public:
 	shared_ptr<HitBox> GetHitBox();
 	shared_ptr<Bullet> GetBullet();
 	shared_ptr<Raycast> GetRaycast();
+    shared_ptr<Particle> GetParticle();
 
 	shared_ptr<Transform> GetOrAddTransform();
 	void AddComponent(shared_ptr<Component> component);

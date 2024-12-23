@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="CreatureController.h" />
+    <ClInclude Include="EffectTest.h" />
     <ClInclude Include="FinalBossMonsterController.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="MonsterController.h" />
@@ -29,10 +30,12 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="MelleMonsterController.h" />
     <ClInclude Include="ShootingMonsterController.h" />
+    <ClInclude Include="Title.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CreatureController.cpp" />
+    <ClCompile Include="EffectTest.cpp" />
     <ClCompile Include="FinalBossMonsterController.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MonsterController.cpp" />
@@ -44,6 +47,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="MelleMonsterController.cpp" />
     <ClCompile Include="ShootingMonsterController.cpp" />
+    <ClCompile Include="Title.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shaders\00. Global.fx" />

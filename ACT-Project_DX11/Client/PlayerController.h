@@ -26,6 +26,7 @@ public:
 	void InteractWithShell(shared_ptr<GameObject> gameObject);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
+    void SetDust(shared_ptr<Material> dustMaterial);
 
     // Handle
     void HandleInput();         // 입력 처리
@@ -48,6 +49,9 @@ public:
 
     void Jump();
 	void ResetToIdleState();
+
+    // DustEffect
+    void CreateDustEffect();
 
 public:
     void OnDeath() override;
@@ -105,5 +109,9 @@ private:
 	bool _isPlayeringDodgeAnimation = false; // 회피 애니메이션 재생 중인지 여부 확인
 
 	AnimationState _currentAnimationState = AnimationState::Idle;
+
+    // Dust
+    float _dustInterval = 0.5f;
+    float _dustTimer = 0.0f;
 };
 

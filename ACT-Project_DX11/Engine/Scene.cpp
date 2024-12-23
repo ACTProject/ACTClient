@@ -177,8 +177,6 @@ void Scene::UpdateUI()
 
 
 	// PickUI
-	
-
 	POINT screenPt = INPUT->GetMousePos();
 
 	shared_ptr<Camera> camera = GetUICamera()->GetCamera();
