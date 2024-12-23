@@ -282,7 +282,7 @@ void ShootingMonsterController::Update()
     }
     else if (_hit)
     {
-        OnHit(30.0f); // 맞는 데미지 입력 필요
+        //OnHit(30.0f); // 맞는 데미지 입력 필요
     }
     else
     {

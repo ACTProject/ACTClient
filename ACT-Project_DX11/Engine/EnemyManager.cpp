@@ -60,7 +60,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
     }
 }
 
-void EnemyManager::CreateShootingMonsterController(Vec3 SpawnPos)
+void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
 {
     auto PistolShrimp = make_shared<GameObject>(); // Pistol_Shrimp
     {
