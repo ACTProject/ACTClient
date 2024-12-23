@@ -13,6 +13,7 @@ public:
 
     float GetRatio() { return _uvRatio; };
     void SetRatio(float ratio) { _uvRatio = ratio; };
+
 private:
     // 슬라이더 스케일 변화 함수.
     void UpdateScale();

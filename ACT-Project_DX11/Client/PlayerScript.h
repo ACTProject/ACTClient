@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "MonoBehaviour.h"
 
 class Model;
@@ -17,10 +17,14 @@ public:
 	void SetAnimationState(AnimationState state);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 
+    void SetDust(shared_ptr<Material> dustMaterial);
+
 	void StartAttack();
 	void ContinueAttack();
 	void PlayAttackAnimation(int stage);
 	void ResetToIdleState();
+
+    void CreateDustEffect();
 private:
 	float _speed = 5.f;
 	shared_ptr<Model> _player;
@@ -43,5 +47,8 @@ private:
 
 	bool _isPlayeringAttackAnimation = false; // 공격 애니메이션 재생 중인지 여부 확인
 	AnimationState _currentAnimationState = AnimationState::Idle;
+
+    float _dustInterval = 0.5f;
+    float _dustTimer = 0.0f;
 };
 

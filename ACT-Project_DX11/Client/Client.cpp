@@ -33,6 +33,7 @@
 #include "Slider.h"
 #include "Skybox.h"
 #include "HitBox.h"
+#include "Particle.h"
 
 void Client::Init()
 {
@@ -40,6 +41,7 @@ void Client::Init()
 	shared_ptr<Shader> renderBoxShader = make_shared<Shader>(L"23. RenderDemoBox.fx");
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     shared_ptr<Shader> hpShader = make_shared<Shader>(L"HpUI.fx");
+    shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
 
 	// Camera
 	{
@@ -246,7 +248,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>(GameObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"RedBar"));
-
+            obj->GetUI()->SetUIID("HP");
             //obj->GetUI()->SetOwner();
             CUR_SCENE->Add(obj);
         }
@@ -257,7 +259,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>(GameObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 27.f, armorPosition.y - 9.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"BlueBar"));
-
+            obj->GetUI()->SetUIID("Armor");
             CUR_SCENE->Add(obj);
         }
     }
@@ -447,12 +449,25 @@ void Client::Init()
 	hitbox->Craete(player, Vec3(1.4f));
 	CUR_SCENE->Add(hitboxGO);
 
+    // Material
+    shared_ptr<Material> dustMaterial = make_shared<Material>();
+    dustMaterial->SetShader(particleShader);
+    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
+    dustMaterial->SetDiffuseMap(texture);
+    MaterialDesc& desc = dustMaterial->GetMaterialDesc();
+    desc.ambient = Vec4(1.f);
+    desc.diffuse = Vec4(1.f);
+    desc.specular = Vec4(1.f);
+    RESOURCES->Add(L"Dust", dustMaterial);
+    
+
 	// Player::PlayerScript
 	shared_ptr<PlayerScript> playerScript = make_shared<PlayerScript>();
 
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
+    playerScript->SetDust(dustMaterial);
 
 	player->AddComponent(playerScript);
 
@@ -510,8 +525,10 @@ void Client::Init()
 
         auto ui = make_shared<GameObject>(GameObjectType::UI);
         ui->AddComponent(make_shared<Slider>());
+       
         ui->GetUI()->Create(Vec3(0, 0, 0.0f), Vec2(60, 8), RESOURCES->Get<Material>(L"RedBar"));
         ui->GetUI()->SetOwner(enemy);
+        ui->GetUI()->SetUIID("Enemy");
         CUR_SCENE->Add(ui);
 
 		COLLISION->AddRigidbody(rigidBody);

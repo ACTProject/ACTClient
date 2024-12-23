@@ -3,11 +3,9 @@
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "material.h"
-#include "InstancingManager.h"
 
 Particle::Particle() : Super(ComponentType::Particle)
 {
-
 }
 
 Particle::~Particle()
@@ -20,7 +18,7 @@ void Particle::Create(Vec3 screenPos, Vec2 size, shared_ptr<Material> material)
     auto go = _gameObject.lock();
 
 
-    go->GetOrAddTransform()->SetLocalPosition(screenPos);
+    go->GetOrAddTransform()->SetPosition(screenPos);
     go->GetOrAddTransform()->SetScale(Vec3(size.x, size.y, 1));
 
     if (go->GetMeshRenderer() == nullptr)

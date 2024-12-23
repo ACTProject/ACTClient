@@ -34,7 +34,7 @@ WPARAM Game::Run(uint32 num)
 	GUI->Init();
 	RESOURCES->Init();
 	
-	//MAP->Init();
+	MAP->Init();
 	SCENE->Awake();
     _scenes[_num].app->Init(); // 게임오브젝트 생성
 	SCENE->Start();
@@ -59,7 +59,7 @@ WPARAM Game::Run(uint32 num)
 			Update(_num);
 		}
 	}
-	//MAP->ExportMapObj();
+	MAP->ExportMapObj();
 
 	return _msg.wParam;
 }

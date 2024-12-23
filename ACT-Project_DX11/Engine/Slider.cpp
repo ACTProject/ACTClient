@@ -17,33 +17,39 @@ void Slider::Update()
 {
     Super::PreUpdate();
 
-    if (ImGui::Button("Decrease Slider"))
+    if (_uiID == "HP")
     {
-        _uvRatio -= 0.1f; // 감소량 조절 (예: 0.1f만큼 감소)
-        if (_uvRatio < 0.0f) // 최소값 제한
+        ImGui::Text("HP");
+        if (ImGui::Button("Decrease HP"))
         {
-            _uvRatio = 0.0f;
+            _uvRatio -= 0.1f;
+            if (_uvRatio < 0.0f) _uvRatio = 0.0f;
         }
+        ImGui::SliderFloat("HP Control", &_uvRatio, 0.0f, 1.0f);
+    }
+    else if (_uiID == "Armor")
+    {
+        ImGui::Text("Armor Slider");
+        if (ImGui::Button("Decrease Armor"))
+        {
+            _uvRatio -= 0.1f;
+            if (_uvRatio < 0.0f) _uvRatio = 0.0f;
+        }
+        ImGui::SliderFloat("Armor Control", &_uvRatio, 0.0f, 1.0f);
     }
 
-    ImGui::SliderFloat("SliderTest", &_uvRatio, 0.0f, 1.0f);
-
-    if (_isVisible == true)
+    else if (_uiID == "Enemy")
     {
-        if (GetOwner() != nullptr)
+        ImGui::Text("Enemy Slider");
+        if (ImGui::Button("Decrease Enemy"))
         {
-            if (GetOwner()->GetGameObjectType() == GameObjectType::ENEMY)
-            {
-                // 슬라이더같은 경우는 setOwner를 해놨을 테니까.
-                // 그냥 owner hp랑 공유를 시킬까.
-
-                // 움직임은 직교투영에 xy값만 계속 바꾸면 될 듯.
-                //Vec3 pos = GetOwner()->GetTransform()->GetLocalPosition();
-                //GetGameObject()->GetTransform()->SetLocalPosition(pos);
-            }
+            _uvRatio -= 0.1f;
+            if (_uvRatio < 0.0f) _uvRatio = 0.0f;
         }
-        UpdateScale();
+        ImGui::SliderFloat("Enemy Control", &_uvRatio, 0.0f, 1.0f);
     }
+    
+    UpdateScale();
 }
 
 void Slider::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> material)

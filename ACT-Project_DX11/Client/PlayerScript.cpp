@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "PlayerScript.h"
 #include "Model.h"
 #include "Camera.h"
@@ -7,6 +7,8 @@
 #include <coroutine>
 #include "HitBox.h"
 #include "BaseCollider.h"
+#include "Particle.h"
+#include "Material.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -129,10 +131,17 @@ void PlayerScript::Update()
 		{
 			_hitbox->GetTransform()->SetPosition(_transform->GetPosition() + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 1.8f);
 		}
+
+        _dustTimer += TIME->GetDeltaTime();
+        if (_dustTimer >= _dustInterval) {
+            CreateDustEffect();
+            _dustTimer = 0.0f; // 타이머 초기화
+        }
 	}
 	else
 	{
 		targetAnimationState = AnimationState::Idle;
+        _dustTimer = 0.0f;
 	}
 
 	// 애니메이션 상태가 변경되었을 때만 상태 전환
@@ -216,4 +225,20 @@ void PlayerScript::ResetToIdleState() {
 	_isPlayeringAttackAnimation = false;
 	EndAttackCoroutine();
 	SetAnimationState(AnimationState::Idle);
+}
+
+void PlayerScript::SetDust(shared_ptr<Material> dustMaterial)
+{
+    RESOURCES->Add(L"Dust", dustMaterial);
+}
+
+void PlayerScript::CreateDustEffect()
+{
+    /*auto obj = make_shared<GameObject>();
+    obj->AddComponent(make_shared<Particle>());
+
+    Vec3 dustPosition = _transform->GetPosition();
+    obj->GetParticle()->Create(dustPosition, Vec2(2.0f, 2.0f), RESOURCES->Get<Material>(L"Dust"));
+
+    CUR_SCENE->Add(obj);*/
 }

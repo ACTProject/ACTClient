@@ -25,6 +25,10 @@ public:
 
     virtual void Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> material) { };
     virtual void Update() { };
+
+    void SetUIID(const string& id) { _uiID = id; }
+    const string& GetUIID() const { return _uiID; }
+
 protected:
     void PreUpdate();
 protected:
@@ -33,5 +37,6 @@ protected:
 
     // 오너가 있으면 active=false로 시작.
     weak_ptr<GameObject> _owner;
+    string _uiID;
 };
 
