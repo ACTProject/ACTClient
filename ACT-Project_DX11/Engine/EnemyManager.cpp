@@ -191,7 +191,6 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
-        BossScript->SetPhase(1);
         FinalBoss->SetController(BossScript);
 
         // HitBox

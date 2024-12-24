@@ -54,7 +54,6 @@ private:
     void Sprint();
     void Run(float speed);
 
-    void Die();                                         // 죽음
     void Punch();                            // 펀치 공격
     void Fireball();
     void FireMoney();
@@ -70,7 +69,6 @@ public:
     float currentTime = 0.f;            //현재 게임 시간
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float _FPS;                         //게임 FPS = 60
-    float dt;                           //deltaTime = 프레임당 시간
     float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
 
     Vec3 bossPos;                       //보스 위치
@@ -78,7 +76,7 @@ public:
     float distance;                     //플레이어 - 보스 거리
     Vec3 direction;                     //플레이어 - 보스 방향
     float hp;                  //보스 hp
-    float speed = 5.0f;
+    float speed;
 
     int myPhase;                    //1페이즈 2페이즈 구분용
     int patternCnt = 1;

@@ -19,7 +19,7 @@ bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState st
 {
     SetAnimationState(state);
 
-    animPlayingTime += dt;
+    animPlayingTime += DT;
     float duration = _enemy->GetAnimationDuration(state) / _FPS;
 
     if (animPlayingTime >= duration)
@@ -42,6 +42,7 @@ void FinalBossMonsterSecondPhaseController::Start()
     _maxHp = 500.f;
     _hp = 500.0f;
     _atk = 50.0f;
+    speed = 10.0f;
 
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
@@ -55,7 +56,6 @@ void FinalBossMonsterSecondPhaseController::Start()
 void FinalBossMonsterSecondPhaseController::Update()
 {
     Super::Update();
-    dt = DT;
     currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
     _transform = GetTransform();
@@ -67,14 +67,12 @@ void FinalBossMonsterSecondPhaseController::Update()
 
     if (_isDead)
     {
-        animPlayingTime += dt;
-        SetAnimationState(AnimationState::Die);
-        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
+        if (PlayCheckAnimating(AnimationState::Down2))
         {
-            Die();
-            Super::OnDeath();
-            std::cout << "FinalBoss has been defeated!" << std::endl;
+            return;
         }
+        Super::OnDeath();
+        std::cout << "FinalBoss has been defeated! Game Over!" << std::endl;
         return;
     }
 
@@ -88,22 +86,18 @@ void FinalBossMonsterSecondPhaseController::Update()
 
     Rota(bossPos, playerPos);
 
-    if (myPhase == 2)
-    {
-        speed *= 2;
-        Phase_2();
-    }
+    Phase_2();
 }
 
 
 void FinalBossMonsterSecondPhaseController::Phase_2()
 {
-    if (isFirstTime) // 2페이즈 시작
+    if (!isFirstTime) // 2페이즈 시작
     {
-        _hp = 500.0f;
-        DEBUG->Log(L"Boss 2nd Phase Start");
         if (!Phase2Flag) // 한번만 실행
         {
+            _hp = 500.0f;
+            DEBUG->Log(L"Boss 2nd Phase Start");
             Phase2Flag = true;
         }
         if (!isExecuted)
@@ -119,19 +113,7 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
         {
             return;
         }
-        isFirstTime = false; // 플래그
-    }
-
-    if (_hp < 0.0f)
-    {
-        if (PlayCheckAnimating(AnimationState::Die))
-        {
-            return;
-        }
-        else
-        {
-            Die();
-        }
+        isFirstTime = true; // 플래그
     }
 
     switch (randType)
@@ -255,7 +237,7 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             }
         }
         break;
-    case 7:
+    case 7: // 깔아 뭉게기
         Move(bossPos, playerPos, speed);
         Rota(bossPos, playerPos);
         if (distance < 10.0f)
@@ -282,7 +264,7 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             }
         }
         break;
-    case 8:
+    case 8: // 업어치기
         if (PlayCheckAnimating(AnimationState::Skill8))
         {
             GrabSlam();
@@ -293,7 +275,7 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             randType = rand() % 10;
         }
         break;
-    case 9:
+    case 9: // 허리케인
         if (PlayCheckAnimating(AnimationState::Skill9))
         {
             Hurricane();
@@ -332,7 +314,7 @@ void FinalBossMonsterSecondPhaseController::Move(Vec3 objPos, Vec3 targetPos, fl
 
     direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * speed * DT);  // 일정 거리만큼 이동
 }
 
 void FinalBossMonsterSecondPhaseController::Rota(Vec3 objPos, Vec3 targetPos)
@@ -384,7 +366,7 @@ void FinalBossMonsterSecondPhaseController::Sprint()
 
     direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * DT);  // 일정 거리만큼 이동
 
 }
 
@@ -401,7 +383,7 @@ void FinalBossMonsterSecondPhaseController::BackSprint()
 
     direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * DT);  // 일정 거리만큼 이동
 }
 
 void FinalBossMonsterSecondPhaseController::Run(float speed)
@@ -417,16 +399,9 @@ void FinalBossMonsterSecondPhaseController::Run(float speed)
 
     direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * speed * DT);  // 일정 거리만큼 이동
 }
 
-void FinalBossMonsterSecondPhaseController::Die()
-{
-    if (myPhase == 1)
-    {
-        ENEMY->CreateFinalPhase(bossPos);
-    }
-}
 
 void FinalBossMonsterSecondPhaseController::Punch()
 {
@@ -442,7 +417,7 @@ void FinalBossMonsterSecondPhaseController::Punch()
 void FinalBossMonsterSecondPhaseController::Fireball()
 {
     Rota(bossPos, playerPos);
-    shootTime += dt;
+    shootTime += DT;
     float startTime = 208 / 60 - 0.6;
     float endTime = 208 / 60 - 0.4;
     if ((shootTime <= endTime) && (shootTime > startTime))
@@ -457,7 +432,7 @@ void FinalBossMonsterSecondPhaseController::Fireball()
 void FinalBossMonsterSecondPhaseController::FireMoney()
 {
     Rota(bossPos, playerPos);
-    shootTime += dt;
+    shootTime += DT;
     float startTime = 160 / 60;
     if ((shootTime > startTime) && !shootState)
     {
@@ -523,7 +498,7 @@ void FinalBossMonsterSecondPhaseController::makeCash(Vec3 pos, Vec3 dir)
     auto bullet = make_shared<GameObject>(); // bullet
 
     bullet->GetOrAddTransform()->SetPosition({ pos.x, pos.y + 3.f, pos.z });
-    bullet->GetOrAddTransform()->SetLocalRotation({0,0,0}); // XMConvertToRadians()
+    bullet->GetOrAddTransform()->SetLocalRotation({ 0,0,0 }); // XMConvertToRadians()
     bullet->GetOrAddTransform()->SetScale(Vec3(0.003f));
 
     shared_ptr<Model> objModel = make_shared<Model>();
@@ -593,7 +568,7 @@ void FinalBossMonsterSecondPhaseController::Hurricane()
 
     direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    _transform->SetPosition(_transform->GetPosition() + direction * 8.0f * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * 8.0f * DT);  // 일정 거리만큼 이동
 }
 
 void FinalBossMonsterSecondPhaseController::OnDeath()

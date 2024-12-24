@@ -37,7 +37,6 @@ public:
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void SetAnimationState(AnimationState state);
-    void SetPhase(int phase) { myPhase = phase; }
 
     void ResetToIdleState();
     void UpdateHitBox();
@@ -47,32 +46,23 @@ public:
 private:
     bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
     void Phase_1();                                     // 1페이즈
-    void Phase_2();                                     // 2페이즈
 
     void Appear();                                      // 조우시 모션용 어그로와 같음
     void Move(Vec3 objPos, Vec3 targetPos, float speed);// 타겟 방향으로 이동
     void Rota(Vec3 objPos, Vec3 targetPos);             // 타겟 방향으로 회전
-    void BackSprint();
-    void Sprint();
     void Run(float speed);
 
     void Punch();                            // 펀치 공격
     void Fireball();
-    void FireMoney();
-    void Choke_lift();
-    void GrabSlam();
-    void Hurricane();
-    Matrix CalculateWorldTransform(shared_ptr<ModelBone> bone);
     void makeBubble(Vec3 pos, Vec3 dir);
-    void makeCash(Vec3 pos, Vec3 dir);
 
 public:
     void OnDeath() override;
     float currentTime = 0.f;            //현재 게임 시간
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float _FPS;                         //게임 FPS = 60
-    float dt;                           //deltaTime = 프레임당 시간
     float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
+    float duration;
 
     Vec3 bossPos;                       //보스 위치
     Vec3 playerPos;                     //플레이어 위치
@@ -81,7 +71,6 @@ public:
     float hp;                  //보스 hp
     float speed = 5.0f;
 
-    int myPhase;                    //1페이즈 2페이즈 구분용
     int patternCnt = 1;
     float shootTime = 0.0f;
     int randType;                       //랜덤한 타입
@@ -111,7 +100,6 @@ public:
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;
-    shared_ptr<ModelBone> rightHand;
     AnimationState _currentAnimationState = AnimationState::Idle;
 };
 
