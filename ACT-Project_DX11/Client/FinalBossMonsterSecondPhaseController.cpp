@@ -89,7 +89,6 @@ void FinalBossMonsterSecondPhaseController::Update()
     Phase_2();
 }
 
-
 void FinalBossMonsterSecondPhaseController::Phase_2()
 {
     if (!isFirstTime) // 2페이즈 시작
@@ -114,13 +113,12 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             return;
         }
         isFirstTime = true; // 플래그
+        randType = 1;
     }
 
     switch (randType)
     {
-    case 1: // 펀치 두 번
-        Move(bossPos, playerPos, speed);
-        Rota(bossPos, playerPos);
+    case 1: // 펀치 콤보
         if (distance < AttackRange)
         {
             punchState = true;
@@ -135,18 +133,24 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             else
             {
                 randPunchType = rand() % 4;
+                if (!punchExecuted)
+                {
+                    punchState = true;
+                    randType = 1;
+                    punchExecuted = true;
+                }
+                else
+                {
+                    punchState = false;
+                    randType = 0;
+                    punchExecuted = false;
+                }
             }
-            if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + randPunchType)))
-            {
-                Punch(); // 히트 및 데미지 처리
-                return;
-            }
-            else
-            {
-                randPunchType = rand() % 4;
-                punchState = false;
-                randType = rand() % 10;
-            }
+        }
+        else
+        {
+            Sprint();
+            Rota(bossPos, playerPos);
         }
         break;
     case 2: // 초크
@@ -357,16 +361,16 @@ void FinalBossMonsterSecondPhaseController::Sprint()
 {
     SetAnimationState(AnimationState::Run2);
 
-    Vec3 direction = playerPos - bossPos;
-    if (direction.LengthSquared() < 5.f) // EPSILON 사용
+    Vec3 dir = playerPos - bossPos;
+    if (dir.LengthSquared() < 5.f) // EPSILON 사용
     {
         ResetToIdleState();
         return;
     }
 
-    direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
+    dir.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * DT);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + dir * 10.0f * DT);  // 일정 거리만큼 이동
 
 }
 
@@ -401,7 +405,6 @@ void FinalBossMonsterSecondPhaseController::Run(float speed)
 
     _transform->SetPosition(_transform->GetPosition() + direction * speed * DT);  // 일정 거리만큼 이동
 }
-
 
 void FinalBossMonsterSecondPhaseController::Punch()
 {

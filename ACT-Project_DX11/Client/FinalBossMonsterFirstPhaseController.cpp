@@ -40,7 +40,7 @@ void FinalBossMonsterFirstPhaseController::Start()
 {
     Super::Start();
     _maxHp = 500.f;
-    _hp = 100.0f;
+    _hp = 10.0f;
     _atk = 50.0f;
 
     _transform = GetTransform();

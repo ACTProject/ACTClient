@@ -255,9 +255,14 @@ void MelleMonsterController::Update()
         Move(EnemyPos, PlayerPos, _speed);
         Rota(EnemyPos, PlayerPos);
     }
-    else if (_hit)
+    else if (PlayingHitMotion)
     {
-        //OnHit(30.0f); // 맞는 데미지 입력 필요
+        if (PlayCheckAnimating(AnimationState::Hit1))
+        {
+            lastTime = currentTime - 0.8f;
+            return;
+        }
+        PlayingHitMotion = false;
     }
     else
     {
@@ -331,4 +336,25 @@ void MelleMonsterController::UpdateHitBox()
             _hit = true;
         }
     }
+}
+
+bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
+{
+    SetAnimationState(state);
+
+    animPlayingTime += DT;
+    duration = _enemy->GetAnimationDuration(state) / _FPS;
+
+    if (animPlayingTime >= duration)
+    {
+        animPlayingTime = 0.0f;
+        ResetToIdleState();
+        return false;
+    }
+
+    /*MyCoroutine attackCoroutine = EnemyCoroutine(this, duration);
+    currentEnemyCoroutine = attackCoroutine.GetHandler();
+    currentEnemyCoroutine.resume();*/
+
+    return true; // 플레이 중
 }

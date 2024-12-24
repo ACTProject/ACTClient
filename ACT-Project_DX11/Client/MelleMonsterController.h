@@ -33,6 +33,7 @@ public:
     void OnDeath() override;
     bool PlayingHitMotion = false;
 private:
+    bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
     void Aggro();
     void Move(Vec3 objPos, Vec3 targetPos, float speed);
     void Rota(Vec3 objPos, Vec3 targetPos);
