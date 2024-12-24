@@ -139,6 +139,18 @@ void Client::Init()
             desc.specular = Vec4(1.f);
             RESOURCES->Add(L"RedBar", material);
         }
+        // Material
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(renderUIShader);
+            auto texture = RESOURCES->Load<Texture>(L"hpBar", L"..\\Resources\\Textures\\UI\\HP.png");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"hpBar", material);
+        }
 
         // Material
         {
@@ -256,9 +268,8 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"RedBar"));
+            obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
             obj->GetUI()->SetUIID("HP");
-            //obj->GetUI()->SetOwner();
             CUR_SCENE->Add(obj);
         }
 
@@ -534,6 +545,7 @@ void Client::Init()
 
         ENEMY->CreateFinalBoss({ 50.0f,0.f,50.0f });
     }
+    
 
 	// Skybox
 	{
