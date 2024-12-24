@@ -140,6 +140,10 @@ void ModelAnimator::RenderSingle()
 	// SRV를 통해 정보 전달
 	_shader->GetSRV("TransformMap")->SetResource(_srv.Get());
 
+    //Shadow
+    _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
+    _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
+
 	// 본 데이터 준비
 	BoneDesc boneDesc;
 
@@ -201,6 +205,10 @@ void ModelAnimator::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
 
 	// SRV를 통해 정보 전달
 	_shader->GetSRV("TransformMap")->SetResource(_srv.Get());
+
+    //Shadow
+    _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
+    _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
 
 	// Bones
 	BoneDesc boneDesc;

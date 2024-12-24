@@ -338,7 +338,7 @@ void Client::Init()
 
                 obj->SetActive(!obj->IsActive());
                 optionGroup.push_back(obj);
-                CUR_SCENE->Add(obj);
+               // CUR_SCENE->Add(obj);
             }
 
 
@@ -356,7 +356,7 @@ void Client::Init()
                 
                 obj->SetActive(!obj->IsActive());
                 optionGroup.push_back(obj);
-                CUR_SCENE->Add(obj);
+                //CUR_SCENE->Add(obj);
             }
 
             // Mesh
@@ -382,7 +382,7 @@ void Client::Init()
 
                 obj->SetActive(!obj->IsActive());
 
-                CUR_SCENE->Add(obj);
+               // CUR_SCENE->Add(obj);
             }
         }
     }

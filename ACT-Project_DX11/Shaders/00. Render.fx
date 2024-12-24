@@ -249,8 +249,8 @@ MeshOutput VS_InstancingAnimation(InstancingVertexModel input)
 
 	output.position = mul(input.position, m);	// 정점 위치 변환
 	output.position = mul(output.position, input.world); // 월드 변환 적용
-    output.TexShadow = mul(output.position, S);
 	output.worldPosition = output.position;	// 월드 좌표 설정
+    output.TexShadow = mul(float4(output.worldPosition, 1.0f), S);
 	output.position = mul(output.position, VP);	// 뷰-프로젝션 변환 적용
 	output.uv = input.uv;	// UV 좌표는 변경 없음
 	output.normal = mul(input.normal, (float3x3)input.world);	// 법선 벡터 변환

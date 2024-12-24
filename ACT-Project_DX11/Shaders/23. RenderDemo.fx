@@ -18,11 +18,7 @@ float4 PS(MeshOutput input) : SV_TARGET
     
     //Shadow
     float ShadowAmount = 0.0f;
-    //float4 shadowDepth = float4(input.TexShadow.xy, input.TexShadow.z + Bias.x,1.0f);
-    //float3 ShadowTexColor = shadowDepth.xyz / shadowDepth.w;
     float3 ShadowTexColor = input.TexShadow.xyz / input.TexShadow.w;
-    //float4 tex = ShadowDepthTexture.Sample(LinearSampler, ShadowTexColor.xy);
-    //tex == 
     const float delta = 1.0f / 4096;
     const int g_iNumKernel = 3;
     int iHalf = (g_iNumKernel - 1) / 2;
@@ -40,22 +36,12 @@ float4 PS(MeshOutput input) : SV_TARGET
     float4 fColor = float4(ShadowAmount, ShadowAmount, ShadowAmount, 1.0f);
     
     
+    float4 FinalColor = float4(color.rgb * max(0.5f, ShadowAmount), color.a);
     
-    
-    //ShadowAmount = ShadowDepthTexture.SampleCmpLevelZero(SamComShadowMap,
-	//								ShadowTexColor.xy, ShadowTexColor.z).r;
-    float4 FinalColor = color * max(0.5f, ShadowAmount);
-    FinalColor.a = 1.0f;
+    if (FinalColor.a < 0.3f)
+        discard;
     
     return FinalColor;
-    
-    
-    //float3 shadowTexColor = input.TexShadow.xyz /= input.TexShadow.w;
-    //float depth = shadowTexColor.z;
-    //const float dx = 1.0f / 2048.0f;
-    //return ShadowDepthTexture.SampleCmpLevelZero(SamComShadowMap, shadowTexColor.xy, depth).r;
-    
-
     
     //float distance = length(input.worldPosition - CameraPosition());
 	
@@ -73,11 +59,33 @@ float4 PS(MeshOutput input) : SV_TARGET
     //{
     //    color.rgb = lerp(fogColor.rgb, color.rgb, fogFactor);
     //}
+}
+
+float4 PS_NoShadow(MeshOutput input) : SV_TARGET
+{
+    float4 color = DiffuseMap.Sample(LinearSampler, input.uv);
     
-    //if (color.a < 0.3f)
-    //    discard;
+    float distance = length(input.worldPosition - CameraPosition());
+	
+    float start = 60.f;
+    float end = 140.f;
+    float fogFactor = saturate((end - distance) / (end - start));
+	
+    float4 fogColor = float4(0.1, 0.6, 0.9, 1.0);
+    float maxFog = 0.0;
+    if (fogFactor <= maxFog)
+    {
+        color.rgb = lerp(fogColor.rgb, color.rgb, maxFog);
+    }
+    else
+    {
+        color.rgb = lerp(fogColor.rgb, color.rgb, fogFactor);
+    }
     
-    //return color;
+    if (color.a < 0.3f)
+        discard;
+    
+    return color;
     
 }
 
@@ -87,6 +95,9 @@ technique11 T0 // 인스턴싱 렌더링
 	PASS_VP(P0, VS_InstancingMesh, PS)
 	PASS_VP(P1, VS_InstancingModel, PS)
 	PASS_VP(P2, VS_InstancingAnimation, PS)
+	PASS_VP(P3, VS_InstancingMesh, PS_NoShadow)
+	PASS_VP(P4, VS_InstancingModel, PS_NoShadow)
+	PASS_VP(P5, VS_InstancingAnimation, PS_NoShadow)
 };
 
 technique11 T1 // 싱글 렌더링
@@ -94,6 +105,9 @@ technique11 T1 // 싱글 렌더링
 	PASS_VP(P0, VS_Mesh, PS)
 	PASS_VP(P1, VS_Model, PS)
 	PASS_VP(P2, VS_Animation, PS)
+	PASS_VP(P3, VS_Mesh, PS_NoShadow)
+	PASS_VP(P4, VS_Model, PS_NoShadow)
+	PASS_VP(P5, VS_Animation, PS_NoShadow)
 	//PASS_VP(P3, VS_MeshColor, PS)
 };
 
@@ -118,6 +132,7 @@ technique11 T4 // 매쉬 알파블렌딩
 	PASS_BS_VP(P1, AlphaBlendAlphaToCoverageEnable, VS_Mesh, PS) // 멀티샘플링 환경 알파블렌딩
 	PASS_BS_VP(P2, AdditiveBlend, VS_Mesh, PS) // 애드블렌딩
 	PASS_BS_VP(P3, AdditiveBlendAlphaToCoverageEnable, VS_Mesh, PS) // 멀티샘플링 환경 애드블렌딩
+	PASS_BS_VP(P4, AlphaBlend, VS_Mesh, PS_NoShadow)
 };
 
 technique11 T5 // Debug Collider Rendering

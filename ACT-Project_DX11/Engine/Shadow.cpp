@@ -7,7 +7,7 @@
 void Shadow::Init()
 {
     shadowShader = make_shared<Shader>(_shaderName);
-    testShadowShader = make_shared<Shader>(L"test.fx");
+    testShadowShader = make_shared<Shader>(L"ShadowDebug.fx");
 
     float fWidthLength = 512 * 512;
     float fHeightLength = 512 * 512;
@@ -22,9 +22,6 @@ void Shadow::Init()
     float offset = 60;
     _shadowProjMat = ::XMMatrixOrthographicOffCenterLH(-fMaxViewDistance / 2+ offset, fMaxViewDistance / 2 - offset, -fMaxViewDistance / 2 + offset, fMaxViewDistance / 2 - offset, 0.1f, 100000.0f);
 
-    //_shadowProjMat = XMMatrixOrthographicLH(724,724, 0, 100000);
-
-    //_shadowProjMat = ::XMMatrixPerspectiveFovLH(3.141592 , 1, 0.1f, 3000.f);
 
     _texture = Matrix(
           0.5f, 0.0f, 0.0f, 0.0f
@@ -32,11 +29,9 @@ void Shadow::Init()
         , 0.0f, 0.0f, 1.0f, 0.0f
         , 0.5f, 0.5f, 0.0f, 1.0f);
 
-    //_shadowDesc.ShadowVP = _shadowViewMat * _shadowProjMat;
     _shadowDesc.Shadow = _shadowViewMat * _shadowProjMat * _texture;
-    //_shadowDesc.bias = Vec4(_bias, 0, 0, 0);
 
-    DebugShadow();
+    //DebugShadow();
 }
 
 void Shadow::updatelightPos()
@@ -50,16 +45,16 @@ void Shadow::updatelightPos()
 
 void Shadow::Update()
 {
-    _shadowViewMat = ::XMMatrixLookAtLH(_lightPos, _lookVec, _upVec);
-    //_shadowDesc.ShadowVP = _shadowViewMat * _shadowProjMat;
-    _shadowDesc.Shadow = _shadowViewMat * _shadowProjMat * _texture;
-    //_shadowDesc.bias = Vec4(_bias, 0, 0, 0);
+    //_shadowViewMat = ::XMMatrixLookAtLH(_lightPos, _lookVec, _upVec);
+    ////_shadowDesc.ShadowVP = _shadowViewMat * _shadowProjMat;
+    //_shadowDesc.Shadow = _shadowViewMat * _shadowProjMat * _texture;
+    ////_shadowDesc.bias = Vec4(_bias, 0, 0, 0);
     RenderShadow();
 }
 
 void Shadow::DebugShadow()
 {
-    auto obj = make_shared<GameObject>();
+    /*auto obj = make_shared<GameObject>();
     obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.6, 0.6, 0.1f));
     obj->GetOrAddTransform()->SetLocalScale(Vec3(0.5, 0.5, 0));
     obj->AddComponent(make_shared<MeshRenderer>());
@@ -88,7 +83,7 @@ void Shadow::DebugShadow()
         obj->GetMeshRenderer()->SetTechnique(0);
         obj->GetMeshRenderer()->SetPass(0);
     }
-    CUR_SCENE->Add(obj);
+    CUR_SCENE->Add(obj);*/
 }
 
 void Shadow::RenderShadow()
@@ -104,6 +99,7 @@ void Shadow::RenderShadow()
             continue;
         if (obj->GetSkybox() != nullptr)
             continue;
+        
 
         // 게임오브젝트를 그림자맵에 렌더링
         shared_ptr<Shader> shader;
@@ -128,7 +124,7 @@ void Shadow::RenderShadow()
             obj->GetModelRenderer()->SetTechnique(tech);
         }
 
-        if (obj->GetMeshRenderer() != nullptr)
+        if (obj->GetMeshRenderer() != nullptr && obj->GetTerrain() != nullptr)
         {
             shader = obj->GetMeshRenderer()->GetMaterial()->GetShader();
             uint8 pass = obj->GetMeshRenderer()->GetPass();

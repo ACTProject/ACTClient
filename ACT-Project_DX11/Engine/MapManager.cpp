@@ -226,8 +226,8 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
                 CreateQuadTerrain(mesh, obj, pos);
                 obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(_mapSelectDesc->filename));
                 obj->GetMeshRenderer()->SetMesh(mesh);
-                obj->GetMeshRenderer()->SetPass(0);
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(3);
+                obj->GetMeshRenderer()->SetAlphaBlend(false);
             } 
             else
             {
@@ -281,8 +281,8 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
                 CreateQuadTerrain(mesh, obj, desc.pos);
                 obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(desc.filename));
                 obj->GetMeshRenderer()->SetMesh(mesh);
-                obj->GetMeshRenderer()->SetPass(0);
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(3);
+                obj->GetMeshRenderer()->SetAlphaBlend(false);
             }
             else
             {
