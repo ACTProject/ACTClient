@@ -440,20 +440,15 @@ void Client::Init()
 
         shared_ptr<Model> portalModel = make_shared<Model>();
         {
-            // CustomData -> Memory
             portalModel->ReadModel(L"Shell/Shell_SodaCan");
             portalModel->ReadMaterial(L"Shell/Shell_SodaCan");
         }
-
-        // Shell::ModelRenderer
         shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
         portal->AddComponent(mr);
         {
             portal->GetModelRenderer()->SetModel(portalModel);
             portal->GetModelRenderer()->SetPass(1);
         }
-
-        // Collider
         auto collider = make_shared<AABBBoxCollider>();
         collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(10.f, 10.f, 3.f)));
         collider->SetOffset(Vec3(0.f, 1.f, 0.f));
