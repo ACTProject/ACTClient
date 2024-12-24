@@ -45,10 +45,8 @@ void Shadow::updatelightPos()
 
 void Shadow::Update()
 {
-    //_shadowViewMat = ::XMMatrixLookAtLH(_lightPos, _lookVec, _upVec);
-    ////_shadowDesc.ShadowVP = _shadowViewMat * _shadowProjMat;
-    //_shadowDesc.Shadow = _shadowViewMat * _shadowProjMat * _texture;
-    ////_shadowDesc.bias = Vec4(_bias, 0, 0, 0);
+    _shadowViewMat = ::XMMatrixLookAtLH(_lightPos, _lookVec, _upVec);
+    _shadowDesc.Shadow = _shadowViewMat * _shadowProjMat * _texture;
     RenderShadow();
 }
 
