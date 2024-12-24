@@ -82,7 +82,7 @@ WPARAM Game::Run(uint32 num)
 	}
     if (_scenes[_num].tag == SceneTag::INGAME)
     {
-        MAP->ExportMapObj();
+        MAP->ExportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
     }
 
 	return _msg.wParam;

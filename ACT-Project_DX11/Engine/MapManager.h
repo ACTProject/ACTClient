@@ -54,11 +54,11 @@ public:
 
 
 	// 파일에 맵 오브젝트 정보 추가하는 함수
-	bool ExportMapObj();
+	bool ExportMapObj(wstring _fileName);
 	// 파일을 읽어 들이는 함수
-	bool ImportMapObj();
+	bool ImportMapObj(wstring _fileName);
 private:
-
+    void ClearMap();
     // 빌보드 요소 추가 함수
     void AddBillBoard(Vec3 pos);
 
@@ -85,7 +85,7 @@ private:
 	void ImGuiSelectMapObject();
 private:
 	// 정보 저장된 파일이름.
-	wstring _fileName = L"../Resources/MapFile/MapObjectLists.txt";
+	wstring _fileNames = L"../Resources/MapFile/MapObjectLists.txt";
 	wstring _meshFileName = L"..\\Resources\\Textures\\Terrain\\";
 	// 파일로 저장시킬 오브젝트들 리스트
 	vector<shared_ptr<GameObject>> _mapObjList;
