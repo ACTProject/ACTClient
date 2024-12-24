@@ -110,7 +110,7 @@ void Game::ShowFps()
 	WCHAR text[100] = L"";
 	::wsprintf(text, L"FPS : %d", fps);
 
-	::SetWindowText(_desc.hWnd, text);
+	::SetWindowText(_scenes[_num].hWnd, text);
 
 }
 

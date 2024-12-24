@@ -406,7 +406,7 @@ void Client::Init()
     {
         auto shell = make_shared<GameObject>();
         shell->SetObjectType(ObjectType::Shell);
-        shell->GetOrAddTransform()->SetPosition(Vec3(5, -1, 5));
+        shell->GetOrAddTransform()->SetPosition(Vec3(35, 3.5f, 35));
         shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> shellModel = make_shared<Model>();
