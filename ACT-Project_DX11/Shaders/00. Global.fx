@@ -2,7 +2,6 @@
 #define _GLOBAL_FX_
 
 Texture2D ShadowDepthTexture;
-//Texture2D ShadowColorTexture;
 
 /////////////////
 // ConstBuffer //
@@ -150,9 +149,9 @@ RasterizerState FrontCounterClockwiseTrue
 
 RasterizerState Depth
 {
-    DepthBias = 50000;
+    DepthBias = 30000;
     DepthBiasClamp = 0.0f;
-    SlopeScaledDepthBias = 4.0f;
+    SlopeScaledDepthBias = 1.0f;
 };
 ////////////////////////
 // DepthStencillState //
