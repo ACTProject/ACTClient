@@ -257,11 +257,10 @@ void MelleMonsterController::Update()
     }
     else if (PlayingHitMotion)
     {
-        if (PlayCheckAnimating(AnimationState::Hit1))
-        {
-            lastTime = currentTime - 0.8f;
-            return;
-        }
+        //if (PlayCheckAnimating(AnimationState::Hit1))
+        //{
+            //return;
+        //}
         PlayingHitMotion = false;
     }
     else
@@ -338,7 +337,7 @@ void MelleMonsterController::UpdateHitBox()
     }
 }
 
-bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
+bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState state)
 {
     SetAnimationState(state);
 
