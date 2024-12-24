@@ -52,6 +52,7 @@ private:
 	float _aggroDuration;
 	float animPlayingTime = 0.0f;
     float distance;
+    float duration;
     int atkType = 1;
 
 	bool hasPatrolTarget = false;

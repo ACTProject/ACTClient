@@ -337,7 +337,7 @@ void MelleMonsterController::UpdateHitBox()
     }
 }
 
-bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState state)
+bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
 {
     SetAnimationState(state);
 
@@ -350,10 +350,6 @@ bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState sta
         ResetToIdleState();
         return false;
     }
-
-    /*MyCoroutine attackCoroutine = EnemyCoroutine(this, duration);
-    currentEnemyCoroutine = attackCoroutine.GetHandler();
-    currentEnemyCoroutine.resume();*/
 
     return true; // 플레이 중
 }

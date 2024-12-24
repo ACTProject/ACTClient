@@ -39,14 +39,14 @@ bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState st
 void FinalBossMonsterSecondPhaseController::Start()
 {
     Super::Start();
+
+    SetAnimationState(AnimationState::GetUP2);
     _maxHp = 500.f;
     _hp = 500.0f;
     _atk = 50.0f;
     speed = 10.0f;
-
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
-    SetAnimationState(AnimationState::Idle);
     randPunchType = rand() % 4;
     randType = rand() % 10;
 

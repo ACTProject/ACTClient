@@ -139,6 +139,8 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
+        auto FinalPhase = CreateFinalPhase({ 10.0f,0.f,10.0f });
+
         FinalBoss->SetObjectType(ObjectType::Monster);
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
@@ -191,6 +193,9 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
+        if (FinalPhase != nullptr)
+            BossScript->SetSecondPhase(FinalPhase);
+
         FinalBoss->SetController(BossScript);
 
         // HitBox
@@ -224,11 +229,13 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
     }
 }
 
-void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
+shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
-        FinalBoss->SetObjectType(ObjectType::Monster);
+        FinalBoss->SetActive(false);
+        FinalBoss->SetObjectType(ObjectType::Boss2);
+
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
         FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0005f));
@@ -311,4 +318,5 @@ void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 
         CUR_SCENE->Add(FinalBoss);
     }
+    return FinalBoss;
 }

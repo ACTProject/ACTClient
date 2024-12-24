@@ -16,7 +16,7 @@ public:
     void CreateMeleeMonster(Vec3 SpawnPos);
     void CreateShootingMonster(Vec3 SpawnPos);
     void CreateFinalBoss(Vec3 SpawnPos);
-    void CreateFinalPhase(Vec3 SpawnPos);
+    shared_ptr<GameObject> CreateFinalPhase(Vec3 SpawnPos);
 
     Vec3 Spawnpos;
 };

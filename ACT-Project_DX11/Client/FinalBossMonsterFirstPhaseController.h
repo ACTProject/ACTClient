@@ -37,6 +37,7 @@ public:
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void SetAnimationState(AnimationState state);
+    void SetSecondPhase(shared_ptr<GameObject> secondPhase) { _secondPhase = secondPhase; }
 
     void ResetToIdleState();
     void UpdateHitBox();
@@ -100,6 +101,8 @@ public:
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;
+
+    shared_ptr<GameObject> _secondPhase;
     AnimationState _currentAnimationState = AnimationState::Idle;
 };
 
