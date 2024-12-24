@@ -28,7 +28,6 @@ ShadowDebugPS VS_ShadowModel(VertexTextureNormalTangentBlend input)
     output.p = mul(output.p, W);
     output.p = mul(output.p, V);
     output.p = mul(output.p, P);
-    //output.p = mul(output.p, SVP);
     output.TexShadow = mul(float4(output.p.xyz, 1.0f), S);
     
     return output;

@@ -46,6 +46,11 @@ WPARAM Game::Run(uint32 num)
 	SCENE->Start();
     SHADOW->Init();
 
+    // SHADOW RENDER //
+    GRAPHICS->RenderShadowBegin();
+    SHADOW->Update();
+    ///////////////////
+
     _init = true;
 
 	while (_msg.message != WM_QUIT)
@@ -79,16 +84,10 @@ void Game::Update(uint32 _num)
 	INPUT->Update();
 	ShowFps();
 
-    // SHADOW RENDER //
-    GRAPHICS->RenderShadowBegin();
-    SHADOW->Update();
-    ///////////////////
+
 
     GRAPHICS->RenderBegin();
 	GUI->Update();
-
-
-    SHADOW->updatelightPos();
 
 	SCENE->FixedUpdate();
 	SCENE->Update();
