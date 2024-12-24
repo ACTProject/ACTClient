@@ -75,19 +75,18 @@ float4 PS(V_OUT input) : SV_Target
     {
         color.rgb = lerp(fogColor.rgb, color.rgb, fogFactor);
     }
+    
     if (color.a < 0.3f)
         discard;
     
     return color;
-    //clip(diffuse.a - 0.3f);
-
 }
 
 technique11 T0
 {
     pass P0
     {
-        //SetRasterizerState(FillModeWireFrame);
+        SetBlendState(AlphaBlend, float4(0,0,0,0), 0xFF);
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
     }

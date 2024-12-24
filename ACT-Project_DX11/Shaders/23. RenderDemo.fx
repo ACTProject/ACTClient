@@ -16,6 +16,8 @@ float4 PS(MeshOutput input) : SV_TARGET
 {
     float4 color = DiffuseMap.Sample(LinearSampler, input.uv);
     
+    //NormalMap.Sample(input.uv);
+    
     //Shadow
     float ShadowAmount = 0.0f;
     float3 ShadowTexColor = input.TexShadow.xyz / input.TexShadow.w;

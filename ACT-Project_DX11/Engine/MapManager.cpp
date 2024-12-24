@@ -12,6 +12,9 @@
 
 void MapManager::Init()
 {
+    //clear
+    ClearMap();
+
     ////MapObj
     shared_ptr<MapObjDesc> src;
     {
@@ -578,7 +581,7 @@ void MapManager::CreateBillBoardMesh(shared_ptr<MapObjDesc> objs)
     CUR_SCENE->Add(obj);
 }
 
-bool MapManager::ExportMapObj()
+bool MapManager::ExportMapObj(wstring _fileName)
 {
     int length = _mapObjList.size();
 
@@ -671,7 +674,7 @@ bool MapManager::ExportMapObj()
     return true;
 }
 
-bool MapManager::ImportMapObj()
+bool MapManager::ImportMapObj(wstring _fileName)
 {
     FILE* fp = nullptr;
     errno_t err = _wfopen_s(&fp, _fileName.c_str(), L"rb");
@@ -737,6 +740,30 @@ bool MapManager::ImportMapObj()
         SCENE->GetCurrentScene()->Add(gameObj);
     }
     return true;
+}
+
+void MapManager::ClearMap()
+{
+    // 다음 씬으로 넘어가기 위한 함수
+    // shared_ptr 주의
+    _mapSelectDesc.reset();
+    _mapSelectObj.reset();
+    _mapPreviewObj.reset();
+    _mapBillBoard.reset();
+    _mapSelectDesc = nullptr;
+    _mapSelectObj = nullptr;
+    _mapPreviewObj = nullptr;
+    _mapBillBoard = nullptr;
+
+    _fileTextList.clear();
+
+    // terrain은 이거 전에 set해놔서 reset기달.
+    _terrain.reset();
+
+    // ImportMapObj 위치 클라이언트CPP에 있음 주의.
+    _mapObjList.clear();
+    _mapInfoList.clear();
+    _mapInitInfoList.clear();
 }
 
 

@@ -665,7 +665,7 @@ void Client::Init()
                 for (int32 x = 0; x <= width; x++)
                 {
                     int32 idx = (width + 1) * z + x;
-                    uint8 height = expandedPixelBuffer[idx] / 255.f * 25.f;
+                    uint8 height = expandedPixelBuffer[idx] / 255.f * 15.f;
                     v[idx].position.y = height - 8.f;
                 }
             }
@@ -707,28 +707,7 @@ void Client::Init()
         CUR_SCENE->Add(obj);
     }
 
-    MAP->ImportMapObj();
-
-
-    
-
-
-    //// MapSubTexture
-    //{
-    //    shared_ptr<Material> material = make_shared<Material>();
-    //    material->SetShader(renderBoxShader);
-    //    auto texture = RESOURCES->Load<Texture>(materialName, texturePath);
-    //    material->SetDiffuseMap(texture);
-
-    //    MaterialDesc& desc = material->GetMaterialDesc();
-    //    desc.ambient = Vec4(1.f);
-    //    desc.diffuse = Vec4(1.f);
-    //    desc.specular = Vec4(1.f);
-
-    //    RESOURCES->Add(materialName, material);
-    //}
-
-
+    MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
 
 }
 
