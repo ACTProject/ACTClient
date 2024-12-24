@@ -10,7 +10,8 @@
 #include "Rigidbody.h"
 #include "MelleMonsterController.h"
 #include "ShootingMonsterController.h"
-#include "FinalBossMonsterController.h"
+#include "FinalBossMonsterFirstPhaseController.h"
+#include "FinalBossMonsterSecondPhaseController.h"
 #include "Material.h"
 #include "Particle.h"
 
@@ -371,6 +372,7 @@ void PlayerController::UpdateHitBox()
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
                     melleMonster->OnDamage(_atk);
+                    melleMonster->PlayingHitMotion = true;
                 break;
             }
             case MonoBehaviourType::ShootingMonster:
@@ -378,13 +380,27 @@ void PlayerController::UpdateHitBox()
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
                     shootingMonster->OnDamage(_atk);
+                    shootingMonster->PlayingHitMotion = true;
                 break;
             }
-            case MonoBehaviourType::FinalBossMonster:
+            case MonoBehaviourType::FinalBossMonster_1:
             {
-                auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterController>(controller);
+                auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterFirstPhaseController>(controller);
                 if (FinalBossMonster)
+                {
                     FinalBossMonster->OnDamage(_atk);
+                    FinalBossMonster->PlayingHitMotion = true;
+                }
+                break;
+            }
+            case MonoBehaviourType::FinalBossMonster_2:
+            {
+                auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterSecondPhaseController>(controller);
+                if (FinalBossMonster)
+                {
+                    FinalBossMonster->OnDamage(_atk);
+                    FinalBossMonster->PlayingHitMotion = true;
+                }
                 break;
             }
             default:

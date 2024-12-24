@@ -34,6 +34,7 @@ public:
     void SetModelRenderer(shared_ptr<ModelRenderer> modelRenderer) { _modelRenderer = modelRenderer; }
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
     void SetAnimationState(AnimationState state);
+    void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 
     bool GetHit() { return _hit; }
     void SetHit(bool hit) { _hit = hit; }
@@ -49,6 +50,7 @@ public:
 
 public:
     void OnDeath() override;
+    bool PlayingHitMotion = false;
 
 public:
     float distance;
@@ -85,6 +87,7 @@ private:
     bool _isDead = false;
 
     shared_ptr<Model> _enemy;
+    shared_ptr<GameObject> _hitbox;
     shared_ptr<ModelRenderer> _modelRenderer;
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;

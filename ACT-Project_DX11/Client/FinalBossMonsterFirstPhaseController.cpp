@@ -1,19 +1,21 @@
 #include "pch.h"
-#include "FinalBossMonsterController.h"
+#include "FinalBossMonsterFirstPhaseController.h"
+#include "PlayerController.h"
 
 #define AttackRange 7.0f
 
-void FinalBossMonsterController::SetAnimationState(AnimationState state)
+void FinalBossMonsterFirstPhaseController::SetAnimationState(AnimationState state)
 {
     _modelAnimator->ChangeAnimation(state);
     _currentAnimationState = state;
 }
 
-void FinalBossMonsterController::ResetToIdleState() 
+void FinalBossMonsterFirstPhaseController::ResetToIdleState()
 {
     SetAnimationState(AnimationState::Combat);
 }
-bool FinalBossMonsterController::PlayCheckAnimating(AnimationState state)
+
+bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState state)
 {
     SetAnimationState(state);
 
@@ -34,24 +36,27 @@ bool FinalBossMonsterController::PlayCheckAnimating(AnimationState state)
     return true; // 플레이 중
 }
 
-void FinalBossMonsterController::Start()
+void FinalBossMonsterFirstPhaseController::Start()
 {
     Super::Start();
     _maxHp = 500.f;
-    _hp = 500.0f;
+    _hp = 100.0f;
     _atk = 50.0f;
-    
+
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
     SetAnimationState(AnimationState::Idle);
     randPunchType = rand() % 4;
     randType = rand() % 10;
+
     shared_ptr<ModelBone> rightHand = _enemy->GetBoneByName(L"mixamorig:RightHand");
 }
 
-void FinalBossMonsterController::Update()
+void FinalBossMonsterFirstPhaseController::Update()
 {
     Super::Update();
+    dt = DT;
+    currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
     if (INPUT->GetButton(KEY_TYPE::KEY_4))
     {
@@ -64,16 +69,14 @@ void FinalBossMonsterController::Update()
         SetAnimationState(AnimationState::Die);
         if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
         {
+            ENEMY->CreateFinalPhase(bossPos);
             Super::OnDeath();
-            std::cout << "Shooting Monster has been defeated!" << std::endl;
+            std::cout << "FinalBoss has been defeated!" << std::endl;
         }
         return;
     }
 
-    dt = DT;
     _FPS = static_cast<float>(TIME->GetFps());
-
-    currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
     bossPos = _transform->GetPosition();
     playerPos = _player->GetTransform()->GetPosition();
@@ -94,12 +97,11 @@ void FinalBossMonsterController::Update()
     }
 }
 
-
-
-void FinalBossMonsterController::Phase_1()
+void FinalBossMonsterFirstPhaseController::Phase_1()
 {
     if (isFirstTime) // 조우 ( 편의상 안되게 해놨음 )
     {
+        DEBUG->Log(L"Boss 1st Phase Start");
         if (currentTime > 8.f) // 실행되는데 걸리는 시간으로 인한 애니메이션이 짤리는 현상때문에 설정
         {
             Appear();
@@ -111,27 +113,27 @@ void FinalBossMonsterController::Phase_1()
         }
     }
 
-    if (hp < 0.0f)
+    if (_hp < 0.0f)
     {
         if (PlayCheckAnimating(AnimationState::Down2))
         {
             return;
         }
-        Die();
-        hp = 500.0f;
-        myPhase = 2;
     }
 
-    if (currentTime - lastTime > 2.0f)
+    if (currentTime - lastTime > 1.0f)
     {
         postpone = true;
+    }
+    else
+    {
+        postpone = false;
     }
 
     if (postpone)
     {
         if (patternCnt < 4)
         {
-
             if (distance < AttackRange)
             {
                 punchState = true;
@@ -145,9 +147,11 @@ void FinalBossMonsterController::Phase_1()
                 }
                 else
                 {
+                    lastTime = currentTime;
                     randPunchType = rand() % 4;
                     patternCnt++;
                     punchState = false;
+                    ResetHit();
                 }
             }
             else
@@ -175,26 +179,34 @@ void FinalBossMonsterController::Phase_1()
             {
                 lastTime = currentTime;
                 shootTime = 0.0f;
-                patternCnt = 1;               
+                patternCnt = 1;
             }
         }
     }
     else
     {
+        if (PlayingHitMotion)
+        {
+            if (PlayCheckAnimating(AnimationState::Hit1))
+            {
+                lastTime = currentTime - 0.8f;
+                return;
+            }
+            PlayingHitMotion = false;
+        }
         Rota(bossPos, playerPos);
-        ResetToIdleState();
     }
 
 }
 
-void FinalBossMonsterController::Phase_2()
+void FinalBossMonsterFirstPhaseController::Phase_2()
 {
     if (isFirstTime) // 2페이즈 시작
     {
+        _hp = 500.0f;
+        DEBUG->Log(L"Boss 2nd Phase Start");
         if (!Phase2Flag) // 한번만 실행
         {
-            ENEMY->CreateFinalPhase({ 70.0f, 0.f, 70.0f }); // 1페 LastPosition 넣을 예정
-            hp = 500.0f;
             Phase2Flag = true;
         }
         if (!isExecuted)
@@ -213,7 +225,7 @@ void FinalBossMonsterController::Phase_2()
         isFirstTime = false; // 플래그
     }
 
-    if (hp < 0.0f)
+    if (_hp < 0.0f)
     {
         if (PlayCheckAnimating(AnimationState::Die))
         {
@@ -221,171 +233,185 @@ void FinalBossMonsterController::Phase_2()
         }
         else
         {
-            Die();
         }
     }
 
     switch (randType)
     {
-        case 1: // 펀치 두 번
-            Move(bossPos, playerPos, speed);
-            Rota(bossPos, playerPos);
-            if (distance < AttackRange)
+    case 1: // 펀치 두 번
+        Move(bossPos, playerPos, speed);
+        Rota(bossPos, playerPos);
+        if (distance < AttackRange)
+        {
+            punchState = true;
+        }
+        if (punchState)
+        {
+            if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + randPunchType)))
             {
-                punchState = true;
-            }
-            if (punchState)
-            {
-                if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + randPunchType)))
-                {
-                    Punch(); // 히트 및 데미지 처리
-                    return;
-                }
-                else
-                {
-                    randPunchType = rand() % 4;
-                }
-                if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + randPunchType)))
-                {
-                    Punch(); // 히트 및 데미지 처리
-                    return;
-                }
-                else
-                {
-                    randPunchType = rand() % 4;
-                    punchState = false;
-                }
-            }
-            break;
-        case 2: // 초크
-            Move(bossPos, playerPos, speed);
-            Rota(bossPos, playerPos);
-            if (distance < 5.f)
-            {
-                attackState = true;
-            }
-            if (attackState)
-            {
-                if (PlayCheckAnimating(AnimationState::Skill1))
-                {
-                    Choke_lift();
-                    return;
-                }
-                else
-                {
-                    attackState = false;
-                }
-            }
-            break;
-        case 3: // 버블 발사
-            if (PlayCheckAnimating(AnimationState::Skill2))
-            {
-                Fireball();
+                Punch(); // 히트 및 데미지 처리
                 return;
             }
             else
             {
-                shootTime = 0.0f;
+                randPunchType = rand() % 4;
             }
-            break;
-        case 4: // 돈다발 발사
-            if (PlayCheckAnimating(AnimationState::Skill3))
+            if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + randPunchType)))
             {
-                FireMoney();
+                Punch(); // 히트 및 데미지 처리
                 return;
             }
             else
             {
-                shootState = false;
-                shootTime = 0.0f;
+                randPunchType = rand() % 4;
+                punchState = false;
+                randType = rand() % 10;
             }
-            break;
-        case 5: // 큰 펀치(slash)
-            Move(bossPos, playerPos, speed);
-            Rota(bossPos, playerPos);
-            if (distance < AttackRange)
+        }
+        break;
+    case 2: // 초크
+        Move(bossPos, playerPos, speed);
+        Rota(bossPos, playerPos);
+        if (distance < 5.f)
+        {
+            attackState = true;
+        }
+        if (attackState)
+        {
+            if (PlayCheckAnimating(AnimationState::Skill1))
             {
-                punchState = true;
-            }
-            if (punchState)
-            {
-                if (PlayCheckAnimating(AnimationState::Skill5))
-                {
-                    Punch(); // 히트 및 데미지 처리
-                    return;
-                }
-                else
-                {
-                    punchState = false;
-                }
-            }
-            break;
-        case 6: // 어퍼컷
-            Move(bossPos, playerPos, speed);
-            Rota(bossPos, playerPos);
-            if (distance < AttackRange)
-            {
-                punchState = true;
-            }
-            if (punchState)
-            {
-                if (PlayCheckAnimating(AnimationState::Skill6))
-                {
-                    Punch(); // 히트 및 데미지 처리
-                    return;
-                }
-                else
-                {
-                    punchState = false;
-                }
-            }
-            break;
-        case 7:
-            Move(bossPos, playerPos, speed);
-            Rota(bossPos, playerPos);
-            if (distance < 10.0f)
-            {
-                punchState = true;
-            }
-            if (punchState)
-            {
-                if (!isExecuted_2)
-                {
-                    lastPos = playerPos;
-                    isExecuted_2 = true;
-                }
-                if (PlayCheckAnimating(AnimationState::Skill7))
-                {
-                    Punch(); // 히트 및 데미지 처리
-                    return;
-                }
-                else
-                {
-                    _transform->SetLocalPosition(lastPos);
-                    punchState = false;
-                }
-            }
-            break;
-        case 8:
-            if (PlayCheckAnimating(AnimationState::Skill8))
-            {
-                GrabSlam();
+                Choke_lift();
                 return;
             }
-            break;
-        case 9:
-            if (PlayCheckAnimating(AnimationState::Skill9))
+            else
             {
-                Hurricane();
+                attackState = false;
+                randType = rand() % 10;
+            }
+        }
+        break;
+    case 3: // 버블 발사
+        if (PlayCheckAnimating(AnimationState::Skill2))
+        {
+            Fireball();
+            return;
+        }
+        else
+        {
+            shootTime = 0.0f;
+            randType = rand() % 10;
+        }
+        break;
+    case 4: // 돈다발 발사
+        if (PlayCheckAnimating(AnimationState::Skill3))
+        {
+            FireMoney();
+            return;
+        }
+        else
+        {
+            shootState = false;
+            shootTime = 0.0f;
+            randType = rand() % 10;
+        }
+        break;
+    case 5: // 큰 펀치(slash)
+        Move(bossPos, playerPos, speed);
+        Rota(bossPos, playerPos);
+        if (distance < AttackRange)
+        {
+            punchState = true;
+        }
+        if (punchState)
+        {
+            if (PlayCheckAnimating(AnimationState::Skill5))
+            {
+                Punch(); // 히트 및 데미지 처리
                 return;
             }
-            break;
+            else
+            {
+                punchState = false;
+                randType = rand() % 10;
+            }
+        }
+        break;
+    case 6: // 어퍼컷
+        Move(bossPos, playerPos, speed);
+        Rota(bossPos, playerPos);
+        if (distance < AttackRange)
+        {
+            punchState = true;
+        }
+        if (punchState)
+        {
+            if (PlayCheckAnimating(AnimationState::Skill6))
+            {
+                Punch(); // 히트 및 데미지 처리
+                return;
+            }
+            else
+            {
+                punchState = false;
+                randType = rand() % 10;
+            }
+        }
+        break;
+    case 7:
+        Move(bossPos, playerPos, speed);
+        Rota(bossPos, playerPos);
+        if (distance < 10.0f)
+        {
+            punchState = true;
+        }
+        if (punchState)
+        {
+            if (!isExecuted_2)
+            {
+                lastPos = playerPos;
+                isExecuted_2 = true;
+            }
+            if (PlayCheckAnimating(AnimationState::Skill7))
+            {
+                Punch(); // 히트 및 데미지 처리
+                return;
+            }
+            else
+            {
+                _transform->SetLocalPosition(lastPos);
+                punchState = false;
+                randType = rand() % 10;
+            }
+        }
+        break;
+    case 8:
+        if (PlayCheckAnimating(AnimationState::Skill8))
+        {
+            GrabSlam();
+            return;
+        }
+        else
+        {
+            randType = rand() % 10;
+        }
+        break;
+    case 9:
+        if (PlayCheckAnimating(AnimationState::Skill9))
+        {
+            Hurricane();
+            return;
+        }
+        else
+        {
+            randType = rand() % 10;
+        }
+        break;
 
     }
 
 }
 
-void FinalBossMonsterController::Appear()
+void FinalBossMonsterFirstPhaseController::Appear()
 {
     if (PlayCheckAnimating(AnimationState::Appear))
     {
@@ -395,8 +421,7 @@ void FinalBossMonsterController::Appear()
     lastTime = currentTime;
 }
 
-
-void FinalBossMonsterController::Move(Vec3 objPos, Vec3 targetPos, float speed)
+void FinalBossMonsterFirstPhaseController::Move(Vec3 objPos, Vec3 targetPos, float speed)
 {
     SetAnimationState(AnimationState::Walk);
 
@@ -412,7 +437,7 @@ void FinalBossMonsterController::Move(Vec3 objPos, Vec3 targetPos, float speed)
     _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
 }
 
-void FinalBossMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
+void FinalBossMonsterFirstPhaseController::Rota(Vec3 objPos, Vec3 targetPos)
 {
     Vec3 CurForward = _transform->GetLook();
     Vec3 direction = targetPos - objPos;
@@ -448,7 +473,7 @@ void FinalBossMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
     _transform->SetRotation(newRotation);
 }
 
-void FinalBossMonsterController::Sprint()
+void FinalBossMonsterFirstPhaseController::Sprint()
 {
     SetAnimationState(AnimationState::Run2);
 
@@ -465,7 +490,7 @@ void FinalBossMonsterController::Sprint()
 
 }
 
-void FinalBossMonsterController::BackSprint()
+void FinalBossMonsterFirstPhaseController::BackSprint()
 {
     SetAnimationState(AnimationState::Run3);
 
@@ -481,7 +506,7 @@ void FinalBossMonsterController::BackSprint()
     _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * dt);  // 일정 거리만큼 이동
 }
 
-void FinalBossMonsterController::Run(float speed)
+void FinalBossMonsterFirstPhaseController::Run(float speed)
 {
     SetAnimationState(AnimationState::Run);
 
@@ -497,24 +522,24 @@ void FinalBossMonsterController::Run(float speed)
     _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
 }
 
-void FinalBossMonsterController::Die()
+
+void FinalBossMonsterFirstPhaseController::Punch()
 {
-    CUR_SCENE->Remove(GetGameObject());
-    OCTREE->RemoveCollider(GetGameObject()->GetCollider());
-    return;
+    UpdateHitBox();
+    if (_hit && !hasDealing)
+    {
+        auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
+        player->OnDamage(_atk);
+        hasDealing = true;
+    }
 }
 
-void FinalBossMonsterController::Punch()
-{
-    
-}
-
-void FinalBossMonsterController::Fireball()
+void FinalBossMonsterFirstPhaseController::Fireball()
 {
     Rota(bossPos, playerPos);
     shootTime += dt;
-    float startTime = 208 / 60 - 0.5;
-    float endTime = 208 / 60 - 0.3;
+    float startTime = 208 / 60 - 0.6;
+    float endTime = 208 / 60 - 0.4;
     if ((shootTime <= endTime) && (shootTime > startTime))
     {
         float randX = rand() % 10 / 5.f; // 0 ~ 1.8
@@ -524,7 +549,7 @@ void FinalBossMonsterController::Fireball()
     }
 }
 
-void FinalBossMonsterController::FireMoney()
+void FinalBossMonsterFirstPhaseController::FireMoney()
 {
     Rota(bossPos, playerPos);
     shootTime += dt;
@@ -540,17 +565,17 @@ void FinalBossMonsterController::FireMoney()
 
         Vec3 dir = playerPos - bossPos;
         dir.y -= 0.5f;
-        makeCash({ bossPos.x, bossPos.y + upVec.y , bossPos.z },   dir);
-        makeCash({ bossPos.x, bossPos.y - upVec.y , bossPos.z },   dir);
-        makeCash({ bossPos.x, bossPos.y , bossPos.z },             dir);
-        makeCash({ bossPos.x + rightVec.x, bossPos.y, bossPos.z }, dir);
-        makeCash({ bossPos.x - rightVec.x, bossPos.y, bossPos.z }, dir);
+        makeCash({ bossPos.x, bossPos.y + upVec.y / 0.5f , bossPos.z }, dir);
+        makeCash({ bossPos.x, bossPos.y - upVec.y / 0.5f , bossPos.z }, dir);
+        makeCash({ bossPos.x, bossPos.y , bossPos.z }, dir);
+        makeCash({ bossPos.x + rightVec.x / 0.5f, bossPos.y, bossPos.z }, dir);
+        makeCash({ bossPos.x - rightVec.x / 0.5f, bossPos.y, bossPos.z }, dir);
 
         shootState = true;
     }
 }
 
-void FinalBossMonsterController::makeBubble(Vec3 pos, Vec3 dir)
+void FinalBossMonsterFirstPhaseController::makeBubble(Vec3 pos, Vec3 dir)
 {
     auto bullet = make_shared<GameObject>(); // bullet
 
@@ -566,51 +591,35 @@ void FinalBossMonsterController::makeBubble(Vec3 pos, Vec3 dir)
     bullet->AddComponent(make_shared<ModelRenderer>(renderShader));
     {
         bullet->GetModelRenderer()->SetModel(objModel);
-        bullet->GetModelRenderer()->SetPass(1);
+        bullet->GetModelRenderer()->SetPass(4);
     }
-
-    //// Collider
-    //auto collider = make_shared<AABBBoxCollider>();
-    //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f)));
-    //collider->SetOffset(Vec3(0.f, 0.1f, 0.f));
-    //OCTREE->InsertCollider(collider);
-    //bullet->AddComponent(collider);
-
-    //shared_ptr<Rigidbody> rigidBody = make_shared<Rigidbody>();
-    //rigidBody->SetUseGravity(false);
-    //rigidBody->SetMass(0.1f);
-    //bullet->AddComponent(rigidBody);
 
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
-    bullet->AddComponent(bulletComponent);
+    bulletComponent->SetDirection(dir);
+    bulletComponent->SetSpeed(30.0f);
+    bulletComponent->Add(objModel);
 
     // HitBox
     shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
     shared_ptr<HitBox> hitbox = make_shared<HitBox>();
     hitboxGO->AddComponent(hitbox);
     hitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
-    hitbox->Craete(bullet, Vec3(0.3f));
+    hitbox->Craete(bullet, Vec3(0.1f));
     CUR_SCENE->Add(hitboxGO);
-
-    /*COLLISION->AddRigidbody(rigidBody);
-    COLLISION->AddCollider(collider);*/
+    bulletComponent->SetHitBox(hitboxGO);
+    bullet->AddComponent(bulletComponent);
 
     CUR_SCENE->Add(bullet);
 }
 
-void FinalBossMonsterController::OnDeath()
-{
-    _isDead = true;
-    animPlayingTime = 0.0f;
-}
-void FinalBossMonsterController::makeCash(Vec3 pos, Vec3 dir)
+void FinalBossMonsterFirstPhaseController::makeCash(Vec3 pos, Vec3 dir)
 {
     auto bullet = make_shared<GameObject>(); // bullet
 
     bullet->GetOrAddTransform()->SetPosition({ pos.x, pos.y + 3.f, pos.z });
-    bullet->GetOrAddTransform()->SetLocalRotation(dir); // XMConvertToRadians()
-    bullet->GetOrAddTransform()->SetScale(Vec3(0.0025f));
+    bullet->GetOrAddTransform()->SetLocalRotation({0,0,0}); // XMConvertToRadians()
+    bullet->GetOrAddTransform()->SetScale(Vec3(0.003f));
 
     shared_ptr<Model> objModel = make_shared<Model>();
     // Model
@@ -620,47 +629,34 @@ void FinalBossMonsterController::makeCash(Vec3 pos, Vec3 dir)
     bullet->AddComponent(make_shared<ModelRenderer>(renderShader));
     {
         bullet->GetModelRenderer()->SetModel(objModel);
-        bullet->GetModelRenderer()->SetPass(1);
+        bullet->GetModelRenderer()->SetPass(4);
     }
-
-    //// Collider
-    //auto collider = make_shared<AABBBoxCollider>();
-    //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f)));
-    //collider->SetOffset(Vec3(0.f, 0.1f, 0.f));
-    //OCTREE->InsertCollider(collider);
-    //bullet->AddComponent(collider);
-
-    //shared_ptr<Rigidbody> rigidBody = make_shared<Rigidbody>();
-    //rigidBody->SetUseGravity(false);
-    //rigidBody->SetMass(0.1f);
-    //bullet->AddComponent(rigidBody);
 
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
-    //bulletComponent->SetSpeed(30.0f);
-    //bulletComponent->SetDirection(dir);
-    bullet->AddComponent(bulletComponent);
+    bulletComponent->SetDirection(dir);
+    bulletComponent->SetSpeed(30.0f);
+    bulletComponent->Add(objModel);
 
     // HitBox
-    /*shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+    shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
     shared_ptr<HitBox> hitbox = make_shared<HitBox>();
     hitboxGO->AddComponent(hitbox);
-    hitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
-    hitbox->Craete(bullet, Vec3(0.3f));
-    CUR_SCENE->Add(hitboxGO);*/
-
-    /*COLLISION->AddRigidbody(rigidBody);
-    COLLISION->AddCollider(collider);*/
+    hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+    hitbox->Craete(bullet, Vec3(0.005f));
+    CUR_SCENE->Add(hitboxGO);
+    bulletComponent->SetHitBox(hitboxGO);
+    bullet->AddComponent(bulletComponent);
 
     CUR_SCENE->Add(bullet);
 }
 
-void FinalBossMonsterController::Choke_lift()
+void FinalBossMonsterFirstPhaseController::Choke_lift()
 {
 
 }
 
-void FinalBossMonsterController::GrabSlam()
+void FinalBossMonsterFirstPhaseController::GrabSlam()
 {
     //vector<AnimTransform> animTransforms = _modelAnimator->GetTransform()->
 
@@ -669,7 +665,7 @@ void FinalBossMonsterController::GrabSlam()
     Vec3 handPos = { worldTransform._41, worldTransform._42, worldTransform._43 };
 }
 
-Matrix FinalBossMonsterController::CalculateWorldTransform(shared_ptr<ModelBone> bone) {
+Matrix FinalBossMonsterFirstPhaseController::CalculateWorldTransform(shared_ptr<ModelBone> bone) {
     if (!bone) return Matrix::Identity; // 기본값 반환
 
     // 부모 본의 월드 변환 행렬을 재귀적으로 계산
@@ -682,7 +678,7 @@ Matrix FinalBossMonsterController::CalculateWorldTransform(shared_ptr<ModelBone>
     return bone->transform * parentWorld;
 }
 
-void FinalBossMonsterController::Hurricane()
+void FinalBossMonsterFirstPhaseController::Hurricane()
 {
     Vec3 direction = playerPos - bossPos;
     if (direction.LengthSquared() < 5.f) // EPSILON 사용
@@ -694,3 +690,49 @@ void FinalBossMonsterController::Hurricane()
 
     _transform->SetPosition(_transform->GetPosition() + direction * 8.0f * dt);  // 일정 거리만큼 이동
 }
+
+void FinalBossMonsterFirstPhaseController::OnDeath()
+{
+    _isDead = true;
+    animPlayingTime = 0.0f;
+}
+
+void FinalBossMonsterFirstPhaseController::UpdateHitBox()
+{
+    if (_hit)
+        return;
+
+    auto hitboxCollider = _hitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    _hitbox->GetTransform()->SetPosition(_transform->GetPosition()
+        + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 5.0f);
+
+    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
+
+    for (const auto& collider : nearbyColliders)
+    {
+        ObjectType type = collider->GetGameObject()->GetObjectType();
+        if (type != ObjectType::Player)
+            continue;
+
+        if (hitboxCollider->Intersects(collider))
+        {
+            auto controller = collider->GetGameObject()->GetController();
+            if (!controller)
+                continue;
+
+            auto player = dynamic_pointer_cast<PlayerController>(controller);
+            if (player)
+                _hit = true;
+        }
+    }
+}
+
+void FinalBossMonsterFirstPhaseController::ResetHit()
+{
+    hasDealing = false;
+    _hit = false;
+    _hitbox->GetCollider()->SetActive(false);
+}
+

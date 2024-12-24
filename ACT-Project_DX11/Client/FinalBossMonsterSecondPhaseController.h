@@ -17,7 +17,7 @@ struct ModelBone;
 /*
     각 몬스터의 개별 동작을 추가로 정의.
 */
-class FinalBossMonsterController : public MonsterController
+class FinalBossMonsterSecondPhaseController : public MonsterController
 {
     using Super = MonsterController;
 
@@ -27,7 +27,7 @@ class FinalBossMonsterController : public MonsterController
     void Update() override;
 
 public:
-    MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::FinalBossMonster; }
+    MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::FinalBossMonster_2; }
 
     shared_ptr<Model> GetEnemy() { return _enemy; }
     void SetEnemy(shared_ptr<Model> enemy) { _enemy = enemy; }
@@ -39,10 +39,12 @@ public:
     void SetAnimationState(AnimationState state);
 
     void ResetToIdleState();
+    void UpdateHitBox();
+    void ResetHit();
+    bool PlayingHitMotion = false;
 
 private:
     bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
-    void Phase_1();                                     // 1페이즈
     void Phase_2();                                     // 2페이즈
 
     void Appear();                                      // 조우시 모션용 어그로와 같음
@@ -75,11 +77,11 @@ public:
     Vec3 playerPos;                     //플레이어 위치
     float distance;                     //플레이어 - 보스 거리
     Vec3 direction;                     //플레이어 - 보스 방향
-    float hp = 100.f;                  //보스 hp
+    float hp;                  //보스 hp
     float speed = 5.0f;
 
-    int myPhase = 1;                    //1페이즈 2페이즈 구분용
-    int patternCnt = 4;
+    int myPhase;                    //1페이즈 2페이즈 구분용
+    int patternCnt = 1;
     float shootTime = 0.0f;
     int randType;                       //랜덤한 타입
     int randPunchType;                  //랜덤한 펀치 타입
@@ -92,6 +94,7 @@ public:
     bool isExecuted = false;
     bool isExecuted_2 = false;
     bool isExecuted_3 = false;
+    bool hasDealing = false;
 
     // 상태
     bool chaseState = false;             //추격
@@ -99,6 +102,7 @@ public:
     bool shootState = false;
     bool attackState = false;
     bool _isDead = false;
+    bool _hit = false;
 
     shared_ptr<Model> _enemy;
     shared_ptr<GameObject> _hitbox;

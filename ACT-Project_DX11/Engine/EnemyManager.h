@@ -1,7 +1,8 @@
 #pragma once
 #include "../Client/ShootingMonsterController.h"
 #include "../Client/MelleMonsterController.h"
-#include "../Client/FinalBossMonsterController.h"
+#include "../Client/FinalBossMonsterFirstPhaseController.h"
+#include "../Client/FinalBossMonsterSecondPhaseController.h"
 #include "Rigidbody.h"
 #include "AABBBoxCollider.h"
 

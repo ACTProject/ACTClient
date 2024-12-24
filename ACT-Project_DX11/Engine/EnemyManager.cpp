@@ -36,8 +36,17 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
 
         rangoonScript->SetEnemy(enemyModel);
         rangoonScript->SetModelAnimator(ma2);
-
         rangoon->SetController(rangoonScript);
+
+        // HitBox
+        shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        hitboxGO->AddComponent(hitbox);
+        hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        hitbox->Craete(rangoon, Vec3(1.0f));
+        CUR_SCENE->Add(hitboxGO);
+        rangoonScript->SetHitBox(hitboxGO);
+
         rangoon->AddComponent(rangoonScript);
 
         // Collider
@@ -94,6 +103,16 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
         ShrimpScript->SetModelAnimator(ma2);
 
         PistolShrimp->SetController(ShrimpScript);
+
+        //// HitBox
+        //shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        //shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        //hitboxGO->AddComponent(hitbox);
+        //hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        //hitbox->Craete(PistolShrimp, Vec3(1.0f));
+        //CUR_SCENE->Add(hitboxGO);
+        //ShrimpScript->SetHitBox(hitboxGO);
+
         PistolShrimp->AddComponent(ShrimpScript);
 
         // Collider
@@ -168,17 +187,27 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonsterController> BossScript = make_shared<FinalBossMonsterController>();
+        shared_ptr<FinalBossMonsterFirstPhaseController> BossScript = make_shared<FinalBossMonsterFirstPhaseController>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
+        BossScript->SetPhase(1);
         FinalBoss->SetController(BossScript);
+
+        // HitBox
+        shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        hitboxGO->AddComponent(hitbox);
+        hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        hitbox->Craete(FinalBoss, Vec3(1.0f));
+        CUR_SCENE->Add(hitboxGO);
+        BossScript->SetHitBox(hitboxGO);
+
         FinalBoss->AddComponent(BossScript);
 
         // Collider
         auto collider = make_shared<SphereCollider>();
-        collider->SetRadius(2.0f);
-        //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(2.0f)));
+        collider->SetRadius(2.5f);
         collider->SetOffset(Vec3(0.f, 2.5f, 0.f));
         OCTREE->InsertCollider(collider);
         FinalBoss->AddComponent(collider);
@@ -248,16 +277,26 @@ void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonsterController> BossScript = make_shared<FinalBossMonsterController>();
+        shared_ptr<FinalBossMonsterSecondPhaseController> BossScript = make_shared<FinalBossMonsterSecondPhaseController>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
+        FinalBoss->SetController(BossScript);
+
+        // HitBox
+        shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        hitboxGO->AddComponent(hitbox);
+        hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        hitbox->Craete(FinalBoss, Vec3(1.0f));
+        CUR_SCENE->Add(hitboxGO);
+        BossScript->SetHitBox(hitboxGO);
+
         FinalBoss->AddComponent(BossScript);
 
         // Collider
         auto collider = make_shared<SphereCollider>();
-        collider->SetRadius(30.0f);
-        //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(2.0f)));
+        collider->SetRadius(2.5f);
         collider->SetOffset(Vec3(0.f, 2.5f, 0.f));
         OCTREE->InsertCollider(collider);
         FinalBoss->AddComponent(collider);

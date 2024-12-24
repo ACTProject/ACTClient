@@ -26,10 +26,12 @@ public:
 	shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
+    void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
+    void UpdateHitBox();
 
 public:
     void OnDeath() override;
-
+    bool PlayingHitMotion = false;
 private:
     void Aggro();
     void Move(Vec3 objPos, Vec3 targetPos, float speed);
@@ -58,6 +60,7 @@ private:
     bool isFirstAggro = true;
     bool onAttack = false;
     bool _isAnimating = false;
+    bool _isAttacking = false;
 
     // 히트 상태
     bool _hit = false;
@@ -70,6 +73,7 @@ private:
     Vec3 patrolTarget;
 
 	shared_ptr<Model> _enemy;
+    shared_ptr<GameObject> _hitbox;
 	shared_ptr<ModelAnimator> _modelAnimator;
 	shared_ptr<Transform> _transform;
 	shared_ptr<GameObject> _player;
