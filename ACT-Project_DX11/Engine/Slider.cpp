@@ -17,6 +17,7 @@ void Slider::Update()
 {
     Super::PreUpdate();
 
+    ImGui::Begin("Slider");
     if (_uiID == "HP")
     {
         ImGui::Text("HP");
@@ -48,7 +49,7 @@ void Slider::Update()
         }
         ImGui::SliderFloat("Enemy Control", &_uvRatio, 0.0f, 1.0f);
     }
-    
+    ImGui::End();
     UpdateScale();
 }
 

@@ -111,7 +111,10 @@ void MeshRenderer::RenderSingle()
 
 	if (_isAlphaBlend)
 		_technique = 4; 
-	_shader->DrawIndexed(_technique, _pass, _mesh->GetIndexBuffer()->GetCount(), 0, 0);
+    if (GetGameObject()->IsActive())
+    {
+        _shader->DrawIndexed(_technique, _pass, _mesh->GetIndexBuffer()->GetCount(), 0, 0);
+    }
 }
 
 void MeshRenderer::RenderShadowMap(Matrix view, Matrix proj)
