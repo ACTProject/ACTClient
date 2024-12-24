@@ -72,6 +72,9 @@
     <ClCompile Include="Title.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Client2.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -108,6 +111,9 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Title.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Client2.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
@@ -218,6 +224,9 @@
       <Filter>Shaders\Week5</Filter>
     </FxCompile>
     <FxCompile Include="..\Shaders\ShadowDebug.fx">
+      <Filter>Shaders\Week5</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\Particle.fx">
       <Filter>Shaders\Week5</Filter>
     </FxCompile>
   </ItemGroup>
