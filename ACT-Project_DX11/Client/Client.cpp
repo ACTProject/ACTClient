@@ -44,7 +44,6 @@ void Client::Init()
 	shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 	shared_ptr<Shader> renderBoxShader = make_shared<Shader>(L"23. RenderDemoBox.fx");
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
-    shared_ptr<Shader> hpShader = make_shared<Shader>(L"HpUI.fx");
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
 
 	// Camera
@@ -106,7 +105,7 @@ void Client::Init()
         // Material
         {
             shared_ptr<Material> material = make_shared<Material>();
-            material->SetShader(hpShader);
+            material->SetShader(renderUIShader);
             auto texture = RESOURCES->Load<Texture>(L"HealBar", L"..\\Resources\\Textures\\UI\\BarBorder_Health.png");
             material->SetDiffuseMap(texture);
             MaterialDesc& desc = material->GetMaterialDesc();
@@ -432,7 +431,31 @@ void Client::Init()
         shell->AddComponent(collider);
         CUR_SCENE->Add(shell);
     }
+    // Portal
+    {
+        auto portal = make_shared<GameObject>();
+        portal->SetObjectType(ObjectType::Portal);
+        portal->GetOrAddTransform()->SetPosition(Vec3(424.f, 10.f, 335.f));
+        portal->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
+        shared_ptr<Model> portalModel = make_shared<Model>();
+        {
+            portalModel->ReadModel(L"Shell/Shell_SodaCan");
+            portalModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        portal->AddComponent(mr);
+        {
+            portal->GetModelRenderer()->SetModel(portalModel);
+            portal->GetModelRenderer()->SetPass(1);
+        }
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(10.f, 10.f, 3.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        portal->AddComponent(collider);
+        CUR_SCENE->Add(portal);
+    }
 	// Player
 	auto player = make_shared<GameObject>();
 

@@ -7,6 +7,7 @@ enum class SceneTag
     NONE = 0,
     TITLE = 1,
     INGAME = 2,
+    INGAME2 = 3,
 };
 
 struct GameDesc

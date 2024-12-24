@@ -28,6 +28,7 @@ enum class ObjectType
     Shell,
     Environment,
     UI,
+    Portal,
     // ...
 
     Unknown,
