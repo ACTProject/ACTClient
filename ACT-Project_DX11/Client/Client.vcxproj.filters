@@ -74,6 +74,7 @@
     </ClCompile>
     <ClCompile Include="FinalBossMonsterSecondPhaseController.cpp">
       <Filter>Main\Creature</Filter>
+    </ClCompile>
     <ClCompile Include="Client2.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -117,6 +118,7 @@
     </ClInclude>
     <ClInclude Include="FinalBossMonsterSecondPhaseController.h">
       <Filter>Main\Creature</Filter>
+    </ClInclude>
     <ClInclude Include="Client2.h">
       <Filter>Game</Filter>
     </ClInclude>

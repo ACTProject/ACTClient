@@ -249,8 +249,6 @@ void GameObject::Destroy()
     // 활성화 상태를 비활성화
     _isActive = false;
 
-    OCTREE->RemoveCollider(GetCollider());
-
     // 모든 컴포넌트 정리
     for (auto& component : _components)
     {

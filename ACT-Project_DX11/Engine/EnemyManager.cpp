@@ -139,7 +139,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
-        auto FinalPhase = CreateFinalPhase({ 10.0f,0.f,10.0f });
+        //auto FinalPhase = CreateFinalPhase({ 10.0f,0.f,10.0f });
 
         FinalBoss->SetObjectType(ObjectType::Monster);
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
@@ -193,8 +193,8 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
-        if (FinalPhase != nullptr)
-            BossScript->SetSecondPhase(FinalPhase);
+        //if (FinalPhase != nullptr)
+        //    BossScript->SetSecondPhase(FinalPhase);
 
         FinalBoss->SetController(BossScript);
 
@@ -233,7 +233,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
-        FinalBoss->SetActive(false);
+        FinalBoss->SetActive(true);
         FinalBoss->SetObjectType(ObjectType::Boss2);
 
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);

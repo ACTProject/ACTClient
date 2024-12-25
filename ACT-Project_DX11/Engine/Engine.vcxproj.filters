@@ -250,6 +250,9 @@
     <ClCompile Include="Particle.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
+    <ClCompile Include="TaskQueue.cpp">
+      <Filter>98. Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelMesh.h">
@@ -512,6 +515,9 @@
     </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>04. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskQueue.h">
+      <Filter>98. Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

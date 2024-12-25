@@ -66,10 +66,15 @@ void FinalBossMonsterFirstPhaseController::Update()
         {
             return;
         }
-        _secondPhase->SetActive(true);
-        _secondPhase->GetTransform()->SetPosition(bossPos);
+        //_secondPhase->SetActive(true);
+        //_secondPhase->GetTransform()->SetPosition(bossPos);
         Super::OnDeath();
         std::cout << "FinalBoss Phase_1 has been ended!" << std::endl;
+
+        Vec3 pos = bossPos;
+        TaskQueue::GetInstance().AddTask([this, pos]() {
+            ENEMY->CreateFinalPhase(pos);
+            });
 
         return;
     }

@@ -15,7 +15,7 @@ void CollisionManager::Update()
     for (const auto& colliderA : _colliders)
     {
         // Collider가 비활성화 상태이면 충돌 검사 중단
-        if (!colliderA->IsActive())
+        if (!colliderA->IsActive() || colliderA == nullptr)
             continue;
 
         // 옥트리에서 colliderA와 잠재적으로 충돌할 수 있는 콜라이더 검색
@@ -27,11 +27,13 @@ void CollisionManager::Update()
             if (colliderA == colliderB || !colliderB->IsActive())
                 continue;
 
-            // 충돌 감지
-            if (colliderA->Intersects(colliderB))
-            {
-                HandleCollision(colliderA, colliderB);
-            }
+            // 충돌 검사 작업을 작업 큐에 추가
+            TaskQueue::GetInstance().AddTask([this, colliderA, colliderB]() {
+                if (colliderA->Intersects(colliderB))
+                {
+                    HandleCollision(colliderA, colliderB);
+                }
+            });
         }
     }
 }

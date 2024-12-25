@@ -52,5 +52,12 @@ void CreatureController::OnDamage(float damage)
 // 죽음 처리
 void CreatureController::OnDeath()
 {
-    GetGameObject()->Destroy();
+    OCTREE->RemoveCollider(GetGameObject()->GetCollider());
+    COLLISION->Remove(GetGameObject());
+    CUR_SCENE->Remove(GetGameObject());
+
+    TaskQueue::GetInstance().AddTask([this]() {
+        std::cout << "Destroying object in TaskQueue..." << std::endl;
+        GetGameObject()->Destroy();
+        });
 }

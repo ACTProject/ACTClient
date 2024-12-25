@@ -1,5 +1,6 @@
 #pragma once
 #include "MonoBehaviour.h"
+#include "TaskQueue.h"
 
 /*
     CreatureController는 생명체의 공통 동작과 스탯을 정의.
