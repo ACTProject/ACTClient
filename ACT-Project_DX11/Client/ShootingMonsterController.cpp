@@ -17,7 +17,7 @@ void ShootingMonsterController::Move(Vec3 objPos, Vec3 targetPos, float speed)
     direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
     direction.y = 0.f;
 
-    _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * speed * DT);  // 일정 거리만큼 이동
 }
 
 void ShootingMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
@@ -80,7 +80,6 @@ void ShootingMonsterController::Shoot()
 
     SetAnimationState(AnimationState::Attack1);
 
-
     // 코루틴 실행
     MyCoroutine attackCoroutine = EnemyCoroutine(this, atkDuration);
     currentEnemyCoroutine = attackCoroutine.GetHandler();
@@ -101,22 +100,25 @@ void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
     objModel->ReadModel(L"Enemy/bullet");
     objModel->ReadMaterial(L"Enemy/bullet");
 
-    //// Collider
-    //auto collider = make_shared<AABBBoxCollider>();
-    //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(1.5f)));
-    //collider->SetOffset(Vec3(0.f, 1.f, 0.f));
-    //OCTREE->InsertCollider(collider);
-    //bullet->AddComponent(collider);
     bullet->AddComponent(make_shared<ModelRenderer>(renderShader));
     {
         bullet->GetModelRenderer()->SetModel(objModel);
-        bullet->GetModelRenderer()->SetPass(1);
+        bullet->GetModelRenderer()->SetPass(4);
     }
+
+    // HitBox
+    shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+    hitboxGO->AddComponent(hitbox);
+    hitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    hitbox->Craete(bullet, Vec3(0.05f));
+    CUR_SCENE->Add(hitboxGO);
 
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
-    //bulletComponent->SetSpeed(50.0f);
-    //bulletComponent->SetDirection(dir);
+    bulletComponent->SetSpeed(50.0f);
+    bulletComponent->SetDirection(dir);
+    bulletComponent->SetHitBox(hitboxGO);
     bullet->AddComponent(bulletComponent);
 
     CUR_SCENE->Add(bullet);
@@ -165,7 +167,7 @@ void ShootingMonsterController::Update()
 
     if (_isDead)
     {
-        animPlayingTime += dt;
+        animPlayingTime += DT;
         SetAnimationState(AnimationState::Die);
         if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
         {
@@ -176,7 +178,6 @@ void ShootingMonsterController::Update()
     }
 
     _FPS = static_cast<float>(TIME->GetFps());
-    dt = TIME->GetDeltaTime();
     // 플레이어 위치 계산
     _player = SCENE->GetCurrentScene()->GetPlayer();
     PlayerPos = _player->GetTransform()->GetPosition();
@@ -186,7 +187,7 @@ void ShootingMonsterController::Update()
 
     if (_hp < 0.f)
     {
-        animPlayingTime += dt;
+        animPlayingTime += DT;
         SetAnimationState(AnimationState::Die);
         if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
         {
@@ -197,7 +198,7 @@ void ShootingMonsterController::Update()
 
     if (_isAnimating)
     {
-        animPlayingTime += dt;
+        animPlayingTime += DT;
         Rota(EnemyPos, PlayerPos);
 
         if (_currentAnimationState == AnimationState::Attack1)

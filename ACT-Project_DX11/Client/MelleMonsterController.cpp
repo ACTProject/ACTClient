@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MelleMonsterController.h"
+#include "PlayerController.h"
 
 #define AggroRange 30.0f
 #define AttackRange 5.0f
@@ -14,7 +15,7 @@ void MelleMonsterController::Move(Vec3 objPos, Vec3 targetPos, float speed)
 
     direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-    _transform->SetPosition(_transform->GetPosition() + direction * speed * dt);  // 일정 거리만큼 이동
+    _transform->SetPosition(_transform->GetPosition() + direction * speed * DT);  // 일정 거리만큼 이동
 }
 
 void MelleMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
@@ -138,7 +139,6 @@ void MelleMonsterController::Update()
     Super::Update();
 
     _FPS = static_cast<float>(TIME->GetFps());
-    dt = TIME->GetDeltaTime();
     // 플레이어 위치 계산4
     _player = SCENE->GetCurrentScene()->GetPlayer();
     PlayerPos = _player->GetTransform()->GetPosition();
@@ -149,7 +149,7 @@ void MelleMonsterController::Update()
 
     if (_isDead)
     {
-        animPlayingTime += dt;
+        animPlayingTime += DT;
         SetAnimationState(AnimationState::Die);
         if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
         {
@@ -161,7 +161,7 @@ void MelleMonsterController::Update()
 
     if (_isAnimating)
     {
-        animPlayingTime += dt;
+        animPlayingTime += DT;
         Rota(EnemyPos, PlayerPos);
 
         if (_currentAnimationState == AnimationState::Attack1 ||
@@ -170,9 +170,15 @@ void MelleMonsterController::Update()
         {
             float atkDuration = _attackDuration[atkType] / _FPS;
 
+            if (animPlayingTime > atkDuration / 2.0f)
+            {
+                UpdateHitBox();
+            }
             if (animPlayingTime >= atkDuration)
             {
                 atkType = rand() % 3; // 다음 공격 타입 결정
+                _hit = false;
+                _hitbox->GetCollider()->SetActive(false);
                 ResetToIdleState();
             }
             return;
@@ -222,7 +228,6 @@ void MelleMonsterController::Update()
 
     if (EnemyToPlayerdistance < AttackRange) { onAttack = true; } // 공격 범위 안에 있을 때
     else { onAttack = false; }
-    //
 
     // 상태별 애니메이션 실행
     if (BackToStart)
@@ -230,7 +235,7 @@ void MelleMonsterController::Update()
         SetAnimationState(AnimationState::Run);
         Move(EnemyPos, StartPos, _speed);
         Rota(EnemyPos, StartPos);
-        _hp = 100.f;
+        _hp = 80.0f;
         if (abs(rangeDis) < 1.f)
         {
             BackToStart = false;
@@ -250,9 +255,13 @@ void MelleMonsterController::Update()
         Move(EnemyPos, PlayerPos, _speed);
         Rota(EnemyPos, PlayerPos);
     }
-    else if (_hit)
+    else if (PlayingHitMotion)
     {
-        //OnHit(30.0f); // 맞는 데미지 입력 필요
+        //if (PlayCheckAnimating(AnimationState::Hit1))
+        //{
+            //return;
+        //}
+        PlayingHitMotion = false;
     }
     else
     {
@@ -276,13 +285,11 @@ void MelleMonsterController::Update()
 
 }
 
-
 void MelleMonsterController::SetAnimationState(AnimationState state)
 {
     _modelAnimator->ChangeAnimation(state);
     _currentAnimationState = state;
 }
-
 
 void MelleMonsterController::ResetToIdleState() {
     _isAnimating = false;
@@ -295,4 +302,54 @@ void MelleMonsterController::OnDeath()
 {
     _isDead = true;
     animPlayingTime = 0.0f;
+}
+
+void MelleMonsterController::UpdateHitBox()
+{
+    if (_hit)
+        return;
+
+    auto hitboxCollider = _hitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    _hitbox->GetTransform()->SetPosition(_transform->GetPosition()
+        + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 5.0f);
+
+    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
+
+    for (const auto& collider : nearbyColliders)
+    {
+        ObjectType type = collider->GetGameObject()->GetObjectType();
+        if (type != ObjectType::Player)
+            continue;
+
+        if (hitboxCollider->Intersects(collider))
+        {
+            auto controller = collider->GetGameObject()->GetController();
+            if (!controller)
+                continue;
+
+            auto player = dynamic_pointer_cast<PlayerController>(controller);
+            if (player)
+                player->OnDamage(_atk);
+            _hit = true;
+        }
+    }
+}
+
+bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
+{
+    SetAnimationState(state);
+
+    animPlayingTime += DT;
+    duration = _enemy->GetAnimationDuration(state) / _FPS;
+
+    if (animPlayingTime >= duration)
+    {
+        animPlayingTime = 0.0f;
+        ResetToIdleState();
+        return false;
+    }
+
+    return true; // 플레이 중
 }

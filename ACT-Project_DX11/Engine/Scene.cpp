@@ -23,6 +23,9 @@ void Scene::Start()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->Start();
 	}
 }
@@ -33,6 +36,9 @@ void Scene::Update()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->Update();
 	}
 
@@ -48,6 +54,9 @@ void Scene::FixedUpdate()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->FixedUpdate();
 	}
 }
@@ -58,6 +67,9 @@ void Scene::LateUpdate()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->LateUpdate();
 	}
 

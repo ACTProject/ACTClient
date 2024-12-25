@@ -31,7 +31,10 @@ void CreatureController::OnDamage(float damage)
     case MonoBehaviourType::ShootingMonster:
         name = "ShootingMonster";
         break;
-    case MonoBehaviourType::FinalBossMonster:
+    case MonoBehaviourType::FinalBossMonster_1:
+        name = "FinalBossMonster";
+        break;
+    case MonoBehaviourType::FinalBossMonster_2:
         name = "FinalBossMonster";
         break;
     default:
@@ -43,6 +46,7 @@ void CreatureController::OnDamage(float damage)
     {
         OnDeath();
     }
+
 }
 
 // 죽음 처리

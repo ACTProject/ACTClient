@@ -566,7 +566,7 @@ void Client::Init()
         ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
         ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f });
 
-        ENEMY->CreateFinalBoss({ 50.0f,0.f,50.0f });
+        ENEMY->CreateFinalBoss({ 10.0f,0.f,10.0f });
     }
     
 

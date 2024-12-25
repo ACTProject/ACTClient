@@ -10,7 +10,8 @@ enum class MonoBehaviourType : uint8
     Camera,
     MelleMonster,
     ShootingMonster,
-    FinalBossMonster,
+    FinalBossMonster_1,
+    FinalBossMonster_2,
 };
 
 constexpr float EPSILON = 0.01f;

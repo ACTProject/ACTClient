@@ -48,7 +48,7 @@
     <ClCompile Include="PlayerController.cpp">
       <Filter>Main\Creature</Filter>
     </ClCompile>
-    <ClCompile Include="FinalBossMonsterController.cpp">
+    <ClCompile Include="FinalBossMonsterFirstPhaseController.cpp">
       <Filter>Main\Creature</Filter>
     </ClCompile>
     <ClCompile Include="MelleMonsterController.cpp">
@@ -72,6 +72,8 @@
     <ClCompile Include="Title.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="FinalBossMonsterSecondPhaseController.cpp">
+      <Filter>Main\Creature</Filter>
     <ClCompile Include="Client2.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -92,7 +94,7 @@
     <ClInclude Include="ShootingMonsterController.h">
       <Filter>Main\Creature</Filter>
     </ClInclude>
-    <ClInclude Include="FinalBossMonsterController.h">
+    <ClInclude Include="FinalBossMonsterFirstPhaseController.h">
       <Filter>Main\Creature</Filter>
     </ClInclude>
     <ClInclude Include="MelleMonsterController.h">
@@ -113,6 +115,8 @@
     <ClInclude Include="Title.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="FinalBossMonsterSecondPhaseController.h">
+      <Filter>Main\Creature</Filter>
     <ClInclude Include="Client2.h">
       <Filter>Game</Filter>
     </ClInclude>

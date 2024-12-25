@@ -1,7 +1,8 @@
 #pragma once
 #include "../Client/ShootingMonsterController.h"
 #include "../Client/MelleMonsterController.h"
-#include "../Client/FinalBossMonsterController.h"
+#include "../Client/FinalBossMonsterFirstPhaseController.h"
+#include "../Client/FinalBossMonsterSecondPhaseController.h"
 #include "Rigidbody.h"
 #include "AABBBoxCollider.h"
 
@@ -15,7 +16,7 @@ public:
     void CreateMeleeMonster(Vec3 SpawnPos);
     void CreateShootingMonster(Vec3 SpawnPos);
     void CreateFinalBoss(Vec3 SpawnPos);
-    void CreateFinalPhase(Vec3 SpawnPos);
+    shared_ptr<GameObject> CreateFinalPhase(Vec3 SpawnPos);
 
     Vec3 Spawnpos;
 };
