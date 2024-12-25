@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Component.h"
 
 struct VertexBillboard
@@ -8,7 +8,7 @@ struct VertexBillboard
 	Vec2 scale;
 };
 
-#define MAX_BILLBOARD_COUNT 500
+#define MAX_BILLBOARD_COUNT 1500
 
 class Billboard :  public Component
 {
