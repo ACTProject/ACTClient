@@ -37,7 +37,7 @@ void PlayerController::Start()
     Super::Start();
 
     // 플레이어 스탯 초기화
-    _maxHp = 150.0f;
+    _maxHp = 400.f;
     _hp = 150.0f;
     _atk = 20.0f;
 

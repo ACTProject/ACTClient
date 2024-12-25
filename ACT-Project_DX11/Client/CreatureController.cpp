@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CreatureController.h"
+#include "PlayerController.h"
 
 
 void CreatureController::Start()
@@ -20,11 +21,20 @@ void CreatureController::OnDamage(float damage)
     _hp -= damage;
 
     string name = "";
+
+    auto controller = GetGameObject()->GetController();
+
     switch (GetMonoBehaviourType())
     {
     case MonoBehaviourType::Player:
+    {
         name = "player";
+        auto player = dynamic_pointer_cast<PlayerController>(controller);
+        float hpRatio = _hp / _maxHp;
+
         break;
+    }
+
     case MonoBehaviourType::MelleMonster:
         name = "MelleMonster";
         break;

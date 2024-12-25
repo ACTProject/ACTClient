@@ -688,7 +688,7 @@ void Client::Init()
                 for (int32 x = 0; x <= width; x++)
                 {
                     int32 idx = (width + 1) * z + x;
-                    uint8 height = expandedPixelBuffer[idx] / 255.f * 15.f;
+                    uint8 height = expandedPixelBuffer[idx] / 255.f * 10.f;
                     v[idx].position.y = height - 8.f;
                 }
             }
