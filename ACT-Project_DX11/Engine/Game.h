@@ -2,6 +2,14 @@
 
 class Iexecute;
 
+enum class SceneTag
+{
+    NONE = 0,
+    TITLE = 1,
+    INGAME = 2,
+    INGAME2 = 3,
+};
+
 struct GameDesc
 {
 	shared_ptr<class IExecute> app = nullptr;
@@ -13,6 +21,7 @@ struct GameDesc
 	bool vsync = false;
 	bool windowed = true;
 	Color clearColor = Color(0.5f, 0.5f, 0.5f, 0.5f);
+    SceneTag tag = SceneTag::NONE;
 };
 
 class Game

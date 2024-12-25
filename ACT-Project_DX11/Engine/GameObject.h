@@ -29,6 +29,7 @@ enum class ObjectType
     Environment,
     UI,
     Boss2,
+    Portal,
     // ...
 
     Unknown,

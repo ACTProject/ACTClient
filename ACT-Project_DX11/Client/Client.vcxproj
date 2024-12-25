@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h" />
+    <ClInclude Include="Client2.h" />
     <ClInclude Include="CreatureController.h" />
     <ClInclude Include="EffectTest.h" />
     <ClInclude Include="FinalBossMonsterFirstPhaseController.h" />
@@ -35,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="Client2.cpp" />
     <ClCompile Include="CreatureController.cpp" />
     <ClCompile Include="EffectTest.cpp" />
     <ClCompile Include="FinalBossMonsterFirstPhaseController.cpp" />
@@ -96,6 +98,7 @@
     <FxCompile Include="..\Shaders\28. BillBoardDemo.fx" />
     <FxCompile Include="..\Shaders\29. SnowDemo.fx" />
     <FxCompile Include="..\Shaders\DepthMapShadow.fx" />
+    <FxCompile Include="..\Shaders\Particle.fx" />
     <FxCompile Include="..\Shaders\ShadowDebug.fx" />
   </ItemGroup>
   <ItemGroup>

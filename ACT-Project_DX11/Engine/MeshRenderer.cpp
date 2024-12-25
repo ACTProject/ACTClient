@@ -84,9 +84,6 @@ void MeshRenderer::RenderSingle()
 
     _shader->PushShadowData(SHADOW->GetShadowDesc());
 
-	// Light
-	_material->Update();
-
     // Light
     _material->Update();
 

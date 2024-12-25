@@ -79,6 +79,8 @@ void PlayerController::Update()
 
     // 상호작용 처리
     HandleInteraction();
+
+    HandlePortal();
 }
 
 void PlayerController::HandleInput()
@@ -267,6 +269,25 @@ void PlayerController::HandleInteraction()
             break;
         }
         
+    }
+}
+void PlayerController::HandlePortal()
+{
+    auto playerCollider = GetGameObject()->GetCollider();
+    // 옥트리에서 충돌 가능한 객체 가져오기
+    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(playerCollider);
+
+    for (const auto& collider : nearbyColliders)
+    {
+        if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
+            return;
+
+        if (collider->Intersects(playerCollider))
+        {
+            GAME->ChangeScene(2);
+            break;
+        }
+
     }
 }
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
@@ -487,11 +508,11 @@ void PlayerController::SetDust(shared_ptr<Material> dustMaterial)
 
 void PlayerController::CreateDustEffect()
 {
-    /*auto obj = make_shared<GameObject>();
+    auto obj = make_shared<GameObject>();
     obj->AddComponent(make_shared<Particle>());
     Vec3 dustPosition = _transform->GetPosition();
     obj->GetParticle()->Create(dustPosition, Vec2(2.0f, 2.0f), RESOURCES->Get<Material>(L"Dust"));
-    CUR_SCENE->Add(obj);*/
+    CUR_SCENE->Add(obj);
 }
 
 void PlayerController::OnDeath()

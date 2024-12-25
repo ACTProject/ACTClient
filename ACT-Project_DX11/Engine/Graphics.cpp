@@ -126,44 +126,6 @@ void Graphics::CreateDepthStencilView()
 
 void Graphics::CreateShadowDepthStencilView()
 {
-    // 렌더타겟, 텍스처 생성
-    ////Texture2D
-    //{
-    //    D3D11_TEXTURE2D_DESC desc = { 0 };
-    //    ZeroMemory(&desc, sizeof(desc));
-    //    desc.Width = 1024;//static_cast<uint32>(GAME->GetGameDesc().width);
-    //    desc.Height =1024;// static_cast<uint32>(GAME->GetGameDesc().height);
-    //    desc.MipLevels = 1;
-    //    desc.ArraySize = 1;
-    //    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    //    desc.SampleDesc.Count = 1;
-    //    desc.SampleDesc.Quality = 0;
-    //    desc.Usage = D3D11_USAGE_DEFAULT;
-    //    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    //    desc.CPUAccessFlags = 0;
-    //    desc.MiscFlags = 0;
-
-    //    HRESULT hr = DEVICE->CreateTexture2D(&desc, nullptr, _shadowColorTexture.GetAddressOf());
-    //    CHECK(hr);
-    //}
-    ////SRV
-    //{
-    //    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-    //    ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-    //    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
-    //    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    //    srvDesc.Texture2D.MipLevels = 1;
-
-    //    HRESULT hr = DEVICE->CreateShaderResourceView(_shadowColorTexture.Get(), NULL, _SRV.GetAddressOf());
-    //    CHECK(hr);
-    //}
-    ////RTV
-    //{
-    //    HRESULT hr = DEVICE->CreateRenderTargetView(_shadowColorTexture.Get(), NULL, _shadowRenderTargetView.GetAddressOf());
-    //    CHECK(hr);
-    //}
-
-
     // DepthStencilView 생성
     // Texture2D
     ComPtr<ID3D11Texture2D> pDSTexture = nullptr;
@@ -255,10 +217,11 @@ void Graphics::OnResize(float width, float height)
     CreateDepthStencilView();
 
     // 섀도우 렌타뷰 깊이스탠실 다시 생성
-    CreateShadowDepthStencilView();
+    //CreateShadowDepthStencilView();
 
     // 뷰포트 업데이트
     SetViewport(width, height);
+    _oldVp.Set(_vp.GetWidth(), _vp.GetHeight());
 
     if (CUR_SCENE->GetMainCamera())
     {
