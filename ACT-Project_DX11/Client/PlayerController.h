@@ -2,6 +2,7 @@
 #include "MonoBehaviour.h"
 #include "Camera.h"
 #include "CreatureController.h"
+#include "ObjectPool.h"
 
 class Model;
 class ModelAnimator;
@@ -26,7 +27,7 @@ public:
 	void InteractWithShell(shared_ptr<GameObject> gameObject);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
-    void SetDust(shared_ptr<Material> dustMaterial);
+    void SetDust(shared_ptr<ObjectPool<GameObject>> dust) { _dustPool = dust; }
 
     // Handle
     void HandleInput();         // 입력 처리
@@ -65,6 +66,7 @@ private:
     shared_ptr<GameObject> _camera;
 	shared_ptr<GameObject> _hitbox;
 	shared_ptr<Rigidbody> _rigidbody;
+    shared_ptr<ObjectPool<GameObject>> _dustPool;
 
 private:
 	float _FPS;

@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "ObjectPool.h"
 class MonoBehaviour;
 class Transform;
 class Camera;
@@ -82,6 +83,9 @@ public:
     ObjectType GetObjectType() const { return _type; }
     void SetObjectType(ObjectType type) { _type = type; }
 
+    void SetPool(ObjectPool<GameObject>* pool) { _pool = pool; }
+    ObjectPool<GameObject>* GetPool() { return _pool; }
+
 protected:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> _components;
 	vector<shared_ptr<MonoBehaviour>> _scripts;
@@ -92,5 +96,7 @@ protected:
 private:
     shared_ptr<MonoBehaviour> _controller = nullptr;
     ObjectType _type = ObjectType::Unknown;
+
+    ObjectPool<GameObject>* _pool = nullptr;
 };
 

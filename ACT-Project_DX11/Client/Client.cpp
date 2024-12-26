@@ -435,7 +435,7 @@ void Client::Init()
     {
         auto portal = make_shared<GameObject>();
         portal->SetObjectType(ObjectType::Portal);
-        portal->GetOrAddTransform()->SetPosition(Vec3(424.f, 10.f, 335.f));
+        portal->GetOrAddTransform()->SetPosition(Vec3(424.f, 1.f, 335.f));
         portal->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> portalModel = make_shared<Model>();
@@ -443,12 +443,15 @@ void Client::Init()
             portalModel->ReadModel(L"Shell/Shell_SodaCan");
             portalModel->ReadMaterial(L"Shell/Shell_SodaCan");
         }
+
         shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
         portal->AddComponent(mr);
         {
             portal->GetModelRenderer()->SetModel(portalModel);
             portal->GetModelRenderer()->SetPass(1);
         }
+
+        // Collider
         auto collider = make_shared<AABBBoxCollider>();
         collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(10.f, 10.f, 3.f)));
         collider->SetOffset(Vec3(0.f, 1.f, 0.f));
@@ -526,16 +529,24 @@ void Client::Init()
 	hitbox->Craete(player, Vec3(1.5f));
 	CUR_SCENE->Add(hitboxGO);
 
+    // Dust
+    auto dustObject = make_shared<GameObject>();
+    dustObject->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
+    dustObject->AddComponent(make_shared<Particle>());
     // Material
-    shared_ptr<Material> dustMaterial = make_shared<Material>();
-    dustMaterial->SetShader(particleShader);
-    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
-    dustMaterial->SetDiffuseMap(texture);
-    MaterialDesc& desc = dustMaterial->GetMaterialDesc();
-    desc.ambient = Vec4(1.f);
-    desc.diffuse = Vec4(1.f);
-    desc.specular = Vec4(1.f);
-    RESOURCES->Add(L"Dust", dustMaterial);
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(particleShader);
+        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Dust", material);
+
+        dustObject->GetParticle()->SetMaterial(material);
+    }
     
 
 	// Player::PlayerScript
@@ -544,7 +555,7 @@ void Client::Init()
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
-    playerScript->SetDust(dustMaterial);
+   
 
     player->SetController(playerScript);
 	player->AddComponent(playerScript);

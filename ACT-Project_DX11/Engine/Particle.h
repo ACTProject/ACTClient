@@ -18,6 +18,7 @@ struct VertexParticle
 
 #define MAX_BILLBOARD_COUNT 500
 
+
 class Particle : public Component
 {
 	using Super = Component;
@@ -27,14 +28,13 @@ public:
 	~Particle();
 
 public:
-
-    void Create(Vec3 screenPos, Vec2 size, shared_ptr<Material> material);
     void Update();
     void Add(Vec3 position, Vec2 scale);
 
     void SetMaterial(shared_ptr<Material> material) { _material = material; }
     void SetPass(uint8 pass) { _pass = pass; }
     shared_ptr<Material> GetMaterial() { return _material; }
+
 
 private:
     vector<VertexParticle> _vertices;
@@ -52,7 +52,5 @@ private:
 
     float _lifetime = 10.0f;
     float _fadeStart = 2.0f;
-
-    
 };
 

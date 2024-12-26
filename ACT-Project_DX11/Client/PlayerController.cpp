@@ -13,6 +13,7 @@
 #include "FinalBossMonsterController.h"
 #include "Material.h"
 #include "Particle.h"
+#include "ObjectPool.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -148,7 +149,6 @@ void PlayerController::HandleMovement()
         Vec3 newPosition = oldPosition + _moveDir * speed * dt;
 
         Ray ray(oldPosition, _moveDir);
-
         vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(ray);
         for (const auto& collider : nearbyColliders)
         {
@@ -177,6 +177,11 @@ void PlayerController::HandleMovement()
                 angle = -angle;
 
             _transform->SetRotation(_transform->GetLocalRotation() + Vec3(0, angle, 0));
+        }
+        _dustTimer += TIME->GetDeltaTime();
+        if (_dustTimer >= _dustInterval) {
+            CreateDustEffect();
+            _dustTimer = 0.0f; // 타이머 초기화
         }
     }
 }
@@ -485,18 +490,20 @@ void PlayerController::ResetToIdleState() {
 	SetAnimationState(AnimationState::Idle);
 }
 
-void PlayerController::SetDust(shared_ptr<Material> dustMaterial)
-{
-    RESOURCES->Add(L"Dust", dustMaterial);
-}
-
 void PlayerController::CreateDustEffect()
 {
-    auto obj = make_shared<GameObject>();
-    obj->AddComponent(make_shared<Particle>());
-    Vec3 dustPosition = _transform->GetPosition();
-    obj->GetParticle()->Create(dustPosition, Vec2(2.0f, 2.0f), RESOURCES->Get<Material>(L"Dust"));
-    CUR_SCENE->Add(obj);
+    //auto dustObject = _dustPool->GetPool(); // 풀에서 가져오기
+    //dustObject->GetOrAddTransform()->SetLocalPosition(_transform->GetPosition());
+    //dustObject->GetParticle()->Add(_transform->GetPosition(), Vec2(2.0f, 2.0f));
+    //CUR_SCENE->Add(dustObject);
+    if (!_dustPool)
+        return;
+
+    auto dustObject = _dustPool->Get(); // 풀에서 오브젝트 가져오기
+    dustObject->SetActive(true);       // 활성화
+    dustObject->GetOrAddTransform()->SetLocalPosition(_transform->GetPosition());
+    dustObject->GetParticle()->Add(_transform->GetPosition(), Vec2(2.0f, 2.0f));
+    CUR_SCENE->Add(dustObject);
 }
 
 void PlayerController::OnDeath()
