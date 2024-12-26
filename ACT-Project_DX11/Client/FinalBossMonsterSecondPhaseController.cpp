@@ -29,10 +29,6 @@ bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState st
         return false;
     }
 
-    /*MyCoroutine attackCoroutine = EnemyCoroutine(this, duration);
-    currentEnemyCoroutine = attackCoroutine.GetHandler();
-    currentEnemyCoroutine.resume();*/
-
     return true; // 플레이 중
 }
 

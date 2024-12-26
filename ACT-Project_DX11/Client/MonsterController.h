@@ -10,5 +10,26 @@ class MonsterController : public CreatureController
 public:
     void Start() override;
     void Update() override;
+
+    void Die();
+    bool PlayCheckAnimating(AnimationState state);
+    void ResetToIdleState();
+    void SetAnimationState(AnimationState state);
+
+    bool _isDead = false;
+    float animPlayingTime = 0.0f;
+
+    float _FPS;
+    float duration;
+    float distance;
+    Vec3 direction;
+
+
+    shared_ptr<Model> _enemy;
+    shared_ptr<GameObject> _hitbox;
+    shared_ptr<ModelAnimator> _modelAnimator;
+    shared_ptr<Transform> _transform;
+    shared_ptr<GameObject> _player;
+    AnimationState _currentAnimationState = AnimationState::Idle;
 };
 
