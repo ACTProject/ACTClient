@@ -231,6 +231,7 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetPass(3);
                 obj->GetMeshRenderer()->SetAlphaBlend(false);
+                obj->SetObjectType(ObjectType::MapMesh);
             } 
             else
             {
@@ -245,15 +246,15 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
         if (_mapSelectDesc->isCollision == true)
         {
             auto collider = make_shared<AABBBoxCollider>();
-            collider->GetBoundingBox() = obj->GetTransform()->GenerateBoundingBox();
+            collider->SetBoundingBox(BoundingBox(obj->GetTransform()->GenerateBoundingBox().Center, _mapSelectDesc->extent));
+            collider->SetOffset(_mapSelectDesc->offset);
             obj->AddComponent(collider);
             OCTREE->InsertCollider(collider);
+            COLLISION->AddCollider(collider);
         }
     }
     _mapObjList.push_back(obj);
     return obj;
-
-
 }
 
 
@@ -285,6 +286,7 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetPass(3);
                 obj->GetMeshRenderer()->SetAlphaBlend(false);
+                obj->SetObjectType(ObjectType::MapMesh);
             }
             else
             {
@@ -303,6 +305,7 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
             collider->SetOffset(desc.offset);
             collider->SetBoundingBox(BoundingBox(collider->GetBoundingBox().Center, desc.extent));
             OCTREE->InsertCollider(collider);
+            COLLISION->AddCollider(collider);
         }
     }
     _mapObjList.push_back(obj);

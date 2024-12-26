@@ -99,6 +99,8 @@ technique11 T0 // 인스턴싱 렌더링
 	PASS_VP(P2, VS_InstancingAnimation, PS)
 	PASS_VP(P3, VS_InstancingMesh, PS_NoShadow)
 	PASS_VP(P4, VS_InstancingModel, PS_NoShadow)
+	PASS_VP(P5, VS_InstancingAnimation, PS_NoShadow)
+
 };
 
 technique11 T1 // 싱글 렌더링
@@ -108,6 +110,8 @@ technique11 T1 // 싱글 렌더링
 	PASS_VP(P2, VS_Animation, PS)
 	PASS_VP(P3, VS_Mesh, PS_NoShadow)
 	PASS_VP(P4, VS_Model, PS_NoShadow)
+    PASS_VP(P5, VS_Animation, PS_NoShadow)
+
 };
 
 technique11 T2 // 와이어프레임 인스턴싱
