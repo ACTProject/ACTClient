@@ -30,7 +30,6 @@ public:
     void UpdateHitBox();
 
 public:
-    void OnDeath() override;
     bool PlayingHitMotion = false;
 private:
     bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
@@ -51,13 +50,13 @@ private:
     float distance;
     Vec3 direction;
     float rangeDis;
-    float duration;
+    float animDuration;
     int atkType = 0;
 
 	bool hasPatrolTarget = false;
     bool BackToStart = false;
     bool isFirstTime = false;
-    bool chaseState = false;             //추격
+    bool chaseState = true;              //추격
     bool punchState = false;             //펀치 
     bool isExecuted_1 = false;
 

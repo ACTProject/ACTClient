@@ -72,7 +72,7 @@ void MelleMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 
 void MelleMonsterController::Punch(int type)
 {
-    if (animPlayingTime >= duration / 2.0f)
+    if (animPlayingTime >= animDuration / 2.0f)
     {
         UpdateHitBox();
     }
@@ -92,7 +92,6 @@ void MelleMonsterController::Aggro()
     }
     isFirstTime = true;
 }
-
 
 void MelleMonsterController::Start()
 {
@@ -127,13 +126,23 @@ void MelleMonsterController::Update()
     distance = direction.Length();
     rangeDis = (EnemyPos - StartPos).Length();
 
-    if (_hp < 0.0f)
+    if (_hp <= 0.0f)
     {
-        Super::Die();
-        std::cout << "Melle Monster has been defeated!" << std::endl;
+        if (PlayCheckAnimating(AnimationState::Die))
+        {
+            return;
+        }
+        Super::OnDeath();
+        std::cout << "Melle Monster Died!" << std::endl;
 
         return;
     }
+
+    if (INPUT->GetButton(KEY_TYPE::KEY_4))
+    {
+        int a = 0;
+    }
+
 
     // 범위 검사
     if (rangeDis > 50.f) // 초기 위치에서 너무 멀리 떨어지면 복귀
@@ -165,8 +174,10 @@ void MelleMonsterController::Update()
     if (!isFirstTime && !chaseState)
     {
         Aggro();
+        return;
     }
-    else if (!chaseState)
+
+    if (!chaseState)
     {
         if (distance < AttackRange)
         {
@@ -228,17 +239,6 @@ void MelleMonsterController::Update()
 
 }
 
-void MelleMonsterController::SetAnimationState(AnimationState state)
-{
-    _modelAnimator->ChangeAnimation(state);
-    _currentAnimationState = state;
-}
-
-void MelleMonsterController::ResetToIdleState()
-{
-    SetAnimationState(AnimationState::Idle);
-}
-
 void MelleMonsterController::UpdateHitBox()
 {
     if (_hit)
@@ -277,9 +277,9 @@ bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
     SetAnimationState(state);
 
     animPlayingTime += DT;
-    duration = _enemy->GetAnimationDuration(state) / _FPS;
+    animDuration = _enemy->GetAnimationDuration(state) / _FPS;
 
-    if (animPlayingTime >= duration)
+    if (animPlayingTime >= animDuration)
     {
         animPlayingTime = 0.0f;
         ResetToIdleState();
@@ -289,6 +289,16 @@ bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
     return true; // 플레이 중
 }
 
+void MelleMonsterController::SetAnimationState(AnimationState state)
+{
+    _modelAnimator->ChangeAnimation(state);
+    _currentAnimationState = state;
+}
+
+void MelleMonsterController::ResetToIdleState()
+{
+    SetAnimationState(AnimationState::Idle);
+}
 
 void MelleMonsterController::ResetHit()
 {
