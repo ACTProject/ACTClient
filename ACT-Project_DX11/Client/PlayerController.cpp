@@ -392,7 +392,7 @@ void PlayerController::UpdateHitBox()
             {
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
-                    melleMonster->OnDamage(_atk);
+                    melleMonster->OnDamage(GetGameObject(), _atk);
                     melleMonster->PlayingHitMotion = true;
                 break;
             }
@@ -400,7 +400,7 @@ void PlayerController::UpdateHitBox()
             {
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
-                    shootingMonster->OnDamage(_atk);
+                    shootingMonster->OnDamage(GetGameObject(), _atk);
                     shootingMonster->PlayingHitMotion = true;
                 break;
             }
@@ -409,7 +409,7 @@ void PlayerController::UpdateHitBox()
                 auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterFirstPhaseController>(controller);
                 if (FinalBossMonster)
                 {
-                    FinalBossMonster->OnDamage(_atk);
+                    FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
                 }
                 break;
@@ -419,7 +419,7 @@ void PlayerController::UpdateHitBox()
                 auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterSecondPhaseController>(controller);
                 if (FinalBossMonster)
                 {
-                    FinalBossMonster->OnDamage(_atk);
+                    FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
                 }
                 break;

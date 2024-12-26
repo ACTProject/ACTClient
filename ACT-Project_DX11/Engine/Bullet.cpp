@@ -46,7 +46,7 @@ void Bullet::UpdateHitBox()
 
             auto player = dynamic_pointer_cast<PlayerController>(controller);
             if (player)
-                player->OnDamage(10.0f);
+                player->OnDamage(GetGameObject(), 10.0f);
             _isHit = true;
             Remove();
         }
