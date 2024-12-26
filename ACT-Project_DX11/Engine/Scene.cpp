@@ -336,6 +336,11 @@ vector<shared_ptr<GameObject>> Scene::FrustumCulling(const vector<shared_ptr<Gam
             continue;
         }
 
+        if (object->GetParticle())
+        {
+            visibleObjects.push_back(object);
+            continue;
+        }
         if (object->GetObjectType() == ObjectType::MapMesh)
         {
             visibleObjects.push_back(object);
