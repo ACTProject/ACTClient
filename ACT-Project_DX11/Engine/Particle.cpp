@@ -3,7 +3,6 @@
 #include "MeshRenderer.h"
 #include "Camera.h"
 #include "material.h"
-#include "ObjectPool.h"
 
 Particle::Particle() : Super(ComponentType::Particle)
 {
@@ -45,11 +44,6 @@ void Particle::Update()
         if (obj)
         {
             CUR_SCENE->Remove(obj);
-            auto pool = obj->GetPool();
-            if (pool)
-            {
-                pool->Return(obj);
-            }
         }
         return;
     }
@@ -89,7 +83,7 @@ void Particle::Update()
 
     shader->PushParticleData(desc);
 
-    /*float scaleFactor = 1.0f + _elapsedTime * 0.001f;
+    /*float scaleFactor = 1.0f + _elapsedTime * 0.0001f;
     auto transform = _gameObject.lock()->GetTransform();
     transform->SetScale(transform->GetScale() * scaleFactor);*/
 

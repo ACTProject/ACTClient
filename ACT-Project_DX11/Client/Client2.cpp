@@ -38,7 +38,6 @@
 #include "Frustum.h"
 #include "Shadow.h"
 #include "Particle.h"
-#include "ObjectPool.h"
 
 void Client2::Init()
 {
@@ -503,30 +502,11 @@ void Client2::Init()
 	hitbox->Craete(player, Vec3(1.5f));
 	CUR_SCENE->Add(hitboxGO);
 
-    //// Dust
-    //auto dustObject = make_shared<GameObject>();
-    //dustObject->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
-    //dustObject->AddComponent(make_shared<Particle>());
-    //// Material
-    //{
-    //    shared_ptr<Material> material = make_shared<Material>();
-    //    material->SetShader(particleShader);
-    //    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
-    //    material->SetDiffuseMap(texture);
-    //    MaterialDesc& desc = material->GetMaterialDesc();
-    //    desc.ambient = Vec4(1.f);
-    //    desc.diffuse = Vec4(1.f);
-    //    desc.specular = Vec4(1.f);
-    //    RESOURCES->Add(L"Dust", material);
-
-    //    dustObject->GetParticle()->SetMaterial(material);
-    //}
-    /*dustObject->GetParticle()->Add(Vec3(40, 10, 40), Vec2(2, 2));
-    CUR_SCENE->Add(dustObject);*/
-    // Material 생성
+    
+    // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
     dustMaterial->SetShader(particleShader);
-    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
+    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.png");
     dustMaterial->SetDiffuseMap(texture);
     MaterialDesc& desc = dustMaterial->GetMaterialDesc();
     desc.ambient = Vec4(1.f);
@@ -535,19 +515,6 @@ void Client2::Init()
     RESOURCES->Add(L"Dust", dustMaterial);
 
 
-    // ObjectPool 생성 
-    auto dustPool = make_shared<ObjectPool<GameObject>>(
-        50,//크기
-        [dustMaterial]()
-        {
-            auto dustObject = make_shared<GameObject>();
-            dustObject->AddComponent(make_shared<Particle>());
-            dustObject->GetParticle()->SetMaterial(dustMaterial);
-            dustObject->SetActive(false);
-            return dustObject;
-        }
-    );
-
 
 	// Player::PlayerScript
 	shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
@@ -555,7 +522,7 @@ void Client2::Init()
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
-    playerScript->SetDust(dustPool);
+    playerScript->SetDust(dustMaterial);
 
     player->SetController(playerScript);
 	player->AddComponent(playerScript);

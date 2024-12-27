@@ -529,24 +529,16 @@ void Client::Init()
 	hitbox->Craete(player, Vec3(1.5f));
 	CUR_SCENE->Add(hitboxGO);
 
-    // Dust
-    auto dustObject = make_shared<GameObject>();
-    dustObject->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
-    dustObject->AddComponent(make_shared<Particle>());
-    // Material
-    {
-        shared_ptr<Material> material = make_shared<Material>();
-        material->SetShader(particleShader);
-        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
-        material->SetDiffuseMap(texture);
-        MaterialDesc& desc = material->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"Dust", material);
-
-        dustObject->GetParticle()->SetMaterial(material);
-    }
+    // Dust Material 생성
+    shared_ptr<Material> dustMaterial = make_shared<Material>();
+    dustMaterial->SetShader(particleShader);
+    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.png");
+    dustMaterial->SetDiffuseMap(texture);
+    MaterialDesc& desc = dustMaterial->GetMaterialDesc();
+    desc.ambient = Vec4(1.f);
+    desc.diffuse = Vec4(1.f);
+    desc.specular = Vec4(1.f);
+    RESOURCES->Add(L"Dust", dustMaterial);
     
 
 	// Player::PlayerScript
@@ -555,7 +547,7 @@ void Client::Init()
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
-   
+    playerScript->SetDust(dustMaterial);
 
     player->SetController(playerScript);
 	player->AddComponent(playerScript);

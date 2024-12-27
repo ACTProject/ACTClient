@@ -50,7 +50,7 @@ private:
 
     shared_ptr<Material> _material;
 
-    float _lifetime = 10.0f;
-    float _fadeStart = 2.0f;
+    float _lifetime = 3.0f;
+    float _fadeStart = 1.0f;
 };
 

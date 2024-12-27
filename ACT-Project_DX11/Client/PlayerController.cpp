@@ -13,7 +13,6 @@
 #include "FinalBossMonsterController.h"
 #include "Material.h"
 #include "Particle.h"
-#include "ObjectPool.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -490,19 +489,21 @@ void PlayerController::ResetToIdleState() {
 	SetAnimationState(AnimationState::Idle);
 }
 
+void PlayerController::SetDust(shared_ptr<Material> dust)
+{
+    _dustMaterial = dust;
+    RESOURCES->Add(L"Dust", dust);
+}
 void PlayerController::CreateDustEffect()
 {
-    //auto dustObject = _dustPool->GetPool(); // 풀에서 가져오기
-    //dustObject->GetOrAddTransform()->SetLocalPosition(_transform->GetPosition());
-    //dustObject->GetParticle()->Add(_transform->GetPosition(), Vec2(2.0f, 2.0f));
-    //CUR_SCENE->Add(dustObject);
-    if (!_dustPool)
-        return;
+    auto dustObject = make_shared<GameObject>();
+    dustObject->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
+    dustObject->AddComponent(make_shared<Particle>());
 
-    auto dustObject = _dustPool->Get(); // 풀에서 오브젝트 가져오기
-    dustObject->SetActive(true);       // 활성화
-    dustObject->GetOrAddTransform()->SetLocalPosition(_transform->GetPosition());
-    dustObject->GetParticle()->Add(_transform->GetPosition(), Vec2(2.0f, 2.0f));
+    Vec3 dustPosition = _transform->GetPosition();
+
+    dustObject->GetParticle()->SetMaterial(_dustMaterial);
+    dustObject->GetParticle()->Add(dustPosition, Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(dustObject);
 }
 

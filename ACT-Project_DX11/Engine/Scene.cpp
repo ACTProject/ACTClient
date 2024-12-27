@@ -318,6 +318,12 @@ vector<shared_ptr<GameObject>> Scene::FrustumCulling(const vector<shared_ptr<Gam
             continue;
         }
 
+        /*if (object->GetParticle())
+        {
+            visibleObjects.push_back(object);
+            continue;
+        }*/
+
         // 객체가 비활성화되어 있으면 무시
         if (!object->IsActive())
             continue;

@@ -250,9 +250,6 @@
     <ClCompile Include="Particle.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectPool.cpp">
-      <Filter>03. GameObject</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelMesh.h">
@@ -515,9 +512,6 @@
     </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>04. Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectPool.h">
-      <Filter>03. GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
