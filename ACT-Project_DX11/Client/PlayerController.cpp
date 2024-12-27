@@ -162,8 +162,6 @@ void PlayerController::HandleMovement()
             if (collider->Intersects(ray, distance) && distance <= speed * dt)
                 return; // 충돌 시 이동 취소
         }
-
-        CreateDustEffect();
         _transform->SetPosition(newPosition);
 
         // 방향에 따라 회전
@@ -182,6 +180,10 @@ void PlayerController::HandleMovement()
 
             _transform->SetRotation(_transform->GetLocalRotation() + Vec3(0, angle, 0));
         }
+        _dustTimer += TIME->GetDeltaTime();
+        if (_dustTimer >= _dustInterval) {
+            CreateDustEffect();
+            _dustTimer = 0.0f; // 타이머 초기화
     }
 }
 
@@ -361,7 +363,6 @@ void PlayerController::PlayAttackAnimation(int stage)
 		break;
 	}
 }
-
 void PlayerController::UpdateHitBox()
 {
     if (!_hitbox || _isHit)
@@ -504,18 +505,22 @@ void PlayerController::ResetToIdleState() {
 	SetAnimationState(AnimationState::Idle);
 }
 
-void PlayerController::SetDust(shared_ptr<Material> dustMaterial)
+void PlayerController::SetDust(shared_ptr<Material> dust)
 {
-    RESOURCES->Add(L"Dust", dustMaterial);
+    _dustMaterial = dust;
+    RESOURCES->Add(L"Dust", dust);
 }
-
 void PlayerController::CreateDustEffect()
 {
-    auto obj = make_shared<GameObject>();
-    obj->AddComponent(make_shared<Particle>());
+    auto dustObject = make_shared<GameObject>();
+    dustObject->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
+    dustObject->AddComponent(make_shared<Particle>());
+
     Vec3 dustPosition = _transform->GetPosition();
-    obj->GetParticle()->Create(dustPosition, Vec2(2.0f, 2.0f), RESOURCES->Get<Material>(L"Dust"));
-    CUR_SCENE->Add(obj);
+
+    dustObject->GetParticle()->SetMaterial(_dustMaterial);
+    dustObject->GetParticle()->Add(dustPosition, Vec2(4.0f, 4.0f));
+    CUR_SCENE->Add(dustObject);
 }
 
 void PlayerController::OnDeath()

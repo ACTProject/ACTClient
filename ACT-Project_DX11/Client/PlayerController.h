@@ -26,7 +26,7 @@ public:
 	void InteractWithShell(shared_ptr<GameObject> gameObject);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
-    void SetDust(shared_ptr<Material> dustMaterial);
+    void SetDust(shared_ptr<Material> dust);
 
     // Handle
     void HandleInput();         // 입력 처리
@@ -112,7 +112,8 @@ private:
 	AnimationState _currentAnimationState = AnimationState::Idle;
 
     // Dust
-    float _dustInterval = 0.5f;
+    shared_ptr<Material> _dustMaterial;
+    float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
 };
 

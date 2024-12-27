@@ -1,75 +1,55 @@
 #include "00. Global.fx"
 #include "00. Light.fx"
 #include "00. Render.fx"
-
 cbuffer ParticleBuffer
 {
     float time;
     float lifetime;
     float fadeStart;
 };
-
-float4 PS_Collision() : SV_TARGET
+struct VertexInput
 {
-    return float4(1.0f, 1.0f, 1.0f, 1.0f);
-}
-MeshOutput VS_InstancingMesh_Particle(InstancingVertexMesh input)
-{
-    MeshOutput output;
+    float4 position : POSITION;
+    float2 uv : TEXCOORD;
+    float2 scale : SCALE;
+};
 
-    float4 position = mul(input.position, input.world);
-    
+struct V_OUT
+{
+    float4 position : SV_POSITION;
+    float2 uv : TEXCOORD;
+};
+
+V_OUT VS(VertexInput input)
+{
+    V_OUT output;
+
+    float4 position = mul(input.position, W);
+
     float3 up = float3(0, 1, 0);
     float3 forward = position.xyz - CameraPosition();
     float3 right = normalize(cross(up, forward));
-    
-    position.xyz += (input.uv.x - 0.5f) * right;
-    position.xyz += (1.0f - input.uv.y - 0.5f) * up;
+
+    // 시간에 따른 스케일 증가 계산
+    float lifetimeRatio = saturate(time / lifetime); // 0.0 ~ 1.0
+    float scaleFactor = 1.0f + lifetimeRatio; // 1.0에서 시작해 2.0까지 커짐
+
+    float2 currentScale = input.scale * scaleFactor;
+
+    // 위치 변환에 스케일 적용
+    position.xyz += (input.uv.x - 0.5f) * right * currentScale.x;
+    position.xyz += (1.0f - input.uv.y - 0.5f) * up * currentScale.y;
     position.w = 1.0f;
-    
-    output.worldPosition = position;
-    output.position = mul(position, VP);
+
+    output.position = mul(mul(position, V), P);
+
     output.uv = input.uv;
-    output.normal = input.normal;
 
     return output;
 }
 
-// ************** SingleMeshRender ****************
-
-MeshOutput VS_Mesh_Particle(VertexTextureNormal input)
+float4 PS(V_OUT input) : SV_Target
 {
-        MeshOutput output;
-
-    // 월드 공간 위치로 변환
-        float4 position = mul(input.position, W);
-
-    // 카메라 위치와 방향 계산
-        float3 cameraPosition = CameraPosition();
-        float3 forward = normalize(cameraPosition - position.xyz); // 카메라 -> 입자 방향
-        float3 right = normalize(cross(float3(0, 1, 0), forward)); // 카메라 오른쪽 벡터
-        float3 up = cross(forward, right); // 카메라 위쪽 벡터
-
-    // UV 좌표를 기준으로 빌보드 정점 위치 계산
-        float2 uvOffset = input.uv - float2(0.5, 0.5); // UV 중심 기준으로 [-0.5, 0.5]
-        position.xyz += uvOffset.x * right; // 오른쪽 방향 오프셋
-        position.xyz += uvOffset.y * up; // 위쪽 방향 오프셋
-
-        position.w = 1.0f; // w 컴포넌트 설정
-
-    // 출력 설정
-        output.worldPosition = position; // 월드 좌표 저장
-        output.position = mul(position, VP); // 클립 공간 변환
-        output.uv = input.uv; // UV 전달
-        output.normal = forward; // 입자의 정면 방향 설정
-
-        return output;
-}
-
-float4 PS(MeshOutput input) : SV_TARGET
-{
-	//float4 color = ComputeLight(input.normal, input.uv, input.worldPosition);
-
     float4 color = DiffuseMap.Sample(LinearSampler, input.uv);
    
     float alpha = 1.0f;
@@ -80,11 +60,15 @@ float4 PS(MeshOutput input) : SV_TARGET
     
     color.a *= alpha;
     
+    if (color.a <= 0.8f)
+    {
+        discard;
+    }
+    
     return color;
 }
 
-
-technique11 T0 // 인스턴싱 렌더링
+technique11 T0
 {
 	PASS_VP(P0, VS_InstancingMesh_Particle, PS)
 	PASS_VP(P1, VS_InstancingModel, PS)

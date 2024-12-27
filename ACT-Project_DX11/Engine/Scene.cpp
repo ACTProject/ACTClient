@@ -332,6 +332,7 @@ vector<shared_ptr<GameObject>> Scene::FrustumCulling(const vector<shared_ptr<Gam
             continue;
         }
 
+
         if (object->GetSkybox())
         {
             visibleObjects.push_back(object);

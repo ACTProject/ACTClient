@@ -473,19 +473,7 @@ void Client2::Init()
         hitbox->Craete(player, Vec3(1.5f));
         CUR_SCENE->Add(hitboxGO);
 
-        // Material
-        shared_ptr<Material> dustMaterial = make_shared<Material>();
-        dustMaterial->SetShader(particleShader);
-        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
-        dustMaterial->SetDiffuseMap(texture);
-        MaterialDesc& desc = dustMaterial->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"Dust", dustMaterial);
-
-
-        // Player::PlayerScript
+              // Player::PlayerScript
         shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
         playerScript->SetPlayer(playerModel);
@@ -499,8 +487,55 @@ void Client2::Init()
         CUR_SCENE->Add(player);
         CUR_SCENE->SetPlayer(player);
     }
-	
+        // Material
+        shared_ptr<Material> dustMaterial = make_shared<Material>();
+        dustMaterial->SetShader(particleShader);
+        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
+        dustMaterial->SetDiffuseMap(texture);
+        MaterialDesc& desc = dustMaterial->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Dust", dustMaterial);
+    
+        // Dust Material 생성
+        shared_ptr<Material> dustMaterial = make_shared<Material>();
+        dustMaterial->SetShader(particleShader);
+        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.png");
+        dustMaterial->SetDiffuseMap(texture);
+        MaterialDesc& desc = dustMaterial->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Dust", dustMaterial);
+   
 
+	// Skybox
+	{
+		// Material
+		{
+			auto createMaterial = [&](const wstring& texturePath, const wstring& materialName)
+			{
+				shared_ptr<Material> material = make_shared<Material>();
+				material->SetShader(renderBoxShader);
+				auto texture = RESOURCES->Load<Texture>(materialName, texturePath);
+				material->SetDiffuseMap(texture);
+
+				MaterialDesc& desc = material->GetMaterialDesc();
+				desc.ambient = Vec4(1.f);
+				desc.diffuse = Vec4(1.f);
+				desc.specular = Vec4(1.f);
+
+				RESOURCES->Add(materialName, material);
+			};
+			createMaterial(L"..\\Resources\\Textures\\SkyBox\\Cubemap_Front.png", L"Cubemap_Front");
+			createMaterial(L"..\\Resources\\Textures\\SkyBox\\Cubemap_Back.png", L"Cubemap_Back");
+			createMaterial(L"..\\Resources\\Textures\\SkyBox\\Cubemap_Left.png", L"Cubemap_Left");
+			createMaterial(L"..\\Resources\\Textures\\SkyBox\\Cubemap_Right.png", L"Cubemap_Right");
+			createMaterial(L"..\\Resources\\Textures\\SkyBox\\Cubemap_Top.png", L"Cubemap_Top");
+			createMaterial(L"..\\Resources\\Textures\\SkyBox\\Cubemap_Bottom.png", L"Cubemap_Bottom");
+    }
+  }
 
     // Scene2 Terrain Material
         {
