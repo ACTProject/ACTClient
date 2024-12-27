@@ -119,9 +119,9 @@ void MelleMonsterController::Update()
     PlayerPos = _player->GetTransform()->GetPosition();
     EnemyPos = _transform->GetPosition();
 
+    _FPS = static_cast<float>(TIME->GetFps());
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
-    _FPS = static_cast<float>(TIME->GetFps());
 
     direction = PlayerPos - EnemyPos;
     distance = direction.Length();
@@ -201,14 +201,15 @@ void MelleMonsterController::Update()
         }
         else
         {
-            if (PlayingHitMotion && rand() % 3 == 0)
+            int randomHit = rand() % 3;
+            if (PlayingHitMotion && randomHit == 0)
             {
                 if (PlayCheckAnimating(AnimationState::Hit1))
                 {
                     return;
                 }
-                PlayingHitMotion = false;
             }
+            PlayingHitMotion = false;
             Rota(EnemyPos, PlayerPos);
             Move(EnemyPos, PlayerPos, _speed);
         }

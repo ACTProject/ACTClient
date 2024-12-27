@@ -163,15 +163,15 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
     }
     else
     {
-        if (PlayingHitMotion)
+        int randomHit = rand() % 3;
+        if (PlayingHitMotion && randomHit == 0)
         {
             if (PlayCheckAnimating(AnimationState::Hit1))
             {
-                lastTime = currentTime - 0.8f;
                 return;
             }
-            PlayingHitMotion = false;
         }
+        PlayingHitMotion = false;
         Rota(bossPos, playerPos);
     }
 

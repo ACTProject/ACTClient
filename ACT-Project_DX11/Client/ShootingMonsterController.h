@@ -53,38 +53,31 @@ public:
 public:
     void OnDeath() override;
     bool PlayingHitMotion = false;
-
-public:
-    float duration;
-    float distance;
-    Vec3 direction;
-    Vec3 CurForward;
-    Vec3 EnemyPos;
-    Vec3 PlayerPos;
-    Vec3 patrolTarget;
-    int atkType = 1;
-    bool _isAnimating = false;
-
 private:
     float _speed;
     float _hp;
     float _atk;
-    bool onTarget = false;
-    bool onRange = false;
-    bool BackToStart = false;
+
+    float duration;
+    float distance;
+    Vec3 direction;
+    float rangeDis;
     float dt;
     float _FPS;
+
+    Vec3 CurForward;
+    Vec3 EnemyPos;
+    Vec3 PlayerPos;
+    Vec3 patrolTarget;
     Vec3 StartPos;
-    float rangeDis;
-    bool onAttack = false;
-    float _attackDuration;
-    float _aggroDuration;
-    bool isFirstAggro = true;
+
     float animPlayingTime = 0.0f;
     bool hasPatrolTarget = false;
     bool shootCount = false;
     bool hasDealing = false;
     bool isFirstTime = false;
+
+    bool BackToStart = false;
     bool chaseState = true;
     bool shootState = false;
 

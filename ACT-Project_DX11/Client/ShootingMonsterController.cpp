@@ -237,14 +237,15 @@ void ShootingMonsterController::Update()
         }
         else
         {
-            if (PlayingHitMotion && rand() % 3 == 0)
+            int randomHit = rand() % 3;
+            if (PlayingHitMotion && randomHit == 0)
             {
                 if (PlayCheckAnimating(AnimationState::Hit1))
                 {
                     return;
                 }
-                PlayingHitMotion = false;
             }
+            PlayingHitMotion = false;
             Rota(EnemyPos, PlayerPos);
             Move(EnemyPos, PlayerPos, _speed);
         }
