@@ -133,7 +133,7 @@ void Client::Init()
         {
             shared_ptr<Material> material = make_shared<Material>();
             material->SetShader(renderUIShader);
-            auto texture = RESOURCES->Load<Texture>(L"RedBar", L"..\\Resources\\Textures\\UI\\HP.png");
+            auto texture = RESOURCES->Load<Texture>(L"RedBar", L"..\\Resources\\Textures\\UI\\MonsterHP.png");
             material->SetDiffuseMap(texture);
             MaterialDesc& desc = material->GetMaterialDesc();
             desc.ambient = Vec4(1.f);
