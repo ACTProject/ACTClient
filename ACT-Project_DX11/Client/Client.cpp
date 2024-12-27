@@ -46,6 +46,9 @@ void Client::Init()
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
 
+    // Player
+    auto player = make_shared<GameObject>();
+
 	// Camera
 	{
 		auto camera = make_shared<GameObject>();
@@ -268,7 +271,10 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
-            obj->GetUI()->SetUIID("HP");
+            obj->GetUI()->SetUIID("PlayerHP");
+
+            UIMANAGER->AddUI(obj->GetUI());
+
             CUR_SCENE->Add(obj);
         }
 
@@ -279,7 +285,7 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 27.f, armorPosition.y - 9.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"BlueBar"));
-            obj->GetUI()->SetUIID("Armor");
+            obj->GetUI()->SetUIID("PlayerArmor");
             CUR_SCENE->Add(obj);
         }
     }
@@ -459,9 +465,7 @@ void Client::Init()
         portal->AddComponent(collider);
         CUR_SCENE->Add(portal);
     }
-	// Player
-	auto player = make_shared<GameObject>();
-
+    // player
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()

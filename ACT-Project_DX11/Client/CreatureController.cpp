@@ -21,6 +21,7 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
     _hp -= damage;
 
     string name = "";
+    auto uiList = UIMANAGER->GetUIList();
 
     auto controller = GetGameObject()->GetController();
 

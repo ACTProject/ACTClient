@@ -18,9 +18,9 @@ void Slider::Update()
     Super::PreUpdate();
 
     ImGui::Begin("Slider");
-    if (_uiID == "HP")
+    if (_uiID == "PlayerHP")
     {
-        ImGui::Text("HP");
+        ImGui::Text("PlayerHP");
         if (ImGui::Button("Decrease HP"))
         {
             _uvRatio -= 0.1f;
@@ -28,9 +28,9 @@ void Slider::Update()
         }
         ImGui::SliderFloat("HP Control", &_uvRatio, 0.0f, 1.0f);
     }
-    else if (_uiID == "Armor")
+    else if (_uiID == "PlayerArmor")
     {
-        ImGui::Text("Armor Slider");
+        ImGui::Text("PlayerArmor");
         if (ImGui::Button("Decrease Armor"))
         {
             _uvRatio -= 0.1f;
