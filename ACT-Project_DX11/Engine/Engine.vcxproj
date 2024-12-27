@@ -176,6 +176,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="DebugManager.h" />
+    <ClInclude Include="DynamicObj.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="HitBox.h" />
     <ClInclude Include="MapManager.h" />
@@ -220,6 +221,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Potal.h" />
     <ClInclude Include="Primitive3D.h" />
     <ClInclude Include="RawBuffer.h" />
     <ClInclude Include="BindShaderDesc.h" />
@@ -265,6 +267,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="DebugManager.cpp" />
+    <ClCompile Include="DynamicObj.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="HitBox.cpp" />
     <ClCompile Include="MapManager.cpp" />
@@ -332,6 +335,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Potal.cpp" />
     <ClCompile Include="Primitive3D.cpp" />
     <ClCompile Include="RawBuffer.cpp" />
     <ClCompile Include="BindShaderDesc.cpp" />

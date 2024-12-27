@@ -19,6 +19,7 @@ class HitBox;
 class Bullet;
 class Raycast;
 class Particle;
+class DynamicObj;
 
 enum class ObjectType
 {
@@ -68,6 +69,7 @@ public:
 	shared_ptr<Bullet> GetBullet();
 	shared_ptr<Raycast> GetRaycast();
     shared_ptr<Particle> GetParticle();
+    shared_ptr<DynamicObj> GetDynamicObj();
 
 	shared_ptr<Transform> GetOrAddTransform();
 	void AddComponent(shared_ptr<Component> component);

@@ -20,6 +20,7 @@
 #include "Raycast.h"
 #include "Ui.h"
 #include "Particle.h"
+#include "DynamicObj.h"
 
 
 
@@ -216,6 +217,12 @@ shared_ptr<Particle> GameObject::GetParticle()
 {
     shared_ptr<Component> component = GetFixedComponent(ComponentType::Particle);
     return static_pointer_cast<Particle>(component);
+}
+
+shared_ptr<DynamicObj> GameObject::GetDynamicObj()
+{
+    shared_ptr<Component> component = GetFixedComponent(ComponentType::DynamicObject);
+    return static_pointer_cast<DynamicObj>(component);
 }
 
 std::shared_ptr<Transform> GameObject::GetOrAddTransform()
