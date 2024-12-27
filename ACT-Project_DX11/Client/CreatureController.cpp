@@ -53,8 +53,19 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
     }
 
     case MonoBehaviourType::MelleMonster:
+    {
         name = "MelleMonster";
+        float hpRatio = _hp / _maxHp;
+        for (auto& ui : uiList)
+        {
+            if (ui->GetUIID() == "Enemy")
+            {
+                auto slider = dynamic_pointer_cast<Slider>(ui);
+                slider->SetRatio(hpRatio);
+            }
+        }
         break;
+    }
     case MonoBehaviourType::ShootingMonster:
         name = "ShootingMonster";
         break;
