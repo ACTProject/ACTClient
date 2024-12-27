@@ -169,7 +169,7 @@ void Client::Init()
 
         Vec3 healPosition;
         Vec3 armorPosition;;
-        healPosition.x = -330.f;
+        healPosition.x = -270.f;
         healPosition.y = -260.f;
         armorPosition.x = healPosition.x + 2.f;
         armorPosition.y = healPosition.y + 40.f;
@@ -178,7 +178,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.2f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 29.75, 100));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -200,8 +200,8 @@ void Client::Init()
         {
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 46, 100));
+            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -224,7 +224,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 29.75, 100));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -247,7 +247,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 46, 100));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -270,11 +270,8 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
-            obj->GetUI()->SetUIID("PlayerHP");
-
-            UIMANAGER->AddUI(obj->GetUI());
-
+            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
+            obj->GetUI()->SetUIID("HP");
             CUR_SCENE->Add(obj);
         }
 
@@ -284,8 +281,8 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(armorPosition.x - 27.f, armorPosition.y - 9.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"BlueBar"));
-            obj->GetUI()->SetUIID("PlayerArmor");
+            obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
+            obj->GetUI()->SetUIID("Armor");
             CUR_SCENE->Add(obj);
         }
     }
