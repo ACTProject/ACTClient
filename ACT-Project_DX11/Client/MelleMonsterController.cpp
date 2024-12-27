@@ -79,7 +79,7 @@ void MelleMonsterController::Punch(int type)
     if (_hit && !hasDealing)
     {
         auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
-        player->OnDamage(_atk);
+        player->OnDamage(GetGameObject(), _atk);
         hasDealing = true;
     }
 }
