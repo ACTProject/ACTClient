@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CreatureController.h"
+#include "PlayerController.h"
 
 
 void CreatureController::Start()
@@ -15,23 +16,35 @@ void CreatureController::Update()
 }
 
 // 데미지 처리
-void CreatureController::OnDamage(float damage)
+void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
 {
     _hp -= damage;
 
     string name = "";
+
+    auto controller = GetGameObject()->GetController();
+
     switch (GetMonoBehaviourType())
     {
     case MonoBehaviourType::Player:
+    {
         name = "player";
+        auto player = dynamic_pointer_cast<PlayerController>(controller);
+        //float hpRatio = _hp / _maxHp;
+
         break;
+    }
+
     case MonoBehaviourType::MelleMonster:
         name = "MelleMonster";
         break;
     case MonoBehaviourType::ShootingMonster:
         name = "ShootingMonster";
         break;
-    case MonoBehaviourType::FinalBossMonster:
+    case MonoBehaviourType::FinalBossMonster_1:
+        name = "FinalBossMonster";
+        break;
+    case MonoBehaviourType::FinalBossMonster_2:
         name = "FinalBossMonster";
         break;
     default:
@@ -43,10 +56,18 @@ void CreatureController::OnDamage(float damage)
     {
         OnDeath();
     }
+
 }
 
 // 죽음 처리
 void CreatureController::OnDeath()
 {
-    GetGameObject()->Destroy();
+    OCTREE->RemoveCollider(GetGameObject()->GetCollider());
+    COLLISION->Remove(GetGameObject());
+    CUR_SCENE->Remove(GetGameObject());
+
+    TaskQueue::GetInstance().AddTask([this]() {
+        std::cout << "Destroying object in TaskQueue..." << std::endl;
+        GetGameObject()->Destroy();
+        });
 }

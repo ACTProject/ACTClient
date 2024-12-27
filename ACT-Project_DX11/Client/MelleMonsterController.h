@@ -26,42 +26,45 @@ public:
 	shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
+    void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
+    void UpdateHitBox();
 
 public:
-    void OnDeath() override;
-
+    void OnDeath();
+    bool PlayingHitMotion = false;
 private:
+    bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
     void Aggro();
     void Move(Vec3 objPos, Vec3 targetPos, float speed);
     void Rota(Vec3 objPos, Vec3 targetPos);
-    void Attack(int type);
+    void Punch(int type);
     //void Tracking(Vec3 pos, const std::vector<Node3D>& path);
     void ResetToIdleState();
-    void Patrol(Vec3 Target);
+    void ResetHit();
 
-	float _speed = 10.f;
-	float _hp = 100.0f;
-	float _atk = 30.0f;
+	float _speed;
+	float _hp;
+	float _atk;
 	float dt;
 	float _FPS;
-	float rangeDis;
-	float _attackDuration[3];
-	float _aggroDuration;
 	float animPlayingTime = 0.0f;
     float distance;
-    int atkType = 1;
+    Vec3 direction;
+    float rangeDis;
+    float animDuration;
+    int atkType = 0;
 
 	bool hasPatrolTarget = false;
-    bool onTarget = false;
-    bool onRange = false;
     bool BackToStart = false;
-    bool isFirstAggro = true;
-    bool onAttack = false;
-    bool _isAnimating = false;
+    bool isFirstTime = false;
+    bool chaseState = true;              //추격
+    bool punchState = false;             //펀치 
+    bool isExecuted_1 = false;
 
     // 히트 상태
     bool _hit = false;
     bool _isDead = false;
+    bool hasDealing = false;
 
     Vec3 StartPos;
     Vec3 CurForward;
@@ -70,6 +73,7 @@ private:
     Vec3 patrolTarget;
 
 	shared_ptr<Model> _enemy;
+    shared_ptr<GameObject> _hitbox;
 	shared_ptr<ModelAnimator> _modelAnimator;
 	shared_ptr<Transform> _transform;
 	shared_ptr<GameObject> _player;

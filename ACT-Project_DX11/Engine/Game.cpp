@@ -34,7 +34,7 @@ WPARAM Game::Run(uint32 num)
     // Octree
     {
         // 전체 월드 공간 옥트리
-        BoundingBox worldBounds(Vec3(300.f, 100.f, 300.f), Vec3(300.f, 100.f, 300.f));
+        BoundingBox worldBounds(Vec3(200.f, 70.f, 200.f), Vec3(350.f, 100.f, 350.f));
         int maxDepth = 4;
         OCTREE->Init(worldBounds, maxDepth);
     }
@@ -82,7 +82,7 @@ WPARAM Game::Run(uint32 num)
 	}
     if (_scenes[_num].tag == SceneTag::INGAME)
     {
-        MAP->ExportMapObj();
+        MAP->ExportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
     }
 
 	return _msg.wParam;

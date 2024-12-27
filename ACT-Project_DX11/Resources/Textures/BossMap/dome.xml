@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Materials>
+    <Material>
+        <Name>scoreboard.002</Name>
+        <DiffuseFile>fce3dfd1.png</DiffuseFile>
+        <SpecularFile>fce3dfd1.png</SpecularFile>
+        <NormalFile>fce3dfd1.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>path.002</Name>
+        <DiffuseFile>968bdcb1.png</DiffuseFile>
+        <SpecularFile>968bdcb1.png</SpecularFile>
+        <NormalFile>968bdcb1.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>sbsign.002</Name>
+        <DiffuseFile>a7145c6b.png</DiffuseFile>
+        <SpecularFile>a7145c6b.png</SpecularFile>
+        <NormalFile>a7145c6b.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>table.002</Name>
+        <DiffuseFile>9fa5387c.png</DiffuseFile>
+        <SpecularFile>9fa5387c.png</SpecularFile>
+        <NormalFile>9fa5387c.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>crowd.002</Name>
+        <DiffuseFile>4eba94e9.png</DiffuseFile>
+        <SpecularFile>4eba94e9.png</SpecularFile>
+        <NormalFile>4eba94e9.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>shine.002</Name>
+        <DiffuseFile>338191ed.png</DiffuseFile>
+        <SpecularFile>338191ed.png</SpecularFile>
+        <NormalFile>338191ed.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>shell.002</Name>
+        <DiffuseFile>4463463e.png</DiffuseFile>
+        <SpecularFile>4463463e.png</SpecularFile>
+        <NormalFile>4463463e.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>mic.002</Name>
+        <DiffuseFile>a42b7d60.png</DiffuseFile>
+        <SpecularFile>a42b7d60.png</SpecularFile>
+        <NormalFile>a42b7d60.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>floor.002</Name>
+        <DiffuseFile>dd4271a6.png</DiffuseFile>
+        <SpecularFile>dd4271a6.png</SpecularFile>
+        <NormalFile>dd4271a6.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>poseidomefloor.002</Name>
+        <DiffuseFile>e8e97122.png</DiffuseFile>
+        <SpecularFile>e8e97122.png</SpecularFile>
+        <NormalFile>e8e97122.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>banner.002</Name>
+        <DiffuseFile>a4826c98.png</DiffuseFile>
+        <SpecularFile>a4826c98.png</SpecularFile>
+        <NormalFile>a4826c98.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>signs.002</Name>
+        <DiffuseFile>8a03679d.png</DiffuseFile>
+        <SpecularFile>8a03679d.png</SpecularFile>
+        <NormalFile>8a03679d.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>ring.002</Name>
+        <DiffuseFile>cd583d8e.png</DiffuseFile>
+        <SpecularFile>cd583d8e.png</SpecularFile>
+        <NormalFile>cd583d8e.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+    <Material>
+        <Name>lights.002</Name>
+        <DiffuseFile>0a9a74e6.png</DiffuseFile>
+        <SpecularFile>0a9a74e6.png</SpecularFile>
+        <NormalFile>0a9a74e6.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="0"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+</Materials>

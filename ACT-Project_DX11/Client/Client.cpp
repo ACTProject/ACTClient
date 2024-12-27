@@ -405,7 +405,7 @@ void Client::Init()
     {
         auto shell = make_shared<GameObject>();
         shell->SetObjectType(ObjectType::Shell);
-        shell->GetOrAddTransform()->SetPosition(Vec3(35, 3.5f, 35));
+        shell->GetOrAddTransform()->SetPosition(Vec3(35, 0.f, 35));
         shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> shellModel = make_shared<Model>();
@@ -559,17 +559,26 @@ void Client::Init()
 	// Enemy
     {
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f });
+        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f });
         ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f });
         ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f });
         ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f });
+        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f });
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f });
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f });
+        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f });
 
         ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f });
         ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
         ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
         ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
         ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f });
+        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f });
+        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f });
+        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f });
+        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f });
 
-        ENEMY->CreateFinalBoss({ 50.0f,0.f,50.0f });
+        //ENEMY->CreateFinalBoss({ 10.0f,0.f,10.0f });
     }
     
 
@@ -691,7 +700,7 @@ void Client::Init()
                 for (int32 x = 0; x <= width; x++)
                 {
                     int32 idx = (width + 1) * z + x;
-                    uint8 height = expandedPixelBuffer[idx] / 255.f * 25.f;
+                    uint8 height = expandedPixelBuffer[idx] / 255.f * 10.f;
                     v[idx].position.y = height - 8.f;
                 }
             }
@@ -733,28 +742,7 @@ void Client::Init()
         CUR_SCENE->Add(obj);
     }
 
-    MAP->ImportMapObj();
-
-
-    
-
-
-    //// MapSubTexture
-    //{
-    //    shared_ptr<Material> material = make_shared<Material>();
-    //    material->SetShader(renderBoxShader);
-    //    auto texture = RESOURCES->Load<Texture>(materialName, texturePath);
-    //    material->SetDiffuseMap(texture);
-
-    //    MaterialDesc& desc = material->GetMaterialDesc();
-    //    desc.ambient = Vec4(1.f);
-    //    desc.diffuse = Vec4(1.f);
-    //    desc.specular = Vec4(1.f);
-
-    //    RESOURCES->Add(materialName, material);
-    //}
-
-
+    MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
 
 }
 

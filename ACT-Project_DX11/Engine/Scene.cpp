@@ -23,6 +23,9 @@ void Scene::Start()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->Start();
 	}
 }
@@ -33,6 +36,9 @@ void Scene::Update()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->Update();
 	}
 
@@ -48,6 +54,9 @@ void Scene::FixedUpdate()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->FixedUpdate();
 	}
 }
@@ -58,6 +67,9 @@ void Scene::LateUpdate()
 
 	for (shared_ptr<GameObject> object : objects)
 	{
+        if (!object->IsActive())
+            continue;
+
 		object->LateUpdate();
 	}
 
@@ -76,13 +88,15 @@ void Scene::Render()
 		camera->GetCamera()->SortGameObject();
  		camera->GetCamera()->Render_Forward();
 	}
-    if (DEBUG->IsDebugEnabled() || INPUT->GetButton(KEY_TYPE::CAPSLOCK))
+    if (DEBUG->IsDebugEnabled())
     {
         Camera::S_MatView = mainCamera->GetViewMatrix();
         Camera::S_MatProjection = mainCamera->GetProjectionMatrix();
         FRUSTUM->FinalUpdate();
         vector<std::shared_ptr<GameObject>> visibleObjects = FrustumCulling(mainCamera->GetVecForward());
-        INSTANCING->RenderCollider(visibleObjects);
+        
+        if (INPUT->GetButton(KEY_TYPE::CAPSLOCK))
+            INSTANCING->RenderCollider(visibleObjects);
         
         if (INPUT->GetButton(KEY_TYPE::KEY_F2))
         {
@@ -318,11 +332,29 @@ vector<shared_ptr<GameObject>> Scene::FrustumCulling(const vector<shared_ptr<Gam
             continue;
         }
 
-        /*if (object->GetParticle())
+
+        if (object->GetSkybox())
         {
             visibleObjects.push_back(object);
             continue;
-        }*/
+        }
+
+        if (object->GetParticle())
+        {
+            visibleObjects.push_back(object);
+            continue;
+        }
+        if (object->GetObjectType() == ObjectType::MapMesh)
+        {
+            visibleObjects.push_back(object);
+            continue;
+        }
+
+        if (object->GetObjectType() == ObjectType::Map)
+        {
+            visibleObjects.push_back(object);
+            continue;
+        }
 
         // 객체가 비활성화되어 있으면 무시
         if (!object->IsActive())

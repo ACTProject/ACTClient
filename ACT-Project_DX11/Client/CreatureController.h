@@ -1,5 +1,6 @@
 #pragma once
 #include "MonoBehaviour.h"
+#include "TaskQueue.h"
 
 /*
     CreatureController는 생명체의 공통 동작과 스탯을 정의.
@@ -21,7 +22,7 @@ public:
     void SetAtk(float atk) { _atk = atk; }
 
 public:
-    void OnDamage(float damage);
+    void OnDamage(shared_ptr<GameObject> attacker, float damage);
     virtual void OnDeath();
 
 protected:

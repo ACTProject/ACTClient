@@ -70,11 +70,43 @@ float4 PS(V_OUT input) : SV_Target
 
 technique11 T0
 {
-    pass P0
-    {
-        //SetRasterizerState(FillModeWireFrame);
-        SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
-        SetVertexShader(CompileShader(vs_5_0, VS()));
-        SetPixelShader(CompileShader(ps_5_0, PS()));
-    }
+	PASS_VP(P0, VS_InstancingMesh_Particle, PS)
+	PASS_VP(P1, VS_InstancingModel, PS)
+	PASS_VP(P2, VS_InstancingAnimation, PS)
+};
+
+technique11 T1 // 싱글 렌더링
+{
+	PASS_VP(P0, VS_Mesh_Particle, PS)
+	PASS_VP(P1, VS_Model, PS)
+	PASS_VP(P2, VS_Animation, PS)
+	//PASS_VP(P3, VS_MeshColor, PS)
+};
+
+technique11 T2 // 와이어프레임 인스턴싱
+{
+	PASS_RS_VP(P0, FillModeWireFrame, VS_InstancingMesh_Particle, PS)
+	PASS_RS_VP(P1, FillModeWireFrame, VS_InstancingModel, PS)
+	PASS_RS_VP(P2, FillModeWireFrame, VS_InstancingAnimation, PS)
+};
+
+technique11 T3 // 와이어프레임 싱글
+{
+	PASS_RS_VP(P0, FillModeWireFrame, VS_Mesh_Particle, PS)
+	PASS_RS_VP(P1, FillModeWireFrame, VS_Model, PS)
+	PASS_RS_VP(P2, FillModeWireFrame, VS_Animation, PS)
+	//PASS_RS_VP(P3, FillModeWireFrame, VS_MeshColor, PS)
+};
+
+technique11 T4 // 매쉬 알파블렌딩
+{
+	PASS_BS_VP(P0, AlphaBlend, VS_Mesh_Particle, PS) // 기본적인 알파 블렌딩
+	PASS_BS_VP(P1, AlphaBlendAlphaToCoverageEnable, VS_Mesh_Particle, PS) // 멀티샘플링 환경 알파블렌딩
+	PASS_BS_VP(P2, AdditiveBlend, VS_Mesh_Particle, PS) // 애드블렌딩
+	PASS_BS_VP(P3, AdditiveBlendAlphaToCoverageEnable, VS_Mesh_Particle, PS) // 멀티샘플링 환경 애드블렌딩
+};
+
+technique11 T5 // Debug Collider Rendering
+{
+	PASS_VP(P0, VS_Collision, PS_Collision)
 };

@@ -10,7 +10,8 @@
 #include "Rigidbody.h"
 #include "MelleMonsterController.h"
 #include "ShootingMonsterController.h"
-#include "FinalBossMonsterController.h"
+#include "FinalBossMonsterFirstPhaseController.h"
+#include "FinalBossMonsterSecondPhaseController.h"
 #include "Material.h"
 #include "Particle.h"
 
@@ -36,7 +37,7 @@ void PlayerController::Start()
     Super::Start();
 
     // 플레이어 스탯 초기화
-    _maxHp = 150.0f;
+    _maxHp = 400.f;
     _hp = 150.0f;
     _atk = 20.0f;
 
@@ -148,17 +149,19 @@ void PlayerController::HandleMovement()
         Vec3 newPosition = oldPosition + _moveDir * speed * dt;
 
         Ray ray(oldPosition, _moveDir);
+
         vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(ray);
         for (const auto& collider : nearbyColliders)
         {
             if (collider->GetGameObject()->GetRigidbody() != nullptr)
+                continue;
+            if (collider->GetGameObject()->GetHitBox() != nullptr)
                 continue;
 
             float distance = 0.0f;
             if (collider->Intersects(ray, distance) && distance <= speed * dt)
                 return; // 충돌 시 이동 취소
         }
-
         _transform->SetPosition(newPosition);
 
         // 방향에 따라 회전
@@ -181,7 +184,6 @@ void PlayerController::HandleMovement()
         if (_dustTimer >= _dustInterval) {
             CreateDustEffect();
             _dustTimer = 0.0f; // 타이머 초기화
-        }
     }
 }
 
@@ -361,7 +363,6 @@ void PlayerController::PlayAttackAnimation(int stage)
 		break;
 	}
 }
-
 void PlayerController::UpdateHitBox()
 {
     if (!_hitbox || _isHit)
@@ -395,21 +396,36 @@ void PlayerController::UpdateHitBox()
             {
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
-                    melleMonster->OnDamage(_atk);
+                    melleMonster->OnDamage(GetGameObject(), _atk);
+                    melleMonster->PlayingHitMotion = true;
                 break;
             }
             case MonoBehaviourType::ShootingMonster:
             {
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
-                    shootingMonster->OnDamage(_atk);
+                    shootingMonster->OnDamage(GetGameObject(), _atk);
+                    shootingMonster->PlayingHitMotion = true;
                 break;
             }
-            case MonoBehaviourType::FinalBossMonster:
+            case MonoBehaviourType::FinalBossMonster_1:
             {
-                auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterController>(controller);
+                auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterFirstPhaseController>(controller);
                 if (FinalBossMonster)
-                    FinalBossMonster->OnDamage(_atk);
+                {
+                    FinalBossMonster->OnDamage(GetGameObject(), _atk);
+                    FinalBossMonster->PlayingHitMotion = true;
+                }
+                break;
+            }
+            case MonoBehaviourType::FinalBossMonster_2:
+            {
+                auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterSecondPhaseController>(controller);
+                if (FinalBossMonster)
+                {
+                    FinalBossMonster->OnDamage(GetGameObject(), _atk);
+                    FinalBossMonster->PlayingHitMotion = true;
+                }
                 break;
             }
             default:

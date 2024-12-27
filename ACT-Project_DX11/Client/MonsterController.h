@@ -10,5 +10,6 @@ class MonsterController : public CreatureController
 public:
     void Start() override;
     void Update() override;
+
 };
 

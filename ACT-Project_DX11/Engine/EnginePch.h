@@ -77,6 +77,7 @@ using namespace Microsoft::WRL;
 #include "Octree.h"
 #include "Shadow.h"
 #include "UIManager.h"
+#include "TaskQueue.h"
 
 // Engine
 #include "VertexData.h"

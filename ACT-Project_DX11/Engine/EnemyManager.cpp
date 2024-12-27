@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "EnemyManager.h"
+#include "Ui.h"
 
 void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
 {
@@ -36,8 +37,17 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
 
         rangoonScript->SetEnemy(enemyModel);
         rangoonScript->SetModelAnimator(ma2);
-
         rangoon->SetController(rangoonScript);
+
+        // HitBox
+        shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        hitboxGO->AddComponent(hitbox);
+        hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        hitbox->Craete(rangoon, Vec3(1.0f));
+        CUR_SCENE->Add(hitboxGO);
+        rangoonScript->SetHitBox(hitboxGO);
+
         rangoon->AddComponent(rangoonScript);
 
         // Collider
@@ -55,8 +65,19 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
 
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
-
+        
         CUR_SCENE->Add(rangoon);
+        //// RedBar HPMesh
+        //{
+        //    // 슬라이더 컴포넌트 추가.
+        //    auto obj = make_shared<GameObject>();
+        //    obj->SetObjectType(ObjectType::UI);
+        //    obj->AddComponent(make_shared<Slider>());
+        //    obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
+        //    obj->GetUI()->SetUIID("HP");
+        //    obj->GetUI()->SetOwner(rangoon);
+        //    CUR_SCENE->Add(obj);
+        //}
     }
 }
 
@@ -94,6 +115,16 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
         ShrimpScript->SetModelAnimator(ma2);
 
         PistolShrimp->SetController(ShrimpScript);
+
+        //// HitBox
+        //shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        //shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        //hitboxGO->AddComponent(hitbox);
+        //hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        //hitbox->Craete(PistolShrimp, Vec3(1.0f));
+        //CUR_SCENE->Add(hitboxGO);
+        //ShrimpScript->SetHitBox(hitboxGO);
+
         PistolShrimp->AddComponent(ShrimpScript);
 
         // Collider
@@ -120,6 +151,8 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
+        //auto FinalPhase = CreateFinalPhase({ 10.0f,0.f,10.0f });
+
         FinalBoss->SetObjectType(ObjectType::Monster);
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
@@ -168,17 +201,29 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonsterController> BossScript = make_shared<FinalBossMonsterController>();
+        shared_ptr<FinalBossMonsterFirstPhaseController> BossScript = make_shared<FinalBossMonsterFirstPhaseController>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
+        //if (FinalPhase != nullptr)
+        //    BossScript->SetSecondPhase(FinalPhase);
+
         FinalBoss->SetController(BossScript);
+
+        // HitBox
+        shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        hitboxGO->AddComponent(hitbox);
+        hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        hitbox->Craete(FinalBoss, Vec3(1.0f));
+        CUR_SCENE->Add(hitboxGO);
+        BossScript->SetHitBox(hitboxGO);
+
         FinalBoss->AddComponent(BossScript);
 
         // Collider
         auto collider = make_shared<SphereCollider>();
-        collider->SetRadius(2.0f);
-        //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(2.0f)));
+        collider->SetRadius(2.5f);
         collider->SetOffset(Vec3(0.f, 2.5f, 0.f));
         OCTREE->InsertCollider(collider);
         FinalBoss->AddComponent(collider);
@@ -196,11 +241,13 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
     }
 }
 
-void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
+shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
-        FinalBoss->SetObjectType(ObjectType::Monster);
+        FinalBoss->SetActive(true);
+        FinalBoss->SetObjectType(ObjectType::Boss2);
+
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
         FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0005f));
@@ -248,16 +295,26 @@ void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
             FinalBoss->GetModelAnimator()->SetPass(2);
         }
-        shared_ptr<FinalBossMonsterController> BossScript = make_shared<FinalBossMonsterController>();
+        shared_ptr<FinalBossMonsterSecondPhaseController> BossScript = make_shared<FinalBossMonsterSecondPhaseController>();
 
         BossScript->SetEnemy(enemyModel);
         BossScript->SetModelAnimator(ma2);
+        FinalBoss->SetController(BossScript);
+
+        // HitBox
+        shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> hitbox = make_shared<HitBox>();
+        hitboxGO->AddComponent(hitbox);
+        hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        hitbox->Craete(FinalBoss, Vec3(1.0f));
+        CUR_SCENE->Add(hitboxGO);
+        BossScript->SetHitBox(hitboxGO);
+
         FinalBoss->AddComponent(BossScript);
 
         // Collider
         auto collider = make_shared<SphereCollider>();
-        collider->SetRadius(30.0f);
-        //collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(2.0f)));
+        collider->SetRadius(2.5f);
         collider->SetOffset(Vec3(0.f, 2.5f, 0.f));
         OCTREE->InsertCollider(collider);
         FinalBoss->AddComponent(collider);
@@ -273,4 +330,5 @@ void EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 
         CUR_SCENE->Add(FinalBoss);
     }
+    return FinalBoss;
 }

@@ -19,6 +19,9 @@ MeshRenderer::~MeshRenderer()
 
 void MeshRenderer::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
 {
+    if (!GetGameObject()->IsActive())
+        return;
+
 	if (_mesh == nullptr || _material == nullptr)
 		return;
 
@@ -63,6 +66,9 @@ void MeshRenderer::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
 
 void MeshRenderer::RenderSingle()
 {
+    if (!GetGameObject()->IsActive())
+        return;
+
     if (_mesh == nullptr || _material == nullptr)
         return;
 
@@ -83,9 +89,6 @@ void MeshRenderer::RenderSingle()
         _shader->PushGlobalData(Camera::S_MatView, Camera::S_MatProjection);
 
     _shader->PushShadowData(SHADOW->GetShadowDesc());
-
-	// Light
-	_material->Update();
 
     // Light
     _material->Update();
@@ -111,10 +114,9 @@ void MeshRenderer::RenderSingle()
 
 	if (_isAlphaBlend)
 		_technique = 4; 
-    if (GetGameObject()->IsActive())
-    {
-        _shader->DrawIndexed(_technique, _pass, _mesh->GetIndexBuffer()->GetCount(), 0, 0);
-    }
+
+    _shader->DrawIndexed(_technique, _pass, _mesh->GetIndexBuffer()->GetCount(), 0, 0);
+
 }
 
 void MeshRenderer::RenderShadowMap(Matrix view, Matrix proj)

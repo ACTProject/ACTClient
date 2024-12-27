@@ -12,6 +12,9 @@
 
 void MapManager::Init()
 {
+    //clear
+    ClearMap();
+
     ////MapObj
     shared_ptr<MapObjDesc> src;
     {
@@ -105,7 +108,6 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/CastleKit_Tower_01", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
 
-
         // 바닥텍스처
         src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", true, true);
         MAP->AddMapObj(src);
@@ -114,12 +116,9 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"grass.png", L"28. BillBoardDemo.fx", false, false, true);
         MAP->AddMapObj(src);
 
-
         // ImGui용 함수.
         MAP->InitMapText();
     }
-
-
 }
 
 // 맵 오브젝트 피킹했는지 체크
@@ -228,6 +227,7 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetPass(3);
                 obj->GetMeshRenderer()->SetAlphaBlend(false);
+                obj->SetObjectType(ObjectType::MapMesh);
             } 
             else
             {
@@ -242,7 +242,8 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
         if (_mapSelectDesc->isCollision == true)
         {
             auto collider = make_shared<AABBBoxCollider>();
-            collider->GetBoundingBox() = obj->GetTransform()->GenerateBoundingBox();
+            collider->SetBoundingBox(BoundingBox(obj->GetTransform()->GenerateBoundingBox().Center, _mapSelectDesc->extent));
+            collider->SetOffset(_mapSelectDesc->offset);
             obj->AddComponent(collider);
             OCTREE->InsertCollider(collider);
             COLLISION->AddCollider(collider);
@@ -250,8 +251,6 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
     }
     _mapObjList.push_back(obj);
     return obj;
-
-
 }
 
 
@@ -283,6 +282,7 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetPass(3);
                 obj->GetMeshRenderer()->SetAlphaBlend(false);
+                obj->SetObjectType(ObjectType::MapMesh);
             }
             else
             {
@@ -301,7 +301,6 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
             collider->SetOffset(desc.offset);
             collider->SetBoundingBox(BoundingBox(collider->GetBoundingBox().Center, desc.extent));
             OCTREE->InsertCollider(collider);
-
             COLLISION->AddCollider(collider);
         }
     }
@@ -578,7 +577,7 @@ void MapManager::CreateBillBoardMesh(shared_ptr<MapObjDesc> objs)
     CUR_SCENE->Add(obj);
 }
 
-bool MapManager::ExportMapObj()
+bool MapManager::ExportMapObj(wstring _fileName)
 {
     int length = _mapObjList.size();
 
@@ -671,7 +670,7 @@ bool MapManager::ExportMapObj()
     return true;
 }
 
-bool MapManager::ImportMapObj()
+bool MapManager::ImportMapObj(wstring _fileName)
 {
     FILE* fp = nullptr;
     errno_t err = _wfopen_s(&fp, _fileName.c_str(), L"rb");
@@ -737,6 +736,30 @@ bool MapManager::ImportMapObj()
         SCENE->GetCurrentScene()->Add(gameObj);
     }
     return true;
+}
+
+void MapManager::ClearMap()
+{
+    // 다음 씬으로 넘어가기 위한 함수
+    // shared_ptr 주의
+    _mapSelectDesc.reset();
+    _mapSelectObj.reset();
+    _mapPreviewObj.reset();
+    _mapBillBoard.reset();
+    _mapSelectDesc = nullptr;
+    _mapSelectObj = nullptr;
+    _mapPreviewObj = nullptr;
+    _mapBillBoard = nullptr;
+
+    _fileTextList.clear();
+
+    // terrain은 이거 전에 set해놔서 reset기달.
+    _terrain.reset();
+
+    // ImportMapObj 위치 클라이언트CPP에 있음 주의.
+    _mapObjList.clear();
+    _mapInfoList.clear();
+    _mapInitInfoList.clear();
 }
 
 
@@ -893,12 +916,12 @@ void MapManager::UpdateMapObjTransform()
         collider->SetBoundingBox(BoundingBox({ collider->GetBoundingBox().Center }, extent));
         _mapSelectObj->GetCollider()->SetOffset(offset);
         OCTREE->UpdateCollider(collider);
-
         break;
     }
     default:
         break;
     }
+
     ImGui::End();
 }
 

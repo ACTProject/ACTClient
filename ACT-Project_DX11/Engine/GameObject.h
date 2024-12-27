@@ -28,7 +28,10 @@ enum class ObjectType
     Shell,
     Environment,
     UI,
+    Boss2,
     Portal,
+    MapMesh,
+    Map,
     // ...
 
     Unknown,
