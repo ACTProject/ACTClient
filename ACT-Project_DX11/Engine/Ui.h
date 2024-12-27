@@ -27,12 +27,14 @@ public:
 
     void SetUIID(const string& id) { _uiID = id; }
     const string& GetUIID() const { return _uiID; }
+    void SetPositionUI(Vec3 addPos) { _addPos = addPos; }
 
 protected:
     void PreUpdate();
 protected:
     UiType _type = UiType::NONE;
     bool _isVisible = true;
+    Vec3 _addPos = { 0, 3.0f ,0 };
 
     // 오너가 있으면 active=false로 시작.
     weak_ptr<GameObject> _owner;

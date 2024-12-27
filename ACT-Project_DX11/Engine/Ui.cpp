@@ -15,7 +15,7 @@ void Ui::PreUpdate()
     if (owner != nullptr)
     {
         Vec3 pos = owner->GetTransform()->GetLocalPosition();
-        pos += Vec3{ 0, 3.0f, 0.0f };
+        pos += _addPos;
         Matrix VP = Camera::S_MatView * Camera::S_MatProjection;
         Vec3 uiClipPos = XMVector3TransformCoord(pos, VP);
         float d = sqrt(uiClipPos.x * uiClipPos.x + uiClipPos.y * uiClipPos.y + uiClipPos.z * uiClipPos.z);

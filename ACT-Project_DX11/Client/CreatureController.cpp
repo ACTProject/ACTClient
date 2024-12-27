@@ -26,12 +26,12 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
     {
     case MonoBehaviourType::Player:
     {
+        _hp -= damage;
         name = "player";
         auto player = dynamic_pointer_cast<PlayerController>(controller);
        
         if (player->GetIsInvincible())
             return;
-
         if (player->GetIsBlocking())
         {
             float shellMaxHp = player->GetShellMaxHP();
@@ -63,14 +63,29 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
 
     case MonoBehaviourType::MelleMonster:
     {
-        name = "MelleMonster";
+        _hp -= damage;
+        auto melle = dynamic_pointer_cast<MelleMonsterController>(controller);
+        string ID = melle->GetObjID();
         float hpRatio = _hp / _maxHp;
+
+        shared_ptr<Ui> ui = UIMANAGER->GetUi(ID);
+        auto slider = dynamic_pointer_cast<Slider>(ui);
+        slider->SetRatio(hpRatio);
 
         break;
     }
     case MonoBehaviourType::ShootingMonster:
-        name = "ShootingMonster";
+    {
+        _hp -= damage;
+        auto shooting = dynamic_pointer_cast<ShootingMonsterController>(controller);
+        string ID = shooting->GetObjID();
+        float hpRatio = _hp / _maxHp;
+
+        shared_ptr<Ui> ui = UIMANAGER->GetUi(ID);
+        auto slider = dynamic_pointer_cast<Slider>(ui);
+        slider->SetRatio(hpRatio);
         break;
+    }
     case MonoBehaviourType::FinalBossMonster_1:
         name = "FinalBossMonster";
         break;

@@ -20,12 +20,15 @@ public:
     void SetHP(float hp) { _hp = hp; }
     float GetAtk() const { return _atk; }
     void SetAtk(float atk) { _atk = atk; }
+    string GetObjID() const { return objID; }
+
 
 public:
     void OnDamage(shared_ptr<GameObject> attacker, float damage);
     virtual void OnDeath();
 
 protected:
+    string objID;
     float _maxHp = 100.0f;      // 최대 체력
     float _hp = 100.0f;         // 체력
     float _atk = 10.0f;         // 공격력

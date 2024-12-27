@@ -116,6 +116,7 @@ void ShootingMonsterController::Aggro()
         return;
     }
     isFirstTime = true;
+    _hpBar->SetActive(true);
 }
 
 void ShootingMonsterController::Patrol(Vec3 Target)
@@ -192,12 +193,13 @@ void ShootingMonsterController::Update()
     {
         Move(EnemyPos, StartPos, _speed);
         Rota(EnemyPos, StartPos);
-        _hp = 80.0f;            // 돌아가면 체력 회복
+        _hp = 50.0f;            // 돌아가면 체력 회복
         if (abs(rangeDis) < 1.f)
         {
             BackToStart = false;
             chaseState = true;
             isFirstTime = false;
+            _hpBar->SetActive(false);
         }
         return;
     }
@@ -302,11 +304,4 @@ bool ShootingMonsterController::PlayCheckAnimating(AnimationState state)
     }
 
     return true; // 플레이 중
-}
-
-void ShootingMonsterController::ResetHit()
-{
-    hasDealing = false;
-    _hit = false;
-    _hitbox->GetCollider()->SetActive(false);
 }
