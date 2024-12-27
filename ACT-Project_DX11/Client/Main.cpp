@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         GAME->AddScene(desc);
     }
 
-	GAME->Run(0);
+	GAME->Run(1);
 
 	return 0;
 }

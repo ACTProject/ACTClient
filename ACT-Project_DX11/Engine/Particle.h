@@ -31,10 +31,13 @@ public:
     void Update();
     void Add(Vec3 position, Vec2 scale);
 
+    void SetLifetime(float lifetime) { _lifetime = lifetime; }
+    void SetfadeStart(float fadeStart) { _fadeStart = fadeStart; }
+    void SetReuse(float isReusable) { _isReusable = isReusable; }
+
     void SetMaterial(shared_ptr<Material> material) { _material = material; }
     void SetPass(uint8 pass) { _pass = pass; }
     shared_ptr<Material> GetMaterial() { return _material; }
-
 
 private:
     vector<VertexParticle> _vertices;
@@ -52,5 +55,7 @@ private:
 
     float _lifetime = 3.0f;
     float _fadeStart = 1.0f;
+
+    bool _isReusable = false;
 };
 

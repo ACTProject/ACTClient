@@ -45,6 +45,7 @@ void Client::Init()
 	shared_ptr<Shader> renderBoxShader = make_shared<Shader>(L"23. RenderDemoBox.fx");
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
+    shared_ptr<Shader> effectShader = make_shared<Shader>(L"EffectTest.fx");
 
     // Player
     auto player = make_shared<GameObject>();
@@ -169,16 +170,17 @@ void Client::Init()
 
         Vec3 healPosition;
         Vec3 armorPosition;;
-        healPosition.x = -330.f;
+        healPosition.x = -270.f;
         healPosition.y = -260.f;
         armorPosition.x = healPosition.x + 2.f;
         armorPosition.y = healPosition.y + 40.f;
+      
         // MeshHealBar_Shadow
         {
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.2f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 29.75, 100));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -202,7 +204,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 29.75, 100));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -226,7 +228,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
+            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
             obj->GetUI()->SetUIID("PlayerHP");
 
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
@@ -238,8 +240,8 @@ void Client::Init()
         {
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 46, 100));
+            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -262,7 +264,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 46, 100));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
             obj->SetLayerIndex(Layer_UI);
@@ -286,9 +288,8 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(armorPosition.x - 27.f, armorPosition.y - 9.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"BlueBar"));
-            obj->GetUI()->SetUIID("PlayerArmor");
-
+            obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
+            obj->GetUI()->SetUIID("Armor");
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
@@ -395,7 +396,35 @@ void Client::Init()
             }
         }
     }
+    // HitEffect
+    {
+        
+        {
+            auto obj = make_shared<GameObject>();
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+            obj->AddComponent(make_shared<Particle>());
+            {
+                //material
+                shared_ptr<Material> material = make_shared<Material>();
+                material->SetShader(effectShader);
+                auto texture = RESOURCES->Load<Texture>(L"HitEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
+                material->SetDiffuseMap(texture);
+                MaterialDesc& desc = material->GetMaterialDesc();
+                desc.ambient = Vec4(1.f);
+                desc.diffuse = Vec4(1.f);
+                desc.specular = Vec4(1.f);
+                RESOURCES->Add(L"HitEffect", material);
 
+                obj->GetParticle()->SetMaterial(material);
+            }
+            obj->GetMeshRenderer()->SetParticleRender(true);
+            obj->GetParticle()->SetLifetime(0.5f);
+            obj->GetParticle()->SetfadeStart(0.25f);
+            obj->GetParticle()->SetReuse(true);
+            obj->GetParticle()->Add(Vec3(40,0,40), Vec2(5.0f, 5.0f));
+            CUR_SCENE->Add(obj);
+        }
+    }
 	// Light
 	{
 		auto light = make_shared<GameObject>();

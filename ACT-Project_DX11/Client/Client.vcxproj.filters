@@ -235,5 +235,8 @@
     <FxCompile Include="..\Shaders\Particle.fx">
       <Filter>Shaders\Week5</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shaders\EffectTest.fx">
+      <Filter>Shaders\Week5</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
