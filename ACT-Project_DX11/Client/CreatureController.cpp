@@ -30,7 +30,7 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
     {
         name = "player";
         auto player = dynamic_pointer_cast<PlayerController>(controller);
-        //float hpRatio = _hp / _maxHp;
+        float hpRatio = _hp / _maxHp;
 
         break;
     }

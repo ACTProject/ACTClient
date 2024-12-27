@@ -401,6 +401,18 @@ void Client2::Init()
 	}
 
 
+    // Dust Material 생성
+    shared_ptr<Material> dustMaterial = make_shared<Material>();
+    {
+        dustMaterial->SetShader(particleShader);
+        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.png");
+        dustMaterial->SetDiffuseMap(texture);
+        MaterialDesc& desc = dustMaterial->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Dust", dustMaterial);
+    }
 
 	// Player
     {
@@ -473,7 +485,7 @@ void Client2::Init()
         hitbox->Craete(player, Vec3(1.5f));
         CUR_SCENE->Add(hitboxGO);
 
-              // Player::PlayerScript
+        // Player::PlayerScript
         shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
         playerScript->SetPlayer(playerModel);
@@ -487,29 +499,7 @@ void Client2::Init()
         CUR_SCENE->Add(player);
         CUR_SCENE->SetPlayer(player);
     }
-        // Material
-        shared_ptr<Material> dustMaterial = make_shared<Material>();
-        dustMaterial->SetShader(particleShader);
-        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
-        dustMaterial->SetDiffuseMap(texture);
-        MaterialDesc& desc = dustMaterial->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"Dust", dustMaterial);
-    
-        // Dust Material 생성
-        shared_ptr<Material> dustMaterial = make_shared<Material>();
-        dustMaterial->SetShader(particleShader);
-        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.png");
-        dustMaterial->SetDiffuseMap(texture);
-        MaterialDesc& desc = dustMaterial->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"Dust", dustMaterial);
    
-
 	// Skybox
 	{
 		// Material

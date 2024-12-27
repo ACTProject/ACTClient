@@ -184,6 +184,7 @@ void PlayerController::HandleMovement()
         if (_dustTimer >= _dustInterval) {
             CreateDustEffect();
             _dustTimer = 0.0f; // 타이머 초기화
+        }
     }
 }
 
