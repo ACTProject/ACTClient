@@ -7,6 +7,7 @@
 
 void MelleMonsterController::Move(Vec3 objPos, Vec3 targetPos, float speed)
 {
+    SetAnimationState(AnimationState::Run);
     Vec3 direction = targetPos - objPos;
     if (direction.LengthSquared() < EPSILON) // EPSILON 사용
     {
@@ -69,48 +70,27 @@ void MelleMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 //	}
 //}
 
-void MelleMonsterController::Attack(int type)
+void MelleMonsterController::Punch(int type)
 {
-    _isAnimating = true;
-
-    float atkDuration = _attackDuration[atkType] / _FPS;
-
-    switch (type)
+    if (animPlayingTime >= animDuration / 2.0f)
     {
-    case 0:
-        SetAnimationState(AnimationState::Attack1);
-        break;
-    case 1:
-        SetAnimationState(AnimationState::Attack2);
-        break;
-    case 2:
-        SetAnimationState(AnimationState::Attack3);
-        break;
+        UpdateHitBox();
     }
-
-    // 코루틴 실행
-    MyCoroutine attackCoroutine = EnemyCoroutine(this, atkDuration);
-    currentEnemyCoroutine = attackCoroutine.GetHandler();
-    currentEnemyCoroutine.resume();
-
+    if (_hit && !hasDealing)
+    {
+        auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
+        player->OnDamage(_atk);
+        hasDealing = true;
+    }
 }
 
 void MelleMonsterController::Aggro()
 {
-    _isAnimating = true;
-
-    float duration = _aggroDuration / _FPS;
-
-    SetAnimationState(AnimationState::Aggro);
-    MyCoroutine aggroCoroutine = EnemyCoroutine(this, duration);
-    currentEnemyCoroutine = aggroCoroutine.GetHandler();
-    currentEnemyCoroutine.resume();
-}
-
-void MelleMonsterController::Patrol(Vec3 Target)
-{
-    Move(EnemyPos, Target, _speed / 2.f);
-    Rota(EnemyPos, Target);
+    if (PlayCheckAnimating(AnimationState::Aggro))
+    {
+        return;
+    }
+    isFirstTime = true;
 }
 
 void MelleMonsterController::Start()
@@ -121,15 +101,11 @@ void MelleMonsterController::Start()
     _maxHp = 80.0f;
     _hp = 80.0f;
     _atk = 15.0f;
+    _speed = 8.0f;
 
     _transform = GetTransform();
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
-    for (int i = 0; i < 3; ++i)
-    {
-        _attackDuration[i] = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Attack1 + i));
-    }
-    _aggroDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Aggro));
 
     std::cout << "MelleMonsterController Start()" << std::endl;
 }
@@ -138,144 +114,121 @@ void MelleMonsterController::Update()
 {
     Super::Update();
 
-    _FPS = static_cast<float>(TIME->GetFps());
     // 플레이어 위치 계산4
     _player = SCENE->GetCurrentScene()->GetPlayer();
     PlayerPos = _player->GetTransform()->GetPosition();
     EnemyPos = _transform->GetPosition();
 
+    _FPS = static_cast<float>(TIME->GetFps());
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
+    direction = PlayerPos - EnemyPos;
+    distance = direction.Length();
+    rangeDis = (EnemyPos - StartPos).Length();
+
     if (_isDead)
     {
-        animPlayingTime += DT;
-        SetAnimationState(AnimationState::Die);
-        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
+        if (PlayCheckAnimating(AnimationState::Die))
         {
-            Super::OnDeath();
-            std::cout << "Melle Monster has been defeated!" << std::endl;
+            return;
         }
+
+        Super::OnDeath();
+        std::cout << "Melle Monster Died!" << std::endl;
+
         return;
     }
 
-    if (_isAnimating)
+    if (INPUT->GetButton(KEY_TYPE::KEY_4))
     {
-        animPlayingTime += DT;
-        Rota(EnemyPos, PlayerPos);
-
-        if (_currentAnimationState == AnimationState::Attack1 ||
-            _currentAnimationState == AnimationState::Attack2 ||
-            _currentAnimationState == AnimationState::Attack3)
-        {
-            float atkDuration = _attackDuration[atkType] / _FPS;
-
-            if (animPlayingTime > atkDuration / 2.0f)
-            {
-                UpdateHitBox();
-            }
-            if (animPlayingTime >= atkDuration)
-            {
-                atkType = rand() % 3; // 다음 공격 타입 결정
-                _hit = false;
-                _hitbox->GetCollider()->SetActive(false);
-                ResetToIdleState();
-            }
-            return;
-        }
-
-        // Aggro 애니메이션이 완료되었는지 확인
-        if (_currentAnimationState == AnimationState::Aggro)
-        {
-            if (animPlayingTime >= _aggroDuration / _FPS)
-            {
-                isFirstAggro = false;
-                ResetToIdleState();
-            }
-            return;
-        }
-
-        if (_currentAnimationState == AnimationState::Hit1)
-        {
-            if (animPlayingTime >= _enemy->GetAnimationDuration(AnimationState::Hit1) / _FPS)
-            {
-                ResetToIdleState();
-            }
-            return;
-        }
+        int a = 0;
     }
 
-    Vec3 EnemyToPlayerdir = PlayerPos - EnemyPos;
-    float EnemyToPlayerdistance = EnemyToPlayerdir.Length();
-    rangeDis = (EnemyPos - StartPos).Length();
 
     // 범위 검사
     if (rangeDis > 50.f) // 초기 위치에서 너무 멀리 떨어지면 복귀
     {
         BackToStart = true;
-        onTarget = false;
-        onAttack = false;
-        isFirstAggro = true;
-    }
-    else if (EnemyToPlayerdistance <= AggroRange)
-    {
-        onTarget = true;
-    } // 탐지 범위 안에 있을 때
-    else
-    {
-        onTarget = false;
     }
 
-    if (EnemyToPlayerdistance < AttackRange) { onAttack = true; } // 공격 범위 안에 있을 때
-    else { onAttack = false; }
-
-    // 상태별 애니메이션 실행
     if (BackToStart)
     {
-        SetAnimationState(AnimationState::Run);
         Move(EnemyPos, StartPos, _speed);
         Rota(EnemyPos, StartPos);
-        _hp = 80.0f;
+        _hp = 80.0f;            // 돌아가면 체력 회복
         if (abs(rangeDis) < 1.f)
         {
             BackToStart = false;
+            chaseState = true;
+            isFirstTime = false;
         }
+        return;
     }
-    else if (isFirstAggro && onTarget)
+
+    if (distance <= AggroRange)
+    {
+        chaseState = false;
+    } // 탐지 범위 안에 있을 때
+
+
+    // 상태별 애니메이션 실행
+    if (!isFirstTime && !chaseState)
     {
         Aggro();
+        return;
     }
-    else if (onAttack)
+
+    if (!chaseState)
     {
-        Attack(atkType);
-    }
-    else if (onTarget)
-    {
-        SetAnimationState(AnimationState::Run);
-        Move(EnemyPos, PlayerPos, _speed);
-        Rota(EnemyPos, PlayerPos);
-    }
-    else if (PlayingHitMotion)
-    {
-        //if (PlayCheckAnimating(AnimationState::Hit1))
-        //{
-            //return;
-        //}
-        PlayingHitMotion = false;
-    }
-    else
-    {
-        SetAnimationState(AnimationState::Idle);
-        if (currentTime - lastPatrolTime > 2.f) // 3~6초 간격
-        {// 새로운 랜덤 목표 지점 생성
-            Patrol(patrolTarget);
-            if (sqrt(powf(EnemyPos.x - patrolTarget.x, 2) + powf(EnemyPos.z - patrolTarget.z, 2)) < 1.f)
+        if (distance < AttackRange)
+        {
+            punchState = true;
+        }
+        if (punchState)
+        {
+            if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + atkType)))
             {
-                lastPatrolTime = currentTime;
+                Punch(atkType);
+                return;
+            }
+            else
+            {
+                atkType = rand() % 3;
+                punchState = false;
+                ResetHit();
             }
         }
         else
         {
+            int randomHit = rand() % 3;
+            if (PlayingHitMotion && randomHit == 0)
+            {
+                if (PlayCheckAnimating(AnimationState::Hit1))
+                {
+                    return;
+                }
+            }
+            PlayingHitMotion = false;
+            Rota(EnemyPos, PlayerPos);
+            Move(EnemyPos, PlayerPos, _speed);
+        }
+    }
+    else
+    {
+        if (currentTime - lastPatrolTime > 2.f) // 3~6초 간격
+        {
+            Move(EnemyPos, patrolTarget, _speed / 2.f);
+            Rota(EnemyPos, patrolTarget);
+            if (sqrt(powf(EnemyPos.x - patrolTarget.x, 2) + powf(EnemyPos.z - patrolTarget.z, 2)) < 1.f)
+            {
+                lastPatrolTime = currentTime;
+                isExecuted_1 = false;
+            }
+        }
+        else
+        {
+            ResetToIdleState();
             float radius = 5.f; // 배회 반경
             float randomX = StartPos.x + (rand() % 2000 / 1000.0f - 1.0f) * radius;
             float randomZ = StartPos.z + (rand() % 2000 / 1000.0f - 1.0f) * radius;
@@ -283,25 +236,6 @@ void MelleMonsterController::Update()
         }
     }
 
-}
-
-void MelleMonsterController::SetAnimationState(AnimationState state)
-{
-    _modelAnimator->ChangeAnimation(state);
-    _currentAnimationState = state;
-}
-
-void MelleMonsterController::ResetToIdleState() {
-    _isAnimating = false;
-    animPlayingTime = 0.0f;
-    EnemyEndCoroutine();
-    SetAnimationState(AnimationState::Idle);
-}
-
-void MelleMonsterController::OnDeath()
-{
-    _isDead = true;
-    animPlayingTime = 0.0f;
 }
 
 void MelleMonsterController::UpdateHitBox()
@@ -342,9 +276,9 @@ bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
     SetAnimationState(state);
 
     animPlayingTime += DT;
-    duration = _enemy->GetAnimationDuration(state) / _FPS;
+    animDuration = _enemy->GetAnimationDuration(state) / _FPS;
 
-    if (animPlayingTime >= duration)
+    if (animPlayingTime >= animDuration)
     {
         animPlayingTime = 0.0f;
         ResetToIdleState();
@@ -352,4 +286,28 @@ bool MelleMonsterController::PlayCheckAnimating(AnimationState state)
     }
 
     return true; // 플레이 중
+}
+
+void MelleMonsterController::SetAnimationState(AnimationState state)
+{
+    _modelAnimator->ChangeAnimation(state);
+    _currentAnimationState = state;
+}
+
+void MelleMonsterController::ResetToIdleState()
+{
+    SetAnimationState(AnimationState::Idle);
+}
+
+void MelleMonsterController::ResetHit()
+{
+    hasDealing = false;
+    _hit = false;
+    _hitbox->GetCollider()->SetActive(false);
+}
+
+void MelleMonsterController::OnDeath()
+{
+    _isDead = true;
+    animPlayingTime = 0.0f;
 }

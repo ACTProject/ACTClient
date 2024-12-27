@@ -29,10 +29,6 @@ bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState sta
         return false;
     }
 
-    /*MyCoroutine attackCoroutine = EnemyCoroutine(this, duration);
-    currentEnemyCoroutine = attackCoroutine.GetHandler();
-    currentEnemyCoroutine.resume();*/
-
     return true; // 플레이 중
 }
 
@@ -54,11 +50,6 @@ void FinalBossMonsterFirstPhaseController::Update()
 {
     Super::Update();
     currentTime = TIME->GetGameTime(); // 현재 게임 시간
-
-    if (INPUT->GetButton(KEY_TYPE::KEY_4))
-    {
-        int a = 0;
-    }
 
     if (_isDead)
     {
@@ -172,15 +163,15 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
     }
     else
     {
-        if (PlayingHitMotion)
+        int randomHit = rand() % 3;
+        if (PlayingHitMotion && randomHit == 0)
         {
             if (PlayCheckAnimating(AnimationState::Hit1))
             {
-                lastTime = currentTime - 0.8f;
                 return;
             }
-            PlayingHitMotion = false;
         }
+        PlayingHitMotion = false;
         Rota(bossPos, playerPos);
     }
 
