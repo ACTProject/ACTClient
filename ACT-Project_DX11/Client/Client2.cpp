@@ -391,17 +391,6 @@ void Client2::Init()
 
             CUR_SCENE->Add(obj);
         }
-
-        // Boss HP Slider
-        {
-            // 슬라이더 컴포넌트 추가.
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
-            obj->GetUI()->SetUIID("Boss");
-            CUR_SCENE->Add(obj);
-        }
     }
 
     //Option
@@ -634,6 +623,11 @@ void Client2::Init()
 
         CUR_SCENE->Add(player);
         CUR_SCENE->SetPlayer(player);
+    }
+
+    // Enemy
+    {
+        ENEMY->CreateFinalBoss({ 30.0f,0.f,100.0f });
     }
    
 	// Skybox

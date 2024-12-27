@@ -87,11 +87,29 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
         break;
     }
     case MonoBehaviourType::FinalBossMonster_1:
-        name = "FinalBossMonster";
+    {
+        _hp -= damage;
+        auto boss = dynamic_pointer_cast<FinalBossMonsterFirstPhaseController>(controller);
+        string ID = boss->GetObjID();
+        float hpRatio = _hp / _maxHp;
+
+        shared_ptr<Ui> ui = UIMANAGER->GetUi(ID);
+        auto slider = dynamic_pointer_cast<Slider>(ui);
+        slider->SetRatio(hpRatio);
         break;
+    }
     case MonoBehaviourType::FinalBossMonster_2:
-        name = "FinalBossMonster";
+    {
+        _hp -= damage;
+        auto boss = dynamic_pointer_cast<FinalBossMonsterSecondPhaseController>(controller);
+        string ID = boss->GetObjID();
+        float hpRatio = _hp / _maxHp;
+
+        shared_ptr<Ui> ui = UIMANAGER->GetUi(ID);
+        auto slider = dynamic_pointer_cast<Slider>(ui);
+        slider->SetRatio(hpRatio);
         break;
+    }
     default:
         name = "null";
     }
