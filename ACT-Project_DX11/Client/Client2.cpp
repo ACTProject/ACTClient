@@ -540,22 +540,6 @@ void Client2::Init()
                 obj->GetModelRenderer()->SetPass(4);
             }
 
-            // Collider
-            auto collider = make_shared<SphereCollider>();
-            collider->SetRadius(1.f);
-            collider->SetOffset(Vec3(0.f, 30.f, 0.f));
-            OCTREE->InsertCollider(collider);
-            obj->AddComponent(collider);
-
-            // Rigidbody
-            shared_ptr<Rigidbody> rigidBody = make_shared<Rigidbody>();
-            rigidBody->SetUseGravity(false);
-            rigidBody->SetMass(5.0f);
-            obj->AddComponent(rigidBody);
-
-            COLLISION->AddCollider(collider);
-            COLLISION->AddRigidbody(rigidBody);
-
             CUR_SCENE->Add(obj);
         }
     }
