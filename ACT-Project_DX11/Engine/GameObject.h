@@ -30,6 +30,8 @@ enum class ObjectType
     UI,
     Boss2,
     Portal,
+    MapMesh,
+    Map,
     // ...
 
     Unknown,
