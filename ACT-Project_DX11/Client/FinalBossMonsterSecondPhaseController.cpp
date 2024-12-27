@@ -45,8 +45,6 @@ void FinalBossMonsterSecondPhaseController::Start()
     _player = SCENE->GetCurrentScene()->GetPlayer();
     randPunchType = rand() % 4;
     randType = rand() % 8;
-
-    shared_ptr<ModelBone> rightHand = _enemy->GetBoneByName(L"mixamorig:RightHand");
 }
 
 void FinalBossMonsterSecondPhaseController::Update()
@@ -67,6 +65,7 @@ void FinalBossMonsterSecondPhaseController::Update()
         {
             return;
         }
+        _hpBar->SetActive(false);
         Super::OnDeath();
         std::cout << "FinalBoss has been defeated! Game Over!" << std::endl;
         return;
@@ -94,6 +93,7 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             _hp = 500.0f;
             DEBUG->Log(L"Boss 2nd Phase Start");
             Phase2Flag = true;
+            _hpBar->SetActive(true);
         }
         if (!isExecuted)
         {

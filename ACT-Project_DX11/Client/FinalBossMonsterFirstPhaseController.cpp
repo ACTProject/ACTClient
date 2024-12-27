@@ -35,7 +35,7 @@ bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState sta
 void FinalBossMonsterFirstPhaseController::Start()
 {
     Super::Start();
-    _maxHp = 500.f;
+    _maxHp = 100.f;
     _hp = 100.0f;
     _atk = 50.0f;
 
@@ -57,6 +57,7 @@ void FinalBossMonsterFirstPhaseController::Update()
         {
             return;
         }
+        _hpBar->SetActive(false);
         //_secondPhase->SetActive(true);
         //_secondPhase->GetTransform()->SetPosition(bossPos);
         Super::OnDeath();
@@ -181,6 +182,7 @@ void FinalBossMonsterFirstPhaseController::Appear()
     {
         return;
     }
+    _hpBar->SetActive(true);
     isFirstTime = true;
     lastTime = currentTime;
 }
