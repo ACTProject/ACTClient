@@ -289,7 +289,7 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
-            obj->GetUI()->SetUIID("Armor");
+            obj->GetUI()->SetUIID("PlayerArmor");
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
@@ -417,7 +417,7 @@ void Client::Init()
 
                 obj->GetParticle()->SetMaterial(material);
             }
-            obj->GetMeshRenderer()->SetParticleRender(true);
+            //obj->GetMeshRenderer()->SetParticleRender(true);
             obj->GetParticle()->SetLifetime(0.5f);
             obj->GetParticle()->SetfadeStart(0.25f);
             obj->GetParticle()->SetReuse(true);

@@ -25,7 +25,7 @@ void Rigidbody::FixedUpdate()
 	// 중력 적용
     if (_useGravity)
     {
-        Addforce(Vec3(0, -9.8f * _mass, 0)); // F = m * g
+        Addforce(Vec3(0, -9.8f * _mass * 2.5, 0)); // F = m * g
     }
 	// 가속도 계산 (a = F / m)
 	Vec3 acceleration = _force / _mass;

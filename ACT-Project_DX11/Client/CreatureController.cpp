@@ -26,7 +26,6 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
     {
     case MonoBehaviourType::Player:
     {
-        _hp -= damage;
         name = "player";
         auto player = dynamic_pointer_cast<PlayerController>(controller);
        
