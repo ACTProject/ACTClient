@@ -259,6 +259,12 @@
     <ClCompile Include="Potal.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
+    <ClCompile Include="JumpObj.cpp">
+      <Filter>04. Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveObj.cpp">
+      <Filter>04. Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelMesh.h">
@@ -529,6 +535,12 @@
       <Filter>04. Component</Filter>
     </ClInclude>
     <ClInclude Include="Potal.h">
+      <Filter>04. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="JumpObj.h">
+      <Filter>04. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveObj.h">
       <Filter>04. Component</Filter>
     </ClInclude>
   </ItemGroup>
