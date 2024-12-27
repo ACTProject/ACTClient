@@ -130,7 +130,7 @@ void Client2::Init()
         {
             shared_ptr<Material> material = make_shared<Material>();
             material->SetShader(renderUIShader);
-            auto texture = RESOURCES->Load<Texture>(L"RedBar", L"..\\Resources\\Textures\\UI\\HP.png");
+            auto texture = RESOURCES->Load<Texture>(L"RedBar", L"..\\Resources\\Textures\\UI\\MonsterHP.png");
             material->SetDiffuseMap(texture);
             MaterialDesc& desc = material->GetMaterialDesc();
             desc.ambient = Vec4(1.f);
@@ -280,6 +280,126 @@ void Client2::Init()
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 27.f, armorPosition.y - 9.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("Armor");
+            CUR_SCENE->Add(obj);
+        }
+    }
+
+    // Boss HP UI
+    {
+        // BossBarLeft Material
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(renderUIShader);
+            auto texture = RESOURCES->Load<Texture>(L"BossBarLeft", L"..\\Resources\\Textures\\UI\\BossBar1.png");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"BossBarLeft", material);
+        }
+        // BossBarRight Material
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(renderUIShader);
+            auto texture = RESOURCES->Load<Texture>(L"BossBarRight", L"..\\Resources\\Textures\\UI\\BossBar2.png");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"BossBarRight", material);
+        }
+        // BossName Material
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(renderUIShader);
+            auto texture = RESOURCES->Load<Texture>(L"BossName", L"..\\Resources\\Textures\\UI\\BossName.png");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"BossName", material);
+        }
+
+        // BossBarLeft Object
+        {
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(-270, 253, 0.f));
+            obj->GetOrAddTransform()->SetScale(Vec3(60));
+            obj->AddComponent(make_shared<MeshRenderer>());
+
+            obj->SetLayerIndex(Layer_UI);
+            {
+                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"BossBarLeft"));
+
+            }
+            {
+                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+                obj->GetMeshRenderer()->SetMesh(mesh);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(0);
+            }
+
+            CUR_SCENE->Add(obj);
+        }
+
+        // BossBarRight Object
+        {
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(270, 253, 0.f));
+            obj->GetOrAddTransform()->SetScale(Vec3(60));
+            obj->AddComponent(make_shared<MeshRenderer>());
+
+            obj->SetLayerIndex(Layer_UI);
+            {
+                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"BossBarRight"));
+
+            }
+            {
+                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+                obj->GetMeshRenderer()->SetMesh(mesh);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(0);
+            }
+
+            CUR_SCENE->Add(obj);
+        }
+
+        // BossName Object
+        {
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(0, 270, 0.f));
+            obj->GetOrAddTransform()->SetScale(Vec3(98.25, 27, 1));
+            obj->AddComponent(make_shared<MeshRenderer>());
+
+            obj->SetLayerIndex(Layer_UI);
+            {
+                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"BossName"));
+
+            }
+            {
+                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+                obj->GetMeshRenderer()->SetMesh(mesh);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(0);
+            }
+
+            CUR_SCENE->Add(obj);
+        }
+
+        // Boss HP Slider
+        {
+            // 슬라이더 컴포넌트 추가.
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->AddComponent(make_shared<Slider>());
+            obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
+            obj->GetUI()->SetUIID("Boss");
             CUR_SCENE->Add(obj);
         }
     }
