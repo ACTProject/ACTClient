@@ -5,12 +5,12 @@ class UIManager
 {
     DECLARE_SINGLE(UIManager);
 public:
-    void AddUI(shared_ptr<Ui> ui);
-    void ReMoveUI(shared_ptr<GameObject> obj);
+    void AddUI(const string& name, shared_ptr<Ui> ui);
+    void RemoveUI(const string& name);
     void Update();
 
-    vector<shared_ptr<Ui>> GetUIList() { return _uiList; }
+    shared_ptr<Ui> GetUi(const string& name);
 private:
-    vector<shared_ptr<Ui>> _uiList;
+    unordered_map<string, shared_ptr<Ui>> _uiList;
 };
 

@@ -77,7 +77,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
         obj->GetUI()->SetOwner(rangoon);
         obj->SetActive(true);
 
-        UIMANAGER->AddUI(obj->GetUI());
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
         CUR_SCENE->Add(obj);
         CUR_SCENE->Add(rangoon);
     }
