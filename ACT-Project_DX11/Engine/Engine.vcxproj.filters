@@ -253,6 +253,18 @@
     <ClCompile Include="TaskQueue.cpp">
       <Filter>98. Utils</Filter>
     </ClCompile>
+    <ClCompile Include="DynamicObj.cpp">
+      <Filter>04. Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Potal.cpp">
+      <Filter>04. Component</Filter>
+    </ClCompile>
+    <ClCompile Include="JumpObj.cpp">
+      <Filter>04. Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveObj.cpp">
+      <Filter>04. Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelMesh.h">
@@ -518,6 +530,18 @@
     </ClInclude>
     <ClInclude Include="TaskQueue.h">
       <Filter>98. Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicObj.h">
+      <Filter>04. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Potal.h">
+      <Filter>04. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="JumpObj.h">
+      <Filter>04. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveObj.h">
+      <Filter>04. Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

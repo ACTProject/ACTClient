@@ -76,12 +76,6 @@ void MelleMonsterController::Punch(int type)
     {
         UpdateHitBox();
     }
-    if (_hit && !hasDealing)
-    {
-        auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
-        player->OnDamage(GetGameObject(), _atk);
-        hasDealing = true;
-    }
 }
 
 void MelleMonsterController::Aggro()
@@ -91,6 +85,7 @@ void MelleMonsterController::Aggro()
         return;
     }
     isFirstTime = true;
+    _hpBar->SetActive(true);
 }
 
 void MelleMonsterController::Start()
@@ -162,6 +157,7 @@ void MelleMonsterController::Update()
             BackToStart = false;
             chaseState = true;
             isFirstTime = false;
+            _hpBar->SetActive(false);
         }
         return;
     }
@@ -301,7 +297,6 @@ void MelleMonsterController::ResetToIdleState()
 
 void MelleMonsterController::ResetHit()
 {
-    hasDealing = false;
     _hit = false;
     _hitbox->GetCollider()->SetActive(false);
 }

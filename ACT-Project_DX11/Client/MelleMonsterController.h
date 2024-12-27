@@ -5,6 +5,7 @@
 #include "MonsterController.h"
 #include "Model.h"
 #include "ModelAnimator.h"
+#include "UI.h"
 
 class Model;
 class ModelAnimator;
@@ -27,6 +28,9 @@ public:
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
+    void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
+    string GetObjID() { return objID; }
+    void SetObjID(string str) { objID = str; }
     void UpdateHitBox();
 
 public:
@@ -64,7 +68,6 @@ private:
     // 히트 상태
     bool _hit = false;
     bool _isDead = false;
-    bool hasDealing = false;
 
     Vec3 StartPos;
     Vec3 CurForward;
@@ -72,11 +75,13 @@ private:
     Vec3 PlayerPos;
     Vec3 patrolTarget;
 
+    string objID;
 	shared_ptr<Model> _enemy;
     shared_ptr<GameObject> _hitbox;
 	shared_ptr<ModelAnimator> _modelAnimator;
 	shared_ptr<Transform> _transform;
 	shared_ptr<GameObject> _player;
+	shared_ptr<GameObject> _hpBar;
 	AnimationState _currentAnimationState = AnimationState::Idle;
 };
 

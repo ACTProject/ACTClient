@@ -459,7 +459,6 @@ void PlayerController::StartDodge()
     _isPlayeringDodgeAnimation = true;
     SetAnimationState(AnimationState::Dodge);
 
-    // TODO (무적 상태)
     _isInvincible = true;
 }
 

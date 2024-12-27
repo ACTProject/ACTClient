@@ -41,11 +41,12 @@ float4 PS(MeshOutput input) : SV_TARGET
     
     float distance = length(input.worldPosition - CameraPosition());
     float start = 60.f;
-    float end = 140.f;
+    float end = 160.f;
     float fogFactor = saturate((end - distance) / (end - start));
 	
-    float4 fogColor = float4(0.1, 0.6, 0.9, 1.0);
+    float4 fogColor = float4(0.1, 0.4, 0.8, 1.0);
     float maxFog = 0.0;
+
     if (fogFactor <= maxFog)
     {
         FinalColor.rgb = lerp(fogColor.rgb, FinalColor.rgb, maxFog);
@@ -59,10 +60,7 @@ float4 PS(MeshOutput input) : SV_TARGET
     if (FinalColor.a < 0.3f)
         discard;
     
-    return FinalColor;
-    
-	
-
+    return FinalColor;    	
 }
 
 float4 PS_NoShadow(MeshOutput input) : SV_TARGET
@@ -72,11 +70,12 @@ float4 PS_NoShadow(MeshOutput input) : SV_TARGET
     float distance = length(input.worldPosition - CameraPosition());
 	
     float start = 60.f;
-    float end = 140.f;
+    float end = 160.f;
     float fogFactor = saturate((end - distance) / (end - start));
 	
-    float4 fogColor = float4(0.1, 0.6, 0.9, 1.0);
+    float4 fogColor = float4(0.1, 0.4, 0.9, 1.0);
     float maxFog = 0.0;
+
     if (fogFactor <= maxFog)
     {
         color.rgb = lerp(fogColor.rgb, color.rgb, maxFog);

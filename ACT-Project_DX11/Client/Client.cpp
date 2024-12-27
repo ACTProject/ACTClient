@@ -174,6 +174,7 @@ void Client::Init()
         healPosition.y = -260.f;
         armorPosition.x = healPosition.x + 2.f;
         armorPosition.y = healPosition.y + 40.f;
+      
         // MeshHealBar_Shadow
         {
             auto obj = make_shared<GameObject>();
@@ -193,28 +194,6 @@ void Client::Init()
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
 
-            }
-
-            CUR_SCENE->Add(obj);
-        }
-        // MeshArmorBar_Shadow
-        {
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
-            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
-            obj->AddComponent(make_shared<MeshRenderer>());
-
-            obj->SetLayerIndex(Layer_UI);
-            {
-                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"ArmorBar_Shadow"));
-
-            }
-            {
-                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
-                obj->GetMeshRenderer()->SetMesh(mesh);
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
-                obj->GetMeshRenderer()->SetPass(0);
             }
 
             CUR_SCENE->Add(obj);
@@ -243,6 +222,43 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
+        // RedBar HPMesh
+        {
+            // 슬라이더 컴포넌트 추가.
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->AddComponent(make_shared<Slider>());
+            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
+            obj->GetUI()->SetUIID("PlayerHP");
+
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+
+            CUR_SCENE->Add(obj);
+        }
+
+        // MeshArmorBar_Shadow
+        {
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
+            obj->AddComponent(make_shared<MeshRenderer>());
+
+            obj->SetLayerIndex(Layer_UI);
+            {
+                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"ArmorBar_Shadow"));
+
+            }
+            {
+                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+                obj->GetMeshRenderer()->SetMesh(mesh);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(0);
+            }
+
+            CUR_SCENE->Add(obj);
+        }
+
         // MeshArmorBar
         {
             auto obj = make_shared<GameObject>();
@@ -265,18 +281,8 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
-        // RedBar HPMesh
-        {
-            // 슬라이더 컴포넌트 추가.
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
-            obj->GetUI()->SetUIID("HP");
-            CUR_SCENE->Add(obj);
-        }
 
-        // RedBar ARmor Mesh
+        // RedBar ArmorMesh
         {
             // 슬라이더 컴포넌트 추가.
             auto obj = make_shared<GameObject>();
@@ -284,6 +290,7 @@ void Client::Init()
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("Armor");
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
     }
@@ -437,7 +444,7 @@ void Client::Init()
     {
         auto shell = make_shared<GameObject>();
         shell->SetObjectType(ObjectType::Shell);
-        shell->GetOrAddTransform()->SetPosition(Vec3(35, 0.f, 35));
+        shell->GetOrAddTransform()->SetPosition(Vec3(35, -5.f, 35));
         shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> shellModel = make_shared<Model>();
@@ -588,27 +595,27 @@ void Client::Init()
 
 	// Enemy
     {
-        ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f });
-        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f });
-        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f });
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f });
-        ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f });
-        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f });
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f });
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f });
-        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f });
+        int cnt = 0;
+        ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
+        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
 
-        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f });
-        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
-        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
-        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
-        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f });
-        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f });
-        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f });
-        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f });
-        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f });
-
-        //ENEMY->CreateFinalBoss({ 10.0f,0.f,10.0f });
+        cnt = 0;
+        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
     }
     
 
