@@ -9,6 +9,9 @@
 #include "Rigidbody.h"
 #include "Material.h"
 #include "Billboard.h"
+#include "DynamicObj.h"
+#include "Potal.h"
+
 
 void MapManager::Init()
 {
@@ -106,14 +109,16 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/can_crushed_03", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
         src = make_shared<MapObjDesc>(L"MapObject/CastleKit_Tower_01", L"23. RenderDemo.fx");
-        MAP->AddMapObj(src);
+        MAP->AddMapObj(src);        
+        src = make_shared<MapObjDesc>(L"MapObject/Medieval_Door", L"23. RenderDemo.fx" , true, DynamicType::Potal);
+        MAP->AddMapObj(src);  
 
         // 바닥텍스처
-        src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", true, true);
+        src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", false, DynamicType::None,false, true);
         MAP->AddMapObj(src);
 
         // 빌보드메시
-        src = make_shared<MapObjDesc>(L"grass.png", L"28. BillBoardDemo.fx", false, false, true);
+        src = make_shared<MapObjDesc>(L"grass.png", L"28. BillBoardDemo.fx", false, DynamicType::None, false, false, true);
         MAP->AddMapObj(src);
 
         // ImGui용 함수.
@@ -248,6 +253,11 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
             OCTREE->InsertCollider(collider);
             COLLISION->AddCollider(collider);
         }
+
+        if (_mapSelectDesc->isDynamic == true)
+        {
+           CreateDynamicObject(obj,_mapSelectDesc->dynamicType);
+        }
     }
     _mapObjList.push_back(obj);
     return obj;
@@ -267,7 +277,6 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
         auto it = _mapInfoList.find(desc.filename);
         if (it != _mapInfoList.end())
         {
-
             if (desc.isMesh == true)
             {
                 auto meshrender = make_shared<MeshRenderer>();
@@ -303,10 +312,14 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
             OCTREE->InsertCollider(collider);
             COLLISION->AddCollider(collider);
         }
+
+        if (desc.isDynamic == true)
+        {
+            CreateDynamicObject(obj, desc.dynamicType);
+        }
     }
     _mapObjList.push_back(obj);
     return obj;
-
 }
 
 
@@ -596,6 +609,13 @@ bool MapManager::ExportMapObj(wstring _fileName)
     for (int i = 0; i < length; i++)
     {
         MapObjDesc dec;
+        dec.isDynamic = (_mapObjList[i]->GetDynamicObj() == nullptr) ? false : true;
+        fwrite(&dec.isDynamic, sizeof(bool), 1, fp);
+        if(dec.isDynamic == true)
+        {
+            dec.dynamicType = _mapObjList[i]->GetDynamicObj()->GetDynamicType();
+            fwrite(&dec.dynamicType, sizeof(DynamicType), 1, fp);
+        }
 
         dec.isMesh = (_mapObjList[i]->GetMeshRenderer() == nullptr) ? false : true;
         fwrite(&dec.isMesh, sizeof(bool), 1, fp);
@@ -607,7 +627,6 @@ bool MapManager::ExportMapObj(wstring _fileName)
         fwrite(&dec.isBillBoard, sizeof(bool), 1, fp);
 
 
-        //AABBBoxCollider* collider = dynamic_cast<AABBBoxCollider*>(_mapObjList[i]->GetCollider().get());
         if (dec.isCollision == true)
         {
             shared_ptr<AABBBoxCollider> collider = dynamic_pointer_cast<AABBBoxCollider>(_mapObjList[i]->GetCollider());
@@ -685,6 +704,12 @@ bool MapManager::ImportMapObj(wstring _fileName)
     MapObjDesc dec;
     for (int i = 0; i < lengths; i++)
     {
+        fread(&dec.isDynamic, sizeof(bool), 1, fp);
+        if (dec.isDynamic == true)
+        {
+            fread(&dec.dynamicType, sizeof(DynamicType), 1, fp);
+        }
+
         fread(&dec.isMesh, sizeof(bool), 1, fp);
 
         fread(&dec.isCollision, sizeof(bool), 1, fp);
@@ -736,6 +761,22 @@ bool MapManager::ImportMapObj(wstring _fileName)
         SCENE->GetCurrentScene()->Add(gameObj);
     }
     return true;
+}
+
+void MapManager::CreateDynamicObject(shared_ptr<GameObject> obj,DynamicType type)
+{
+    switch (type)
+    {
+    case DynamicType::None:
+        break;
+    case DynamicType::Potal:
+    {
+        obj->AddComponent(make_shared<Potal>(DynamicType::Potal));
+    }
+        break;
+    default:
+        break;
+    }
 }
 
 void MapManager::ClearMap()

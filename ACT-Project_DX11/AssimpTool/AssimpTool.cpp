@@ -565,7 +565,18 @@ void AssimpTool::Init()
             converter->ExportMaterialData(L"MapObject/Urock06");
             converter->ExportModelData(L"MapObject/Urock06");
         }
-
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Medieval_Door.fbx");
+            converter->ExportMaterialData(L"MapObject/Medieval_Door");
+            converter->ExportModelData(L"MapObject/Medieval_Door");
+        }
+        //{
+        //    shared_ptr<Converter> converter = make_shared<Converter>();
+        //    converter->ReadAssetFile(L"MapObject/Medieval_Door02.fbx");
+        //    converter->ExportMaterialData(L"MapObject/Medieval_Door02");
+        //    converter->ExportModelData(L"MapObject/Medieval_Door02");
+        //}
 
 	}
 }
