@@ -556,17 +556,26 @@ void Client::Init()
 	// Enemy
     {
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f });
+        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f });
         ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f });
         ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f });
         ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f });
+        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f });
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f });
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f });
+        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f });
 
         ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f });
         ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
         ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
         ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
         ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f });
+        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f });
+        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f });
+        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f });
+        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f });
 
-        ENEMY->CreateFinalBoss({ 10.0f,0.f,10.0f });
+        //ENEMY->CreateFinalBoss({ 10.0f,0.f,10.0f });
     }
     
 
