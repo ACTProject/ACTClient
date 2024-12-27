@@ -161,6 +161,7 @@ void PlayerController::HandleMovement()
                 return; // 충돌 시 이동 취소
         }
 
+        CreateDustEffect();
         _transform->SetPosition(newPosition);
 
         // 방향에 따라 회전

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "EnemyManager.h"
+#include "Ui.h"
 
 void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
 {
@@ -64,8 +65,19 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
 
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
-
+        
         CUR_SCENE->Add(rangoon);
+        //// RedBar HPMesh
+        //{
+        //    // 슬라이더 컴포넌트 추가.
+        //    auto obj = make_shared<GameObject>();
+        //    obj->SetObjectType(ObjectType::UI);
+        //    obj->AddComponent(make_shared<Slider>());
+        //    obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
+        //    obj->GetUI()->SetUIID("HP");
+        //    obj->GetUI()->SetOwner(rangoon);
+        //    CUR_SCENE->Add(obj);
+        //}
     }
 }
 
