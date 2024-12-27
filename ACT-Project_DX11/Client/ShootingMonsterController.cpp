@@ -217,6 +217,7 @@ void ShootingMonsterController::Update()
 
     if (!chaseState)
     {
+        Rota(EnemyPos, PlayerPos);
         if (distance < ShootingRange)
         {
             shootState = true;
@@ -246,7 +247,6 @@ void ShootingMonsterController::Update()
                 }
             }
             PlayingHitMotion = false;
-            Rota(EnemyPos, PlayerPos);
             Move(EnemyPos, PlayerPos, _speed);
         }
     }
