@@ -50,8 +50,6 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
         CUR_SCENE->Add(hitboxGO);
         rangoonScript->SetHitBox(hitboxGO);
 
-        rangoon->AddComponent(rangoonScript);
-
         // Collider
         auto collider = make_shared<AABBBoxCollider>();
         collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(1.5f)));
@@ -72,18 +70,22 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
         obj->AddComponent(make_shared<Slider>());
-        obj->GetUI()->Create(Vec3(), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
-        obj->GetUI()->SetUIID("Enemy");
+        obj->GetUI()->Create(Vec3(), Vec2(50, 10), RESOURCES->Get<Material>(L"hpBar"));
+        obj->GetUI()->SetUIID("melle" + to_string(num));
         obj->GetUI()->SetOwner(rangoon);
-        obj->SetActive(true);
 
-        UIMANAGER->AddUI(obj->GetUI());
+        obj->SetActive(false);
+        rangoonScript->SetObjID("melle" + to_string(num));
+        rangoonScript->SetHpBar(obj);
+
+        rangoon->AddComponent(rangoonScript);
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
         CUR_SCENE->Add(obj);
         CUR_SCENE->Add(rangoon);
     }
 }
 
-void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
+void EnemyManager::CreateShootingMonster(Vec3 SpawnPos, int num)
 {
     auto PistolShrimp = make_shared<GameObject>(); // Pistol_Shrimp
     {
@@ -115,19 +117,7 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
 
         ShrimpScript->SetEnemy(enemyModel);
         ShrimpScript->SetModelAnimator(ma2);
-
         PistolShrimp->SetController(ShrimpScript);
-
-        //// HitBox
-        //shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
-        //shared_ptr<HitBox> hitbox = make_shared<HitBox>();
-        //hitboxGO->AddComponent(hitbox);
-        //hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
-        //hitbox->Craete(PistolShrimp, Vec3(1.0f));
-        //CUR_SCENE->Add(hitboxGO);
-        //ShrimpScript->SetHitBox(hitboxGO);
-
-        PistolShrimp->AddComponent(ShrimpScript);
 
         // Collider
         auto collider = make_shared<AABBBoxCollider>();
@@ -145,6 +135,23 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
 
+        // 슬라이더 컴포넌트 추가.
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->AddComponent(make_shared<Slider>());
+        obj->GetUI()->Create(Vec3(), Vec2(50, 10), RESOURCES->Get<Material>(L"hpBar"));
+        obj->GetUI()->SetUIID("pistol" + to_string(num));
+        obj->GetUI()->SetOwner(PistolShrimp);
+        obj->GetUI()->SetPositionUI({ 0, 8.0f, 0});
+
+        obj->SetActive(false);
+        ShrimpScript->SetObjID("pistol" + to_string(num));
+        ShrimpScript->SetHpBar(obj);
+
+        PistolShrimp->AddComponent(ShrimpScript);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
         CUR_SCENE->Add(PistolShrimp);
     }
 }

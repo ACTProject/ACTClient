@@ -17,7 +17,7 @@ class EnemyManager
 
 public:
     void CreateMeleeMonster(Vec3 SpawnPos, int num);
-    void CreateShootingMonster(Vec3 SpawnPos);
+    void CreateShootingMonster(Vec3 SpawnPos, int num);
     void CreateFinalBoss(Vec3 SpawnPos);
     shared_ptr<GameObject> CreateFinalPhase(Vec3 SpawnPos);
 

@@ -19,10 +19,7 @@ void CreatureController::Update()
 // 데미지 처리
 void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
 {
-    _hp -= damage;
-
     string name = "";
-    auto uiList = UIMANAGER->GetUIList();
 
     auto controller = GetGameObject()->GetController();
 
@@ -30,45 +27,54 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
     {
     case MonoBehaviourType::Player:
     {
+        _hp -= damage;
         name = "player";
         auto player = dynamic_pointer_cast<PlayerController>(controller);
         float hpRatio = _hp / _maxHp;
 
         float shellMaxHp = player->GetShellMaxHP();
         float shellHp = player->GetShellHP();
-        for (auto& ui : uiList)
-        {
-            if (ui->GetUIID() == "PlayerHP")
-            {
-                auto hpSlider = dynamic_pointer_cast<Slider>(ui);
-                hpSlider->SetRatio(hpRatio);
-            }
-            if (ui->GetUIID() == "PlayerArmor")
-            {
-                auto shellSlider = dynamic_pointer_cast<Slider>(ui);
-                shellSlider->SetRatio(hpRatio);
-            }
-        }
+        //for (auto& ui : uiList)
+        //{
+        //    if (ui->GetUIID() == "PlayerHP")
+        //    {
+        //        auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+        //        hpSlider->SetRatio(hpRatio);
+        //    }
+        //    if (ui->GetUIID() == "PlayerArmor")
+        //    {
+        //        auto shellSlider = dynamic_pointer_cast<Slider>(ui);
+        //        shellSlider->SetRatio(hpRatio);
+        //    }
+        //}
+
         break;
     }
 
     case MonoBehaviourType::MelleMonster:
     {
-        name = "MelleMonster";
+        _hp -= damage;
+        auto melle = dynamic_pointer_cast<MelleMonsterController>(controller);
+        string ID = melle->GetObjID();
         float hpRatio = _hp / _maxHp;
-        for (auto& ui : uiList)
-        {
-            if (ui->GetUIID() == "Enemy")
-            {
-                auto slider = dynamic_pointer_cast<Slider>(ui);
-                slider->SetRatio(hpRatio);
-            }
-        }
+
+        shared_ptr<Ui> ui = UIMANAGER->GetUi(ID);
+        auto slider = dynamic_pointer_cast<Slider>(ui);
+        slider->SetRatio(hpRatio);
         break;
     }
     case MonoBehaviourType::ShootingMonster:
-        name = "ShootingMonster";
+    {
+        _hp -= damage;
+        auto shooting = dynamic_pointer_cast<ShootingMonsterController>(controller);
+        string ID = shooting->GetObjID();
+        float hpRatio = _hp / _maxHp;
+
+        shared_ptr<Ui> ui = UIMANAGER->GetUi(ID);
+        auto slider = dynamic_pointer_cast<Slider>(ui);
+        slider->SetRatio(hpRatio);
         break;
+    }
     case MonoBehaviourType::FinalBossMonster_1:
         name = "FinalBossMonster";
         break;
