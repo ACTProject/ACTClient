@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "EnemyManager.h"
+#include "Slider.h"
+#include "Ui.h"
+#include "Material.h"
 
 void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
 {
@@ -64,7 +67,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
 
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
-
+        
         // 슬라이더 컴포넌트 추가.
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
@@ -72,11 +75,10 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
         obj->GetUI()->Create(Vec3(), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
         obj->GetUI()->SetUIID("Enemy");
         obj->GetUI()->SetOwner(rangoon);
-        obj->SetActive(false);
+        obj->SetActive(true);
 
         UIMANAGER->AddUI(obj->GetUI());
         CUR_SCENE->Add(obj);
-
         CUR_SCENE->Add(rangoon);
     }
 }

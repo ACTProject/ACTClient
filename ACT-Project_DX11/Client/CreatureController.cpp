@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CreatureController.h"
 #include "PlayerController.h"
+#include "Slider.h"
 
 
 void CreatureController::Start()
@@ -33,13 +34,27 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
         auto player = dynamic_pointer_cast<PlayerController>(controller);
         float hpRatio = _hp / _maxHp;
 
+        float shellMaxHp = player->GetShellMaxHP();
+        float shellHp = player->GetShellHP();
+        for (auto& ui : uiList)
+        {
+            if (ui->GetUIID() == "PlayerHP")
+            {
+                auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+                hpSlider->SetRatio(hpRatio);
+            }
+            if (ui->GetUIID() == "PlayerArmor")
+            {
+                auto shellSlider = dynamic_pointer_cast<Slider>(ui);
+                shellSlider->SetRatio(hpRatio);
+            }
+        }
         break;
     }
 
     case MonoBehaviourType::MelleMonster:
     {
         name = "MelleMonster";
-        auto melle = dynamic_pointer_cast<MelleMonsterController>(controller);
         float hpRatio = _hp / _maxHp;
         for (auto& ui : uiList)
         {
@@ -49,7 +64,6 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
                 slider->SetRatio(hpRatio);
             }
         }
-        int k = 0;
         break;
     }
     case MonoBehaviourType::ShootingMonster:

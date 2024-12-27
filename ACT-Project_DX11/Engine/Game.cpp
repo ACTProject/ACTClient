@@ -29,7 +29,7 @@ WPARAM Game::Run(uint32 num)
     }
 
     _scenes[_num].hWnd = g_hWnd;
-	
+	//0
     DEBUG->CreateConsoleWindow();
     // Octree
     {
@@ -38,6 +38,7 @@ WPARAM Game::Run(uint32 num)
         int maxDepth = 4;
         OCTREE->Init(worldBounds, maxDepth);
     }
+    //1
 	GUI->Init();
 	RESOURCES->Init();
     if (_scenes[_num].tag == SceneTag::INGAME)
