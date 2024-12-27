@@ -121,17 +121,19 @@ void MelleMonsterController::Update()
 
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
+    _FPS = static_cast<float>(TIME->GetFps());
 
     direction = PlayerPos - EnemyPos;
     distance = direction.Length();
     rangeDis = (EnemyPos - StartPos).Length();
 
-    if (_hp <= 0.0f)
+    if (_isDead)
     {
         if (PlayCheckAnimating(AnimationState::Die))
         {
             return;
         }
+
         Super::OnDeath();
         std::cout << "Melle Monster Died!" << std::endl;
 
@@ -183,7 +185,7 @@ void MelleMonsterController::Update()
         {
             punchState = true;
         }
-        if(punchState)
+        if (punchState)
         {
             if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + atkType)))
             {
@@ -199,7 +201,7 @@ void MelleMonsterController::Update()
         }
         else
         {
-            if (PlayingHitMotion && rand() % 3  == 0)
+            if (PlayingHitMotion && rand() % 3 == 0)
             {
                 if (PlayCheckAnimating(AnimationState::Hit1))
                 {
@@ -225,11 +227,7 @@ void MelleMonsterController::Update()
         }
         else
         {
-            if (!isExecuted_1)
-            {
-                ResetToIdleState();
-                isExecuted_1 = true;
-            }
+            ResetToIdleState();
             float radius = 5.f; // 배회 반경
             float randomX = StartPos.x + (rand() % 2000 / 1000.0f - 1.0f) * radius;
             float randomZ = StartPos.z + (rand() % 2000 / 1000.0f - 1.0f) * radius;
@@ -305,4 +303,10 @@ void MelleMonsterController::ResetHit()
     hasDealing = false;
     _hit = false;
     _hitbox->GetCollider()->SetActive(false);
+}
+
+void MelleMonsterController::OnDeath()
+{
+    _isDead = true;
+    animPlayingTime = 0.0f;
 }

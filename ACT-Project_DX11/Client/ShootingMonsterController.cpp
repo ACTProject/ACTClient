@@ -72,21 +72,6 @@ void ShootingMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 //    }
 //}
 
-void ShootingMonsterController::Shoot()
-{
-    _isAnimating = true;
-
-    float atkDuration = _attackDuration / _FPS;
-
-    SetAnimationState(AnimationState::Attack1);
-
-    // 코루틴 실행
-    MyCoroutine attackCoroutine = EnemyCoroutine(this, atkDuration);
-    currentEnemyCoroutine = attackCoroutine.GetHandler();
-    currentEnemyCoroutine.resume();
-
-}
-
 void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
 {
     auto bullet = make_shared<GameObject>(); // bullet
@@ -126,14 +111,11 @@ void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
 
 void ShootingMonsterController::Aggro()
 {
-    _isAnimating = true;
-
-    float duration = _aggroDuration / _FPS;
-
-    SetAnimationState(AnimationState::Aggro);
-    MyCoroutine aggroCoroutine = EnemyCoroutine(this, duration);
-    currentEnemyCoroutine = aggroCoroutine.GetHandler();
-    currentEnemyCoroutine.resume();
+    if (PlayCheckAnimating(AnimationState::Aggro))
+    {
+        return;
+    }
+    isFirstTime = true;
 }
 
 void ShootingMonsterController::Patrol(Vec3 Target)
@@ -150,13 +132,11 @@ void ShootingMonsterController::Start()
     _maxHp = 50.0f;
     _hp = 50.0f;
     _atk = 25.0f;
+    _speed = 8.0f;
 
     _transform = GetTransform();
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
-    _attackDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Attack1));
-
-    _aggroDuration = _enemy->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Aggro));
 
     std::cout << "ShootingMonsterController Start()" << std::endl;
 }
@@ -167,13 +147,14 @@ void ShootingMonsterController::Update()
 
     if (_isDead)
     {
-        animPlayingTime += DT;
-        SetAnimationState(AnimationState::Die);
-        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
+        if (PlayCheckAnimating(AnimationState::Die))
         {
-            Super::OnDeath();
-            std::cout << "Shooting Monster has been defeated!" << std::endl;
+            return;
         }
+
+        Super::OnDeath();
+        std::cout << "Shooting Monster Died!" << std::endl;
+
         return;
     }
 
@@ -182,6 +163,11 @@ void ShootingMonsterController::Update()
     _player = SCENE->GetCurrentScene()->GetPlayer();
     PlayerPos = _player->GetTransform()->GetPosition();
     EnemyPos = _transform->GetPosition();
+
+    direction = PlayerPos - EnemyPos;
+    distance = direction.Length();
+    rangeDis = (EnemyPos - StartPos).Length();
+
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
@@ -196,110 +182,75 @@ void ShootingMonsterController::Update()
         return;
     }
 
-    if (_isAnimating)
-    {
-        animPlayingTime += DT;
-        Rota(EnemyPos, PlayerPos);
-
-        if (_currentAnimationState == AnimationState::Attack1)
-        {
-            float atkDuration = _attackDuration / _FPS;
-
-            if (animPlayingTime >= atkDuration)
-            {
-                ResetToIdleState();
-                shootCount = true;
-            }
-            else if (animPlayingTime >= atkDuration / 2)
-            {
-                if (shootCount)
-                {
-                    AddBullet(EnemyPos, EnemyToPlayerdir);
-                    shootCount = false;
-                }
-            }
-            return;
-        }
-
-        // Aggro 애니메이션이 완료되었는지 확인
-        if (_currentAnimationState == AnimationState::Aggro)
-        {
-            if (animPlayingTime >= _aggroDuration / _FPS)
-            {
-                isFirstAggro = false;
-                ResetToIdleState();
-            }
-            return;
-        }
-        if (_currentAnimationState == AnimationState::Hit1)
-        {
-            if (animPlayingTime >= _enemy->GetAnimationDuration(AnimationState::Hit1) / _FPS)
-            {
-                ResetToIdleState();
-            }
-            return;
-        }
-
-    }
-
-    EnemyToPlayerdir = PlayerPos - EnemyPos;
-    EnemyToPlayerdistance = EnemyToPlayerdir.Length();
-    rangeDis = (EnemyPos - StartPos).Length();
-
     // 범위 검사
     if (rangeDis > 50.f) // 초기 위치에서 너무 멀리 떨어지면 복귀
     {
         BackToStart = true;
-        onTarget = false;
-        onAttack = false;
-        isFirstAggro = true;
-    }
-    else if (EnemyToPlayerdistance <= AggroRange)
-    {
-        onTarget = true;
-    } // 탐지 범위 안에 있을 때
-    else
-    {
-        onTarget = false;
     }
 
-    if (EnemyToPlayerdistance < ShootingRange) { onAttack = true; } // 공격 범위 안에 있을 때
-    else { onAttack = false; }
-    //
-
-    // 상태별 애니메이션 실행
     if (BackToStart)
     {
-        //SetAnimationState(AnimationState::Run);
         Move(EnemyPos, StartPos, _speed);
         Rota(EnemyPos, StartPos);
-        _hp = 100.f;
+        _hp = 80.0f;            // 돌아가면 체력 회복
         if (abs(rangeDis) < 1.f)
         {
             BackToStart = false;
+            chaseState = true;
+            isFirstTime = false;
         }
+        return;
     }
-    else if (isFirstAggro && onTarget)
+
+    if (distance <= AggroRange)
+    {
+        chaseState = false;
+    } // 탐지 범위 안에 있을 때
+
+
+    // 상태별 애니메이션 실행
+    if (!isFirstTime && !chaseState)
     {
         Aggro();
+        return;
     }
-    else if (onAttack)
+
+    if (!chaseState)
     {
-        Shoot();
-    }
-    else if (onTarget)
-    {
-        //SetAnimationState(AnimationState::Run);
-        Move(EnemyPos, PlayerPos, _speed);
-        Rota(EnemyPos, PlayerPos);
-    }
-    else if (_hit)
-    {
-        //OnHit(30.0f); // 맞는 데미지 입력 필요
+        if (distance < ShootingRange)
+        {
+            shootState = true;
+        }
+        if (shootState)
+        {
+            if (PlayCheckAnimating(AnimationState::Attack1))
+            {
+                if (!shootCount && animPlayingTime >= duration / 2.0f)
+                {
+                    AddBullet(EnemyPos, direction);
+                    shootCount = true;
+                }
+                return;
+            }
+            shootCount = false;
+            shootState = false;
+        }
+        else
+        {
+            if (PlayingHitMotion && rand() % 3 == 0)
+            {
+                if (PlayCheckAnimating(AnimationState::Hit1))
+                {
+                    return;
+                }
+                PlayingHitMotion = false;
+            }
+            Rota(EnemyPos, PlayerPos);
+            Move(EnemyPos, PlayerPos, _speed);
+        }
     }
     else
     {
-        SetAnimationState(AnimationState::Idle);
         if (currentTime - lastPatrolTime > 2.f) // 3~6초 간격
         {// 새로운 랜덤 목표 지점 생성
             Patrol(patrolTarget);
@@ -310,17 +261,12 @@ void ShootingMonsterController::Update()
         }
         else
         {
+            ResetToIdleState();
             float radius = 5.f; // 배회 반경
             float randomX = StartPos.x + (rand() % 2000 / 1000.0f - 1.0f) * radius;
             float randomZ = StartPos.z + (rand() % 2000 / 1000.0f - 1.0f) * radius;
             patrolTarget = Vec3(randomX, EnemyPos.y, randomZ);
         }
-    }
-
-    if (_hp < 0.f)
-    {
-        SetAnimationState(AnimationState::Die);
-        Remove(GetGameObject());
     }
 }
 
@@ -331,9 +277,6 @@ void ShootingMonsterController::SetAnimationState(AnimationState state)
 }
 
 void ShootingMonsterController::ResetToIdleState() {
-    _isAnimating = false;
-    animPlayingTime = 0.0f;
-    EnemyEndCoroutine();
     SetAnimationState(AnimationState::Idle);
 }
 
@@ -341,4 +284,28 @@ void ShootingMonsterController::OnDeath()
 {
     _isDead = true;
     animPlayingTime = 0.0f;
+}
+
+bool ShootingMonsterController::PlayCheckAnimating(AnimationState state)
+{
+    SetAnimationState(state);
+
+    animPlayingTime += DT;
+    duration = _enemy->GetAnimationDuration(state) / _FPS;
+
+    if (animPlayingTime >= duration)
+    {
+        animPlayingTime = 0.0f;
+        ResetToIdleState();
+        return false;
+    }
+
+    return true; // 플레이 중
+}
+
+void ShootingMonsterController::ResetHit()
+{
+    hasDealing = false;
+    _hit = false;
+    _hitbox->GetCollider()->SetActive(false);
 }
