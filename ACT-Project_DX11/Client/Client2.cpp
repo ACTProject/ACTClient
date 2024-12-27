@@ -500,8 +500,10 @@ void Client2::Init()
         CUR_SCENE->SetPlayer(player);
     }
 	
-
-
+    //Enemy
+    {
+        ENEMY->CreateFinalPhase({ 30.0f,0.f,100.0f });
+    }
     // Scene2 Terrain Material
         {
 

@@ -70,7 +70,7 @@ public:
     float distance;                     //플레이어 - 보스 거리
     Vec3 direction;                     //플레이어 - 보스 방향
     float hp;                  //보스 hp
-    float speed = 5.0f;
+    float speed = 10.0f;
 
     int patternCnt = 1;
     float shootTime = 0.0f;

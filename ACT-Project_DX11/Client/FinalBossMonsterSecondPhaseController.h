@@ -39,7 +39,7 @@ public:
     void SetAnimationState(AnimationState state);
 
     void ResetToIdleState();
-    void UpdateHitBox();
+    void UpdateHitBox(float f);
     void ResetHit();
     bool PlayingHitMotion = false;
 
@@ -54,11 +54,12 @@ private:
     void Sprint();
     void Run(float speed);
 
+    void Slash();
+    void Slam();
     void Punch();                            // 펀치 공격
     void Fireball();
     void FireMoney();
     void Choke_lift();
-    void GrabSlam();
     void Hurricane();
     Matrix CalculateWorldTransform(shared_ptr<ModelBone> bone);
     void makeBubble(Vec3 pos, Vec3 dir);
@@ -70,6 +71,7 @@ public:
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float _FPS;                         //게임 FPS = 60
     float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
+    float duration;
 
     Vec3 bossPos;                       //보스 위치
     Vec3 playerPos;                     //플레이어 위치
