@@ -79,6 +79,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
         rangoonScript->SetHpBar(obj);
 
         rangoon->AddComponent(rangoonScript);
+
         UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
         CUR_SCENE->Add(obj);
         CUR_SCENE->Add(rangoon);

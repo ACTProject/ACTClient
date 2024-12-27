@@ -196,28 +196,6 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
-        // MeshArmorBar_Shadow
-        {
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
-            obj->GetOrAddTransform()->SetScale(Vec3(100, 46, 100));
-            obj->AddComponent(make_shared<MeshRenderer>());
-
-            obj->SetLayerIndex(Layer_UI);
-            {
-                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"ArmorBar_Shadow"));
-
-            }
-            {
-                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
-                obj->GetMeshRenderer()->SetMesh(mesh);
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
-                obj->GetMeshRenderer()->SetPass(0);
-            }
-
-            CUR_SCENE->Add(obj);
-        }
 
         // MeshHealBar
         {
@@ -242,6 +220,43 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
+        // RedBar HPMesh
+        {
+            // 슬라이더 컴포넌트 추가.
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->AddComponent(make_shared<Slider>());
+            obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
+            obj->GetUI()->SetUIID("PlayerHP");
+
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+
+            CUR_SCENE->Add(obj);
+        }
+
+        // MeshArmorBar_Shadow
+        {
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
+            obj->GetOrAddTransform()->SetScale(Vec3(100, 46, 100));
+            obj->AddComponent(make_shared<MeshRenderer>());
+
+            obj->SetLayerIndex(Layer_UI);
+            {
+                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"ArmorBar_Shadow"));
+
+            }
+            {
+                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+                obj->GetMeshRenderer()->SetMesh(mesh);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(0);
+            }
+
+            CUR_SCENE->Add(obj);
+        }
+
         // MeshArmorBar
         {
             auto obj = make_shared<GameObject>();
@@ -264,21 +279,8 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
-        // RedBar HPMesh
-        {
-            // 슬라이더 컴포넌트 추가.
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
-            obj->GetUI()->SetUIID("PlayerHP");
 
-            //UIMANAGER->AddUI(obj->GetUI());
-
-            CUR_SCENE->Add(obj);
-        }
-
-        // RedBar ARmor Mesh
+        // RedBar ArmorMesh
         {
             // 슬라이더 컴포넌트 추가.
             auto obj = make_shared<GameObject>();
@@ -286,6 +288,8 @@ void Client::Init()
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 27.f, armorPosition.y - 9.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("PlayerArmor");
+
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
     }
@@ -411,7 +415,7 @@ void Client::Init()
     {
         auto shell = make_shared<GameObject>();
         shell->SetObjectType(ObjectType::Shell);
-        shell->GetOrAddTransform()->SetPosition(Vec3(35, 0.f, 35));
+        shell->GetOrAddTransform()->SetPosition(Vec3(35, -5.f, 35));
         shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> shellModel = make_shared<Model>();

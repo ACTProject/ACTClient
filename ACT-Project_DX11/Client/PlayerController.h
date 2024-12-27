@@ -48,10 +48,13 @@ public:
     bool GetIsBlocking() { return _isBlocking; }
 
     // Dodge
+    bool GetIsInvincible() { return _isInvincible; }
     void StartDodge();
     void UpdateDodge();
 
+    // Jump
     void Jump();
+
 	void ResetToIdleState();
 
     // DustEffect
