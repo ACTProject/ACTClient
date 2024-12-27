@@ -10,8 +10,7 @@ enum class UiType
     END,
 };
 
-class Ui :
-    public Component
+class Ui : public Component
 {
     using Super = Component;
 public:

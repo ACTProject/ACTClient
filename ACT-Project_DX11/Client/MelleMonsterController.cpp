@@ -175,6 +175,7 @@ void MelleMonsterController::Update()
     // 상태별 애니메이션 실행
     if (!isFirstTime && !chaseState)
     {
+        
         Aggro();
         return;
     }

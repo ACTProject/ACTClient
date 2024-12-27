@@ -109,7 +109,7 @@ void MapManager::Init()
         MAP->AddMapObj(src);
 
         // 바닥텍스처
-        src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", false, true);
+        src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", true, true);
         MAP->AddMapObj(src);
 
         // 빌보드메시

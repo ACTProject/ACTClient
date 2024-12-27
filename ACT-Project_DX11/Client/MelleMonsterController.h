@@ -5,6 +5,7 @@
 #include "MonsterController.h"
 #include "Model.h"
 #include "ModelAnimator.h"
+#include "UI.h"
 
 class Model;
 class ModelAnimator;

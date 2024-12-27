@@ -46,6 +46,9 @@ void Client::Init()
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
 
+    // Player
+    auto player = make_shared<GameObject>();
+
 	// Camera
 	{
 		auto camera = make_shared<GameObject>();
@@ -268,7 +271,10 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(healPosition.x - 27.f, healPosition.y - 1.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
-            obj->GetUI()->SetUIID("HP");
+            obj->GetUI()->SetUIID("PlayerHP");
+
+            UIMANAGER->AddUI(obj->GetUI());
+
             CUR_SCENE->Add(obj);
         }
 
@@ -279,7 +285,7 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 27.f, armorPosition.y - 9.f, 0.1f), Vec2(65, 10), RESOURCES->Get<Material>(L"BlueBar"));
-            obj->GetUI()->SetUIID("Armor");
+            obj->GetUI()->SetUIID("PlayerArmor");
             CUR_SCENE->Add(obj);
         }
     }
@@ -435,7 +441,7 @@ void Client::Init()
     {
         auto portal = make_shared<GameObject>();
         portal->SetObjectType(ObjectType::Portal);
-        portal->GetOrAddTransform()->SetPosition(Vec3(424.f, 10.f, 335.f));
+        portal->GetOrAddTransform()->SetPosition(Vec3(424.f, 1.f, 335.f));
         portal->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> portalModel = make_shared<Model>();
@@ -443,12 +449,15 @@ void Client::Init()
             portalModel->ReadModel(L"Shell/Shell_SodaCan");
             portalModel->ReadMaterial(L"Shell/Shell_SodaCan");
         }
+
         shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
         portal->AddComponent(mr);
         {
             portal->GetModelRenderer()->SetModel(portalModel);
             portal->GetModelRenderer()->SetPass(1);
         }
+
+        // Collider
         auto collider = make_shared<AABBBoxCollider>();
         collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(10.f, 10.f, 3.f)));
         collider->SetOffset(Vec3(0.f, 1.f, 0.f));
@@ -456,9 +465,7 @@ void Client::Init()
         portal->AddComponent(collider);
         CUR_SCENE->Add(portal);
     }
-	// Player
-	auto player = make_shared<GameObject>();
-
+    // player
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
@@ -526,10 +533,10 @@ void Client::Init()
 	hitbox->Craete(player, Vec3(1.5f));
 	CUR_SCENE->Add(hitboxGO);
 
-    // Material
+    // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
     dustMaterial->SetShader(particleShader);
-    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
+    auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.png");
     dustMaterial->SetDiffuseMap(texture);
     MaterialDesc& desc = dustMaterial->GetMaterialDesc();
     desc.ambient = Vec4(1.f);
@@ -555,17 +562,18 @@ void Client::Init()
 
 	// Enemy
     {
-        ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, 1);
-        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, 2);
-        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, 3);
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, 4);
-        ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f }, 5);
-        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, 6);
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, 7);
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, 8);
-        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, 9);
+        int cnt = 1;
+        //ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
+        /*ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);*/
+        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        /*ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
+        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++); */
 
-        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f });
+        /*ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f });
         ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
         ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
         ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
@@ -573,8 +581,9 @@ void Client::Init()
         ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f });
         ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f });
         ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f });
-        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f });
+        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f });*/
 
+        //ENEMY->CreateFinalBoss({ 10.0f,0.f,10.0f });
     }
     
 

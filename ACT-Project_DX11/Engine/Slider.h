@@ -1,7 +1,6 @@
 #pragma once
 #include "Ui.h"
-class Slider :
-	public Ui
+class Slider : public Ui
 {
 	using Super = Ui;
 public:

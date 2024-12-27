@@ -82,47 +82,55 @@ void EffectTest::Init()
         desc.specular = Vec4(1.f);
         RESOURCES->Add(L"Veigar", material);
     }
-    // Material
-    {
-        shared_ptr<Material> material = make_shared<Material>();
-        material->SetShader(shader);
-        auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
-        material->SetDiffuseMap(texture);
-        MaterialDesc& desc = material->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"Dust", material);
-    }
+    
 
 
-    // Mesh
-    {
-        auto obj = make_shared<GameObject>();
-        obj->AddComponent(make_shared<Particle>());
-        
-        obj->GetParticle()->Create(Vec3(0, 0, -2), Vec2(2, 2), RESOURCES->Get<Material>(L"Dust"));
-
-        CUR_SCENE->Add(obj);
-    }
     // Mesh
     {
         auto obj = make_shared<GameObject>();
         obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
-        obj->GetOrAddTransform()->SetScale(Vec3(2.f));
-        obj->AddComponent(make_shared<MeshRenderer>());
+        obj->AddComponent(make_shared<Particle>());
+        // Material
         {
-            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Veigar"));
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(shader);
+            auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.dds");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"Dust", material);
+
+            obj->GetParticle()->SetMaterial(material);
         }
-        {
-            auto mesh = RESOURCES->Get<Mesh>(L"Cube");
-            obj->GetMeshRenderer()->SetMesh(mesh);
-            obj->GetMeshRenderer()->SetPass(0);
-        }
+        obj->GetParticle()->Add(Vec3(0, 0, -2), Vec2(2, 2));
 
         CUR_SCENE->Add(obj);
     }
+    //// Mesh
+    //{
+    //    auto obj = make_shared<GameObject>();
+    //    obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+    //    obj->GetOrAddTransform()->SetScale(Vec3(2.f));
+    //    obj->AddComponent(make_shared<MeshRenderer>());
+    //    {
+    //        obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Veigar"));
+    //    }
+    //    {
+    //        auto mesh = RESOURCES->Get<Mesh>(L"Cube");
+    //        obj->GetMeshRenderer()->SetMesh(mesh);
+    //        obj->GetMeshRenderer()->SetPass(0);
+    //    }
 
+    //    CUR_SCENE->Add(obj);
+    //}
+    {
+        auto obj = make_shared<GameObject>();
+        obj->AddComponent(make_shared<Terrain>());
+        obj->GetTerrain()->Create(1, 1, NULL);
+        CUR_SCENE->SetTerrain(obj);
+    }
     //// Mesh
     //{
     //    auto obj = make_shared<GameObject>();
