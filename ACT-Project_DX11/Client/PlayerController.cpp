@@ -153,9 +153,9 @@ void PlayerController::HandleMovement()
         vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(ray);
         for (const auto& collider : nearbyColliders)
         {
-            if (collider->GetGameObject()->GetHitBox() != nullptr)
-                continue;
             if (collider->GetGameObject()->GetRigidbody() != nullptr)
+                continue;
+            if (collider->GetGameObject()->GetHitBox() != nullptr)
                 continue;
 
             float distance = 0.0f;

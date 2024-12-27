@@ -88,13 +88,15 @@ void Scene::Render()
 		camera->GetCamera()->SortGameObject();
  		camera->GetCamera()->Render_Forward();
 	}
-    if (DEBUG->IsDebugEnabled() || INPUT->GetButton(KEY_TYPE::CAPSLOCK))
+    if (DEBUG->IsDebugEnabled())
     {
         Camera::S_MatView = mainCamera->GetViewMatrix();
         Camera::S_MatProjection = mainCamera->GetProjectionMatrix();
         FRUSTUM->FinalUpdate();
         vector<std::shared_ptr<GameObject>> visibleObjects = FrustumCulling(mainCamera->GetVecForward());
-        INSTANCING->RenderCollider(visibleObjects);
+        
+        if (INPUT->GetButton(KEY_TYPE::CAPSLOCK))
+            INSTANCING->RenderCollider(visibleObjects);
         
         if (INPUT->GetButton(KEY_TYPE::KEY_F2))
         {

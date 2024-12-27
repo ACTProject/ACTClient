@@ -157,6 +157,12 @@ RasterizerState Depth
 // DepthStencillState //
 ////////////////////////
 
+DepthStencilState NoDepthWrite
+{
+    DepthEnable = true;
+    DepthWriteMask = ZERO;
+    DepthFunc = LESS;
+};
 
 ////////////////
 // BlendState //
@@ -249,18 +255,19 @@ pass name											\
 pass name											\
 {													\
 	SetBlendState(bs, float4(0, 0, 0, 0), 0xFF);	\
+    SetDepthStencilState(NoDepthWrite, 0);          \
     SetVertexShader(CompileShader(vs_5_0, vs()));	\
     SetPixelShader(CompileShader(ps_5_0, ps()));	\
 }
 
-#define PASS_SHADOW(name, bs, rs,vs)				\
+#define PASS_SHADOW(name, bs, rs, vs)				\
 pass name											\
 {					                                \
 	SetBlendState(bs, float4(0, 0, 0, 0), 0xFF);    \
 	SetRasterizerState(rs);                         \
     SetVertexShader(CompileShader(vs_5_0, vs()));	\
 }
- //SetPixelShader(CompileShader(ps_5_0, ps()));	\
+ 
 //////////////
 // Function //
 //////////////
