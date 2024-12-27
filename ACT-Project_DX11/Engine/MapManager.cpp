@@ -11,6 +11,8 @@
 #include "Billboard.h"
 #include "DynamicObj.h"
 #include "Potal.h"
+#include "JumpObj.h"
+#include "SaveObj.h"
 
 
 void MapManager::Init()
@@ -69,7 +71,7 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/wall02", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
 
-        src = make_shared<MapObjDesc>(L"MapObject/moonjelly", L"23. RenderDemo.fx");
+        src = make_shared<MapObjDesc>(L"MapObject/moonjelly", L"23. RenderDemo.fx", true, DynamicType::Jump, true);
         MAP->AddMapObj(src);
 
         src = make_shared<MapObjDesc>(L"MapObject/rock2", L"23. RenderDemo.fx");
@@ -772,6 +774,16 @@ void MapManager::CreateDynamicObject(shared_ptr<GameObject> obj,DynamicType type
     case DynamicType::Potal:
     {
         obj->AddComponent(make_shared<Potal>(DynamicType::Potal));
+    }
+        break;
+    case DynamicType::Jump:
+    {
+        obj->AddComponent(make_shared<JumpObj>(DynamicType::Jump));
+    }
+        break;
+    case DynamicType::Save:
+    {
+        obj->AddComponent(make_shared<SaveObj>(DynamicType::Save));
     }
         break;
     default:
