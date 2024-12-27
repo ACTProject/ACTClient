@@ -38,7 +38,7 @@ void Particle::Update()
 {
     _elapsedTime += DT;
 
-    if (_elapsedTime >= _lifetime)
+    if (!_isReusable && _elapsedTime >= _lifetime)
     {
         auto obj = _gameObject.lock();
         if (obj)
@@ -46,6 +46,10 @@ void Particle::Update()
             CUR_SCENE->Remove(obj);
         }
         return;
+    }
+    if (_isReusable && _elapsedTime >= _lifetime)
+    {
+        _elapsedTime = 0.0f;
     }
 
     if (_drawCount != _prevCount)

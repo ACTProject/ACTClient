@@ -457,7 +457,7 @@ void Client2::Init()
 
                 obj->SetActive(!obj->IsActive());
                 optionGroup.push_back(obj);
-               // CUR_SCENE->Add(obj);
+                // CUR_SCENE->Add(obj);
             }
 
 
@@ -472,7 +472,7 @@ void Client2::Init()
                 obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(nullptr); });
                 obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
                 obj->GetButton()->AddOnClickedEvent([obj]() { if (obj->IsActive())GAME->GameEnd(); });
-                
+
                 obj->SetActive(!obj->IsActive());
                 optionGroup.push_back(obj);
                 //CUR_SCENE->Add(obj);
@@ -501,10 +501,26 @@ void Client2::Init()
 
                 obj->SetActive(!obj->IsActive());
 
-               // CUR_SCENE->Add(obj);
+                // CUR_SCENE->Add(obj);
             }
         }
     }
+
+    // HitEffect
+    {
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(renderUIShader);
+            auto texture = RESOURCES->Load<Texture>(L"HitEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"HitEffect", material);
+        }
+    }
+
 
 	// Light
 	{

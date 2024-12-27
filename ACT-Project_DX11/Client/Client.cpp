@@ -45,6 +45,7 @@ void Client::Init()
 	shared_ptr<Shader> renderBoxShader = make_shared<Shader>(L"23. RenderDemoBox.fx");
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
+    shared_ptr<Shader> effectShader = make_shared<Shader>(L"EffectTest.fx");
 
     // Player
     auto player = make_shared<GameObject>();
@@ -388,7 +389,35 @@ void Client::Init()
             }
         }
     }
+    // HitEffect
+    {
+        
+        {
+            auto obj = make_shared<GameObject>();
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+            obj->AddComponent(make_shared<Particle>());
+            {
+                //material
+                shared_ptr<Material> material = make_shared<Material>();
+                material->SetShader(effectShader);
+                auto texture = RESOURCES->Load<Texture>(L"HitEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
+                material->SetDiffuseMap(texture);
+                MaterialDesc& desc = material->GetMaterialDesc();
+                desc.ambient = Vec4(1.f);
+                desc.diffuse = Vec4(1.f);
+                desc.specular = Vec4(1.f);
+                RESOURCES->Add(L"HitEffect", material);
 
+                obj->GetParticle()->SetMaterial(material);
+            }
+            obj->GetMeshRenderer()->SetParticleRender(true);
+            obj->GetParticle()->SetLifetime(0.5f);
+            obj->GetParticle()->SetfadeStart(0.25f);
+            obj->GetParticle()->SetReuse(true);
+            obj->GetParticle()->Add(Vec3(40,0,40), Vec2(5.0f, 5.0f));
+            CUR_SCENE->Add(obj);
+        }
+    }
 	// Light
 	{
 		auto light = make_shared<GameObject>();

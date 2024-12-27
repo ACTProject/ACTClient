@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "AABBBoxCollider.h"
 #include "SphereCollider.h"
+#include "Particle.h"
 
 void InstancingManager::Render(vector<shared_ptr<GameObject>>& gameObjects)
 {
@@ -41,6 +42,12 @@ void InstancingManager::RenderMeshRenderer(vector<shared_ptr<GameObject>>& gameO
             
         }
         if (gameObject->GetMeshRenderer()->GetAlphaBlend())
+        {
+            alphaObjects.push_back(gameObject);
+            continue;
+        }
+        
+        if (gameObject->GetMeshRenderer()->GetParticleRender())
         {
             alphaObjects.push_back(gameObject);
             continue;
