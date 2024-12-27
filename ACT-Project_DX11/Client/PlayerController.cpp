@@ -38,8 +38,10 @@ void PlayerController::Start()
 
     // 플레이어 스탯 초기화
     _maxHp = 400.f;
-    _hp = 150.0f;
+    _hp = 400.0f;
     _atk = 20.0f;
+    _shellMaxHp = 200.0f;
+    _shellHp = 200.0f;
 
     for (int i = 0; i < 4; ++i) {
         _attackDurations[i] = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Attack1 + i));

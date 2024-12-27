@@ -44,6 +44,9 @@ public:
 	void PlayAttackAnimation(int stage);
     void UpdateHitBox();
 
+    // Shell
+    bool GetIsBlocking() { return _isBlocking; }
+
     // Dodge
     void StartDodge();
     void UpdateDodge();
@@ -115,5 +118,16 @@ private:
     shared_ptr<Material> _dustMaterial;
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
+
+public:
+    // 스탯 접근자
+    float GetShellMaxHP() const { return _shellMaxHp; }
+    void SetShellMaxHP(float shellMaxHp) { _shellMaxHp = shellMaxHp; }
+    float GetShellHP() const { return _shellHp; }
+    void SetShellHP(float shellHp) { _shellHp = shellHp; }
+private:
+    // Stat
+    float _shellMaxHp;
+    float _shellHp;
 };
 
