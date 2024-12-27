@@ -16,7 +16,7 @@ void CreatureController::Update()
 }
 
 // 데미지 처리
-void CreatureController::OnDamage(float damage)
+void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
 {
     _hp -= damage;
 
@@ -30,7 +30,7 @@ void CreatureController::OnDamage(float damage)
     {
         name = "player";
         auto player = dynamic_pointer_cast<PlayerController>(controller);
-        float hpRatio = _hp / _maxHp;
+        //float hpRatio = _hp / _maxHp;
 
         break;
     }

@@ -265,7 +265,7 @@ void MelleMonsterController::UpdateHitBox()
 
             auto player = dynamic_pointer_cast<PlayerController>(controller);
             if (player)
-                player->OnDamage(_atk);
+                player->OnDamage(GetGameObject(), _atk);
             _hit = true;
         }
     }
