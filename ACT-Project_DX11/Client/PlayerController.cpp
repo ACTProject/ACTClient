@@ -14,6 +14,7 @@
 #include "FinalBossMonsterSecondPhaseController.h"
 #include "Material.h"
 #include "Particle.h"
+#include "DynamicObj.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -82,7 +83,12 @@ void PlayerController::Update()
     // 상호작용 처리
     HandleInteraction();
 
+    // 포탈 충돌 처리
     HandlePortal();
+
+    // 세이브 충돌 처리
+    HandleSave();
+    
 }
 
 void PlayerController::HandleInput()
@@ -297,6 +303,29 @@ void PlayerController::HandlePortal()
         }
 
     }
+}
+void PlayerController::HandleSave()
+{
+    auto playerCollider = GetGameObject()->GetCollider();
+    // 옥트리에서 충돌 가능한 객체 가져오기
+    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(playerCollider);
+
+    for (const auto& collider : nearbyColliders)
+    {
+        if (collider->GetGameObject()->GetDynamicObj() == nullptr)
+            return;
+
+        if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() != DynamicType::Save)
+            return;
+
+        if (collider->Intersects(playerCollider) && INPUT->GetButtonDown(KEY_TYPE::E))
+        {
+            SAVE->SaveGame(collider->GetGameObject());
+            break;
+        }
+
+    }
+
 }
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {

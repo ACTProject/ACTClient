@@ -78,6 +78,7 @@ using namespace Microsoft::WRL;
 #include "Shadow.h"
 #include "UIManager.h"
 #include "TaskQueue.h"
+#include "SaveManager.h"
 
 // Engine
 #include "VertexData.h"

@@ -251,6 +251,15 @@ void GameObject::AddComponent(shared_ptr<Component> component)
 	}
 }
 
+void GameObject::EraseComponent(shared_ptr<Component> component)
+{
+    uint8 index = static_cast<uint8>(component->GetType());
+    if (index < FIXED_COMPONENT_COUNT && _components[index] != nullptr)
+    {
+        _components[index].reset();
+    }
+}
+
 void GameObject::Destroy()
 {
     // 활성화 상태를 비활성화

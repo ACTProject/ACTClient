@@ -37,6 +37,7 @@ public:
     void HandleMovement();      // 이동 처리
     void HandleInteraction();   // 상호작용 처리
     void HandlePortal();
+    void HandleSave(); // 
 
     // Attack
 	void StartAttack();

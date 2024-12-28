@@ -32,7 +32,7 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/StarFish", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
 
-        src = make_shared<MapObjDesc>(L"MapObject/pigeon", L"23. RenderDemo.fx");
+        src = make_shared<MapObjDesc>(L"MapObject/pigeon", L"23. RenderDemo.fx", true, DynamicType::Save, true);
         MAP->AddMapObj(src);
 
         src = make_shared<MapObjDesc>(L"MapObject/flagpole", L"23. RenderDemo.fx");

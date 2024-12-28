@@ -73,6 +73,8 @@ public:
 
 	shared_ptr<Transform> GetOrAddTransform();
 	void AddComponent(shared_ptr<Component> component);
+    void EraseComponent(shared_ptr<Component> component);
+
     void Destroy();
 
 	void SetLayerIndex(uint8 layer) { _layerIndex = layer; }
@@ -86,6 +88,7 @@ public:
 
     ObjectType GetObjectType() const { return _type; }
     void SetObjectType(ObjectType type) { _type = type; }
+
 
 
 protected:

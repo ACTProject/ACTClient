@@ -29,6 +29,9 @@ WPARAM Game::Run(uint32 num)
     }
 
     _scenes[_num].hWnd = g_hWnd;
+    // Save Data Load
+    if (_scenes[_num].tag == SceneTag::TITLE)
+        SAVE->Init();
 	//0
     DEBUG->CreateConsoleWindow();
     // Octree
