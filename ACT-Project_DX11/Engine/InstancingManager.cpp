@@ -11,6 +11,7 @@
 #include "Shader.h"
 #include "AABBBoxCollider.h"
 #include "SphereCollider.h"
+#include "Particle.h"
 
 void InstancingManager::Render(vector<shared_ptr<GameObject>>& gameObjects)
 {

@@ -166,7 +166,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         FinalBoss->SetObjectType(ObjectType::Monster);
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
-        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0005f));
+        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0008f));
 
         shared_ptr<Model> enemyModel = make_shared<Model>();
         // Model
@@ -229,8 +229,6 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         CUR_SCENE->Add(hitboxGO);
         BossScript->SetHitBox(hitboxGO);
 
-        FinalBoss->AddComponent(BossScript);
-
         // Collider
         auto collider = make_shared<SphereCollider>();
         collider->SetRadius(2.5f);
@@ -247,6 +245,22 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
 
+        // 슬라이더 컴포넌트 추가.
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->AddComponent(make_shared<Slider>());
+        obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
+        obj->GetUI()->SetUIID("Boss");
+
+        obj->SetActive(false);
+        BossScript->SetObjID("Boss");
+        BossScript->SetHpBar(obj);
+
+        FinalBoss->AddComponent(BossScript);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
+
         CUR_SCENE->Add(FinalBoss);
     }
 }
@@ -260,7 +274,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
-        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0005f));
+        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0008f));
 
         shared_ptr<Model> enemyModel = make_shared<Model>();
         // Model
@@ -320,8 +334,6 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         CUR_SCENE->Add(hitboxGO);
         BossScript->SetHitBox(hitboxGO);
 
-        FinalBoss->AddComponent(BossScript);
-
         // Collider
         auto collider = make_shared<SphereCollider>();
         collider->SetRadius(2.5f);
@@ -337,6 +349,22 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
+
+        // 슬라이더 컴포넌트 추가.
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->AddComponent(make_shared<Slider>());
+        obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
+        obj->GetUI()->SetUIID("Boss");
+
+        obj->SetActive(false);
+        BossScript->SetObjID("Boss");
+        BossScript->SetHpBar(obj);
+
+        FinalBoss->AddComponent(BossScript);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
 
         CUR_SCENE->Add(FinalBoss);
     }

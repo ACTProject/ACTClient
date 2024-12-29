@@ -151,9 +151,9 @@ void MelleMonsterController::Update()
     {
         Move(EnemyPos, StartPos, _speed);
         Rota(EnemyPos, StartPos);
-        _hp = 80.0f;            // 돌아가면 체력 회복
         if (abs(rangeDis) < 1.f)
         {
+            _hp = 80.0f;            // 돌아가면 체력 회복
             BackToStart = false;
             chaseState = true;
             isFirstTime = false;

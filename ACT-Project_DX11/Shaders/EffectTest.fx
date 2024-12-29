@@ -27,18 +27,12 @@ V_OUT VS(VertexInput input)
     float4 position = mul(input.position, W);
 
     float3 up = float3(0, 1, 0);
-    float3 forward = position.xyz - CameraPosition();
+    //float3 forward = float3(0, 0, 1); // TODO
+    float3 forward = position.xyz - CameraPosition(); // BillBoard
     float3 right = normalize(cross(up, forward));
 
-    // 시간에 따른 스케일 증가 계산
-    float lifetimeRatio = saturate(time / lifetime); // 0.0 ~ 1.0
-    float scaleFactor = 1.0f + lifetimeRatio; // 1.0에서 시작해 2.0까지 커짐
-
-    float2 currentScale = input.scale * scaleFactor;
-
-    // 위치 변환에 스케일 적용
-    position.xyz += (input.uv.x - 0.5f) * right * currentScale.x;
-    position.xyz += (1.0f - input.uv.y - 0.5f) * up * currentScale.y;
+    position.xyz += (input.uv.x - 0.5f) * right * input.scale.x;
+    position.xyz += (1.0f - input.uv.y - 0.5f) * up * input.scale.y;
     position.w = 1.0f;
 
     output.position = mul(mul(position, V), P);
@@ -60,7 +54,7 @@ float4 PS(V_OUT input) : SV_Target
     
     color.a *= alpha;
     
-    if (color.a <= 0.8f)
+    if (color.a <= 0.3f)
     {
         discard;
     }
@@ -72,8 +66,9 @@ technique11 T0
 {
     pass P0
     {
+        //SetRasterizerState(FillModeWireFrame);
         SetBlendState(AlphaBlend, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
-        SetDepthStencilState(NoDepthWrite, 0);
+        //SetDepthStencilState(NoDepthWrite, 0);
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
     }

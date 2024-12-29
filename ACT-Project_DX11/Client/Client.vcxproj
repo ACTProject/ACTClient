@@ -99,6 +99,7 @@
     <FxCompile Include="..\Shaders\29. SnowDemo.fx" />
     <FxCompile Include="..\Shaders\DepthMapShadow.fx" />
     <FxCompile Include="..\Shaders\normalRender.fx" />
+    <FxCompile Include="..\Shaders\EffectTest.fx" />
     <FxCompile Include="..\Shaders\Particle.fx" />
     <FxCompile Include="..\Shaders\ShadowDebug.fx" />
   </ItemGroup>

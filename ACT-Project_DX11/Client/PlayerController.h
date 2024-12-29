@@ -83,7 +83,7 @@ private:
     Vec3 _moveDir = Vec3(0.f);
 
     // Jump
-    float _jumpSpeed = 7.5f;
+    float _jumpSpeed = 15.f;
     bool _isJumping = false;
     float _jumpDuration = 0.0f; // 점프 애니메이션 지속시간 (초)
     float _jumpTimer = 0.0f;   // 점프 애니메이션 시간 추적

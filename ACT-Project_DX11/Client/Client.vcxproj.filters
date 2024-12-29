@@ -238,5 +238,8 @@
     <FxCompile Include="..\Shaders\normalRender.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shaders\EffectTest.fx">
+      <Filter>Shaders\Week5</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

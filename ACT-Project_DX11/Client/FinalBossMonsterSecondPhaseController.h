@@ -37,6 +37,9 @@ public:
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void SetAnimationState(AnimationState state);
+    void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
+    string GetObjID() { return objID; }
+    void SetObjID(string str) { objID = str; }
 
     void ResetToIdleState();
     void UpdateHitBox(float f);
@@ -112,6 +115,8 @@ public:
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;
     shared_ptr<ModelBone> rightHand;
+    shared_ptr<GameObject> _hpBar;
+    string objID;
     AnimationState _currentAnimationState = AnimationState::Idle;
 };
 
