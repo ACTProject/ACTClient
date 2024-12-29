@@ -351,164 +351,164 @@ void AssimpTool::Init()
         }
 	}
 	// MapObject
-	{
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/recyclingBox01.fbx");
-			converter->ExportMaterialData(L"MapObject/recyclingBox01");
-			converter->ExportModelData(L"MapObject/recyclingBox01");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/WallLeft.fbx");
-			converter->ExportMaterialData(L"MapObject/WallLeft");
-			converter->ExportModelData(L"MapObject/WallLeft");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/flagpole.fbx");
-			converter->ExportMaterialData(L"MapObject/flagpole");
-			converter->ExportModelData(L"MapObject/flagpole");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/pigeon.fbx");
-			converter->ExportMaterialData(L"MapObject/pigeon");
-			converter->ExportModelData(L"MapObject/pigeon");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/StarFish.fbx");
-			converter->ExportMaterialData(L"MapObject/StarFish");
-			converter->ExportModelData(L"MapObject/StarFish");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/PencilHedgehog.fbx");
-			converter->ExportMaterialData(L"MapObject/PencilHedgehog");
-			converter->ExportModelData(L"MapObject/PencilHedgehog");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Bottle.fbx");
-			converter->ExportMaterialData(L"MapObject/Bottle");
-			converter->ExportModelData(L"MapObject/Bottle");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/CardHouseEntity.fbx");
-			converter->ExportMaterialData(L"MapObject/CardHouseEntity");
-			converter->ExportModelData(L"MapObject/CardHouseEntity");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Cylinder01.fbx");
-			converter->ExportMaterialData(L"MapObject/Cylinder01");
-			converter->ExportModelData(L"MapObject/Cylinder01");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Cylinder07.fbx");
-			converter->ExportMaterialData(L"MapObject/Cylinder07");
-			converter->ExportModelData(L"MapObject/Cylinder07");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/KelpGround.fbx");
-			converter->ExportMaterialData(L"MapObject/KelpGround");
-			converter->ExportModelData(L"MapObject/KelpGround");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/road.fbx");
-			converter->ExportMaterialData(L"MapObject/road");
-			converter->ExportModelData(L"MapObject/road");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/rock.fbx");
-			converter->ExportMaterialData(L"MapObject/rock");
-			converter->ExportModelData(L"MapObject/rock");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Umbrella.fbx");
-			converter->ExportMaterialData(L"MapObject/Umbrella");
-			converter->ExportModelData(L"MapObject/Umbrella");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/wall01.fbx");
-			converter->ExportMaterialData(L"MapObject/wall01");
-			converter->ExportModelData(L"MapObject/wall01");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/wall02.fbx");
-			converter->ExportMaterialData(L"MapObject/wall02");
-			converter->ExportModelData(L"MapObject/wall02");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/moonjelly.fbx");
-			converter->ExportMaterialData(L"MapObject/moonjelly");
-			converter->ExportModelData(L"MapObject/moonjelly");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/rock2.fbx");
-			converter->ExportMaterialData(L"MapObject/rock2");
-			converter->ExportModelData(L"MapObject/rock2");
-		}
-		//
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Urock01.fbx");
-			converter->ExportMaterialData(L"MapObject/Urock01");
-			converter->ExportModelData(L"MapObject/Urock01");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Urock02.fbx");
-			converter->ExportMaterialData(L"MapObject/Urock02");
-			converter->ExportModelData(L"MapObject/Urock02");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Urock03.fbx");
-			converter->ExportMaterialData(L"MapObject/Urock03");
-			converter->ExportModelData(L"MapObject/Urock03");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Urock04.fbx");
-			converter->ExportMaterialData(L"MapObject/Urock04");
-			converter->ExportModelData(L"MapObject/Urock04");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Urock05.fbx");
-			converter->ExportMaterialData(L"MapObject/Urock05");
-			converter->ExportModelData(L"MapObject/Urock05");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Udrock01.fbx");
-			converter->ExportMaterialData(L"MapObject/Udrock01");
-			converter->ExportModelData(L"MapObject/Udrock01");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Udrock02.fbx");
-			converter->ExportMaterialData(L"MapObject/Udrock02");
-			converter->ExportModelData(L"MapObject/Udrock02");
-		}
-		{
-			shared_ptr<Converter> converter = make_shared<Converter>();
-			converter->ReadAssetFile(L"MapObject/Udrock04.fbx");
-			converter->ExportMaterialData(L"MapObject/Udrock04");
-			converter->ExportModelData(L"MapObject/Udrock04");
-		}
+    {
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/recyclingBox01.fbx");
+            converter->ExportMaterialData(L"MapObject/recyclingBox01");
+            converter->ExportModelData(L"MapObject/recyclingBox01");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/WallLeft.fbx");
+            converter->ExportMaterialData(L"MapObject/WallLeft");
+            converter->ExportModelData(L"MapObject/WallLeft");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/flagpole.fbx");
+            converter->ExportMaterialData(L"MapObject/flagpole");
+            converter->ExportModelData(L"MapObject/flagpole");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/pigeon.fbx");
+            converter->ExportMaterialData(L"MapObject/pigeon");
+            converter->ExportModelData(L"MapObject/pigeon");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/StarFish.fbx");
+            converter->ExportMaterialData(L"MapObject/StarFish");
+            converter->ExportModelData(L"MapObject/StarFish");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/PencilHedgehog.fbx");
+            converter->ExportMaterialData(L"MapObject/PencilHedgehog");
+            converter->ExportModelData(L"MapObject/PencilHedgehog");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Bottle.fbx");
+            converter->ExportMaterialData(L"MapObject/Bottle");
+            converter->ExportModelData(L"MapObject/Bottle");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/CardHouseEntity.fbx");
+            converter->ExportMaterialData(L"MapObject/CardHouseEntity");
+            converter->ExportModelData(L"MapObject/CardHouseEntity");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Cylinder01.fbx");
+            converter->ExportMaterialData(L"MapObject/Cylinder01");
+            converter->ExportModelData(L"MapObject/Cylinder01");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Cylinder07.fbx");
+            converter->ExportMaterialData(L"MapObject/Cylinder07");
+            converter->ExportModelData(L"MapObject/Cylinder07");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/KelpGround.fbx");
+            converter->ExportMaterialData(L"MapObject/KelpGround");
+            converter->ExportModelData(L"MapObject/KelpGround");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/road.fbx");
+            converter->ExportMaterialData(L"MapObject/road");
+            converter->ExportModelData(L"MapObject/road");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/rock.fbx");
+            converter->ExportMaterialData(L"MapObject/rock");
+            converter->ExportModelData(L"MapObject/rock");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Umbrella.fbx");
+            converter->ExportMaterialData(L"MapObject/Umbrella");
+            converter->ExportModelData(L"MapObject/Umbrella");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/wall01.fbx");
+            converter->ExportMaterialData(L"MapObject/wall01");
+            converter->ExportModelData(L"MapObject/wall01");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/wall02.fbx");
+            converter->ExportMaterialData(L"MapObject/wall02");
+            converter->ExportModelData(L"MapObject/wall02");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/moonjelly.fbx");
+            converter->ExportMaterialData(L"MapObject/moonjelly");
+            converter->ExportModelData(L"MapObject/moonjelly");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/rock2.fbx");
+            converter->ExportMaterialData(L"MapObject/rock2");
+            converter->ExportModelData(L"MapObject/rock2");
+        }
+        //
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Urock01.fbx");
+            converter->ExportMaterialData(L"MapObject/Urock01");
+            converter->ExportModelData(L"MapObject/Urock01");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Urock02.fbx");
+            converter->ExportMaterialData(L"MapObject/Urock02");
+            converter->ExportModelData(L"MapObject/Urock02");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Urock03.fbx");
+            converter->ExportMaterialData(L"MapObject/Urock03");
+            converter->ExportModelData(L"MapObject/Urock03");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Urock04.fbx");
+            converter->ExportMaterialData(L"MapObject/Urock04");
+            converter->ExportModelData(L"MapObject/Urock04");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Urock05.fbx");
+            converter->ExportMaterialData(L"MapObject/Urock05");
+            converter->ExportModelData(L"MapObject/Urock05");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Udrock01.fbx");
+            converter->ExportMaterialData(L"MapObject/Udrock01");
+            converter->ExportModelData(L"MapObject/Udrock01");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Udrock02.fbx");
+            converter->ExportMaterialData(L"MapObject/Udrock02");
+            converter->ExportModelData(L"MapObject/Udrock02");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Udrock04.fbx");
+            converter->ExportMaterialData(L"MapObject/Udrock04");
+            converter->ExportModelData(L"MapObject/Udrock04");
+        }
 
         //
         {
@@ -571,13 +571,56 @@ void AssimpTool::Init()
             converter->ExportMaterialData(L"MapObject/Medieval_Door");
             converter->ExportModelData(L"MapObject/Medieval_Door");
         }
-        //{
-        //    shared_ptr<Converter> converter = make_shared<Converter>();
-        //    converter->ReadAssetFile(L"MapObject/Medieval_Door02.fbx");
-        //    converter->ExportMaterialData(L"MapObject/Medieval_Door02");
-        //    converter->ExportModelData(L"MapObject/Medieval_Door02");
-        //}
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/SeaObj01.fbx");
+            converter->ExportMaterialData(L"MapObject/SeaObj01");
+            converter->ExportModelData(L"MapObject/SeaObj01");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/SeaObj02.fbx");
+            converter->ExportMaterialData(L"MapObject/SeaObj02");
+            converter->ExportModelData(L"MapObject/SeaObj02");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/SeaObj03.fbx");
+            converter->ExportMaterialData(L"MapObject/SeaObj03");
+            converter->ExportModelData(L"MapObject/SeaObj03");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/SeaObj04.fbx");
+            converter->ExportMaterialData(L"MapObject/SeaObj04");
+            converter->ExportModelData(L"MapObject/SeaObj04");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/SeaObj05.fbx");
+            converter->ExportMaterialData(L"MapObject/SeaObj05");
+            converter->ExportModelData(L"MapObject/SeaObj05");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/SeaObj06.fbx");
+            converter->ExportMaterialData(L"MapObject/SeaObj06");
+            converter->ExportModelData(L"MapObject/SeaObj06");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/SeaObj07.fbx");
+            converter->ExportMaterialData(L"MapObject/SeaObj07");
+            converter->ExportModelData(L"MapObject/SeaObj07");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Dynamic/MagicGate.fbx");
+            converter->ExportMaterialData(L"MapObject/Dynamic/MagicGate");
+            converter->ExportModelData(L"MapObject/Dynamic/MagicGate");
+            converter->ExportAnimationData(L"MapObject/Dynamic/MagicGate");
 
+        }
 	}
 }
 

@@ -1,10 +1,86 @@
 #include "pch.h"
 #include "SaveManager.h"
+#include "MeshRenderer.h"
+#include "Button.h"
 
 bool SaveManager::Init()
 {
     LoadSaveFiles();
+    CreateSaveUI();
     return true;
+}
+
+void SaveManager::CreateSaveUI()
+{
+    //shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
+    //// option Material
+    //{
+    //    shared_ptr<Material> material = make_shared<Material>();
+    //    material->SetShader(renderUIShader);
+    //    auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\option.png");
+    //    material->SetDiffuseMap(texture);
+    //    MaterialDesc& desc = material->GetMaterialDesc();
+    //    desc.ambient = Vec4(1.f);
+    //    desc.diffuse = Vec4(1.f);
+    //    desc.specular = Vec4(1.f);
+    //    RESOURCES->Add(L"Option", material);
+    //}
+
+
+    //{
+    //    auto obj = make_shared<GameObject>();
+    //    obj->AddComponent(make_shared<Button>());
+
+    //    obj->GetButton()->Create(Vec3(400.f, 250.f, 0.4f), Vec2(595, 404), RESOURCES->Get<Material>(L"Option"));
+    //    obj->GetMeshRenderer()->SetAlphaBlend(true);
+    //    obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
+
+    //    obj->SetActive(!obj->IsActive());
+    //    saveOptionUIGroup.push_back(obj);
+    //}
+
+    //// Mesh
+    //{
+    //    auto obj = make_shared<GameObject>();
+    //    obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.5f));
+    //    obj->GetOrAddTransform()->SetScale(Vec3(800.f, 600.f, 0.f));
+    //    obj->AddComponent(make_shared<MeshRenderer>());
+
+    //    obj->SetLayerIndex(Layer_UI);
+    //    {
+    //        obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Background"));
+    //    }
+    //    {
+    //        auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+    //        obj->GetMeshRenderer()->SetMesh(mesh);
+    //        obj->GetMeshRenderer()->SetPass(0);
+    //    }
+
+    //    CUR_SCENE->Add(obj);
+    //}
+
+
+    //// Button Mesh
+    //{
+    //    auto obj = make_shared<GameObject>();
+    //    obj->AddComponent(make_shared<Button>());
+
+    //    obj->GetButton()->Create(Vec3(250, 300, 0.3), Vec2(166, 44), RESOURCES->Get<Material>(L"StartBtn"));
+    //    obj->GetMeshRenderer()->SetAlphaBlend(true);
+    //    obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn_Hover")); });
+    //    obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn")); });
+
+    //    obj->GetButton()->AddOnClickedEvent([]() { GAME->ChangeScene(1); });
+
+    //    CUR_SCENE->Add(obj);
+    //}
+}
+
+void SaveManager::OpenSaveUI()
+{
+
+
+
 }
 
 bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
@@ -57,7 +133,8 @@ bool SaveManager::CheckSaveFile(int key)
 
 bool SaveManager::LoadGame(SaveData& data)
 {
-
+    // 플레이어만 바꿀지.
+    // 아님 그냥 GameInit부터 시작할지.
     return true;
 }
 

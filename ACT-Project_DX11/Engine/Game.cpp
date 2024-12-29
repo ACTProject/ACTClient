@@ -44,12 +44,18 @@ WPARAM Game::Run(uint32 num)
     //1
 	GUI->Init();
 	RESOURCES->Init();
-    if (_scenes[_num].tag == SceneTag::INGAME)
+    if (_scenes[_num].tag == SceneTag::TITLE)
     {
         MAP->Init();
     }
 	SCENE->Awake();
     _scenes[_num].app->Init(); // 게임오브젝트 생성
+
+    if (_scenes[_num].tag == SceneTag::INGAME)
+        MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
+    if (_scenes[_num].tag == SceneTag::INGAME2)
+        MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists02.txt");
+
 	SCENE->Start();
 
     if (_scenes[_num].tag == SceneTag::INGAME)
@@ -87,6 +93,10 @@ WPARAM Game::Run(uint32 num)
     if (_scenes[_num].tag == SceneTag::INGAME)
     {
         MAP->ExportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
+    }
+    if (_scenes[_num].tag == SceneTag::INGAME2)
+    {
+        MAP->ExportMapObj(L"../Resources/MapFile/MapObjectLists02.txt");
     }
 
 	return _msg.wParam;

@@ -88,6 +88,9 @@ void PlayerController::Update()
 
     // 세이브 충돌 처리
     HandleSave();
+
+    // 힐 충돌
+    HandleHeal();
     
 }
 
@@ -323,9 +326,29 @@ void PlayerController::HandleSave()
             SAVE->SaveGame(collider->GetGameObject());
             break;
         }
-
     }
+}
 
+void PlayerController::HandleHeal()
+{
+    auto playerCollider = GetGameObject()->GetCollider();
+    // 옥트리에서 충돌 가능한 객체 가져오기
+    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(playerCollider);
+
+    for (const auto& collider : nearbyColliders)
+    {
+        if (collider->GetGameObject()->GetDynamicObj() == nullptr)
+            return;
+
+        if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() != DynamicType::Heal)
+            return;
+
+        if (collider->Intersects(playerCollider) && INPUT->GetButtonDown(KEY_TYPE::E))
+        {
+            HealPlayer();
+            break;
+        }
+    }
 }
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
@@ -552,6 +575,19 @@ void PlayerController::CreateDustEffect()
     dustObject->GetParticle()->SetMaterial(_dustMaterial);
     dustObject->GetParticle()->Add(dustPosition, Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(dustObject);
+}
+
+void PlayerController::HealPlayer()
+{
+    if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+    {
+        _hp += _healHp;
+        _hp = std::clamp(_hp, 0.0f, _maxHp);
+
+        auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+        float hpRatio = _hp / _maxHp;
+        hpSlider->SetRatio(hpRatio);
+    }
 }
 
 void PlayerController::OnDeath()
