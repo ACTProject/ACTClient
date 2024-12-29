@@ -1,5 +1,13 @@
 #pragma once
 #include "DynamicObj.h"
+
+
+
+
+
+
+
+
 class SaveObj :
     public DynamicObj
 {

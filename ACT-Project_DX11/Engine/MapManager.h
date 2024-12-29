@@ -9,6 +9,7 @@
 struct MapObjDesc
 {
 public:
+    bool isAnim = false;
     bool isDynamic = false;
     DynamicType dynamicType = DynamicType::None;
     bool isMesh = false;
@@ -25,7 +26,7 @@ public:
 	wstring filename;
 	wstring shadername;
 	MapObjDesc() = default;
-    MapObjDesc(wstring file, wstring sha, bool isdynamic = false, DynamicType type= DynamicType::None, bool isColl = true, bool isMes = false, bool isbill = false) : filename(file), shadername(sha), isDynamic(isdynamic), dynamicType(type), isCollision(isColl), isMesh(isMes), isBillBoard(isbill) {};
+    MapObjDesc(wstring file, wstring sha, bool isanim = false, bool isdynamic = false, DynamicType type = DynamicType::None, bool isColl = true, bool isMes = false, bool isbill = false) : filename(file), shadername(sha),isAnim(isanim), isDynamic(isdynamic), dynamicType(type), isCollision(isColl), isMesh(isMes), isBillBoard(isbill) {};
 };
 
 struct MapModel

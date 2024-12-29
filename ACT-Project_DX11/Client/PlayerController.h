@@ -37,6 +37,9 @@ public:
     void HandleMovement();      // 이동 처리
     void HandleInteraction();   // 상호작용 처리
     void HandlePortal();
+    void HandleSave(); // 세이브
+    void HandleHeal(); // 힐
+
 
     // Attack
 	void StartAttack();
@@ -59,6 +62,8 @@ public:
 
     // DustEffect
     void CreateDustEffect();
+
+    void HealPlayer();
 
 public:
     void OnDeath() override;
@@ -132,5 +137,7 @@ private:
     // Stat
     float _shellMaxHp;
     float _shellHp;
+
+    float _healHp = 50;
 };
 

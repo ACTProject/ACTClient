@@ -8,6 +8,7 @@ enum class DynamicType
     Potal,
     Jump,
     Save,
+    Heal,
 
     End,
 };

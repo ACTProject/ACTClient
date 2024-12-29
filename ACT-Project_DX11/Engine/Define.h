@@ -33,7 +33,7 @@ public:										\
 #define SHADOW      GET_SINGLE(Shadow)
 #define CUR_SCENE	SCENE->GetCurrentScene()
 #define UIMANAGER   GET_SINGLE(UIManager)
-
+#define SAVE        GET_SINGLE(SaveManager)
 
 #define MAX_RENDER_DISTANCE 150.f
 #define FRUSTUM_PADDING 5.0f

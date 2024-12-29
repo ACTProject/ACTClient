@@ -779,7 +779,6 @@ void Client::Init()
         CUR_SCENE->Add(obj);
     }
 
-    MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
 
 }
 

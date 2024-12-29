@@ -13,12 +13,13 @@
 #include "Potal.h"
 #include "JumpObj.h"
 #include "SaveObj.h"
+#include "HealObj.h"
 
 
 void MapManager::Init()
 {
     //clear
-    ClearMap();
+    //ClearMap();
 
     ////MapObj
     shared_ptr<MapObjDesc> src;
@@ -41,7 +42,7 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/WallLeft", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
 
-        src = make_shared<MapObjDesc>(L"MapObject/Bottle", L"23. RenderDemo.fx");
+        src = make_shared<MapObjDesc>(L"MapObject/Bottle", L"23. RenderDemo.fx", false, true, DynamicType::Heal, true);
         MAP->AddMapObj(src);
 
         src = make_shared<MapObjDesc>(L"MapObject/CardHouseEntity", L"23. RenderDemo.fx");
@@ -71,7 +72,7 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/wall02", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
 
-        src = make_shared<MapObjDesc>(L"MapObject/moonjelly", L"23. RenderDemo.fx", true, DynamicType::Jump, true);
+        src = make_shared<MapObjDesc>(L"MapObject/moonjelly", L"23. RenderDemo.fx", false, true, DynamicType::Jump, true);
         MAP->AddMapObj(src);
 
         src = make_shared<MapObjDesc>(L"MapObject/rock2", L"23. RenderDemo.fx");
@@ -111,16 +112,34 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/can_crushed_03", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
         src = make_shared<MapObjDesc>(L"MapObject/CastleKit_Tower_01", L"23. RenderDemo.fx");
-        MAP->AddMapObj(src);        
-        src = make_shared<MapObjDesc>(L"MapObject/Medieval_Door", L"23. RenderDemo.fx" , true, DynamicType::Potal);
+        MAP->AddMapObj(src); 
+
+        src = make_shared<MapObjDesc>(L"MapObject/SeaObj01", L"normalRender.fx");
+        MAP->AddMapObj(src);                                   
+        src = make_shared<MapObjDesc>(L"MapObject/SeaObj02", L"normalRender.fx");
+        MAP->AddMapObj(src);                                   
+        src = make_shared<MapObjDesc>(L"MapObject/SeaObj03", L"normalRender.fx");
+        MAP->AddMapObj(src);                                  
+        src = make_shared<MapObjDesc>(L"MapObject/SeaObj04", L"normalRender.fx");
+        MAP->AddMapObj(src);                                   
+        src = make_shared<MapObjDesc>(L"MapObject/SeaObj05", L"normalRender.fx");
+        MAP->AddMapObj(src);                                   
+        src = make_shared<MapObjDesc>(L"MapObject/SeaObj06", L"normalRender.fx");
+        MAP->AddMapObj(src);                                  
+        src = make_shared<MapObjDesc>(L"MapObject/SeaObj07", L"normalRender.fx");
+        MAP->AddMapObj(src);
+
+        src = make_shared<MapObjDesc>(L"MapObject/Medieval_Door", L"23. RenderDemo.fx" , false, true, DynamicType::Potal);
         MAP->AddMapObj(src);  
+        src = make_shared<MapObjDesc>(L"MapObject/Dynamic/MagicGate", L"23. RenderDemo.fx", true, true, DynamicType::Save,true);
+        MAP->AddMapObj(src);
 
         // 바닥텍스처
-        src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", false, DynamicType::None,false, true);
+        src = make_shared<MapObjDesc>(L"tailtexture01.png", L"23. RenderDemo.fx", false, false, DynamicType::None,false, true);
         MAP->AddMapObj(src);
 
         // 빌보드메시
-        src = make_shared<MapObjDesc>(L"grass.png", L"28. BillBoardDemo.fx", false, DynamicType::None, false, false, true);
+        src = make_shared<MapObjDesc>(L"grass.png", L"28. BillBoardDemo.fx", false,false, DynamicType::None, false, false, true);
         MAP->AddMapObj(src);
 
         // ImGui용 함수.
@@ -220,7 +239,14 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
         auto it = _mapInfoList.find(_mapSelectDesc->filename);
         if (it != _mapInfoList.end())
         {
-            if (_mapSelectDesc->isMesh == true)
+            if (_mapSelectDesc->isAnim == true)
+            {
+                shared_ptr<ModelAnimator> ma2 = make_shared<ModelAnimator>(it->second->_shader);
+                obj->AddComponent(ma2);
+                obj->GetModelAnimator()->SetModel(it->second->_model);
+                obj->GetModelAnimator()->SetPass(2);
+            }
+            else if (_mapSelectDesc->isMesh == true)
             {
                 auto meshrender = make_shared<MeshRenderer>();
                 obj->AddComponent(meshrender);
@@ -279,7 +305,19 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
         auto it = _mapInfoList.find(desc.filename);
         if (it != _mapInfoList.end())
         {
-            if (desc.isMesh == true)
+            if (desc.isAnim == true)
+            {
+                //shared_ptr<ModelAnimator> ma2 = make_shared<ModelAnimator>(it->second->_shader);
+                //obj->AddComponent(ma2);
+                //obj->GetModelAnimator()->SetModel(it->second->_model);
+                //obj->GetModelAnimator()->SetPass(2);
+
+                auto modelrender = make_shared<ModelRenderer>(it->second->_shader);
+                obj->AddComponent(modelrender);
+                obj->GetModelRenderer()->SetModel(it->second->_model);
+                obj->GetModelRenderer()->SetPass(1);
+            }
+            else if (desc.isMesh == true)
             {
                 auto meshrender = make_shared<MeshRenderer>();
                 obj->AddComponent(meshrender);
@@ -304,6 +342,10 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
             }
 
         }
+        if (desc.isDynamic == true)
+        {
+            CreateDynamicObject(obj, desc.dynamicType);
+        }
 
         if (desc.isCollision == true)
         {
@@ -315,10 +357,7 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
             COLLISION->AddCollider(collider);
         }
 
-        if (desc.isDynamic == true)
-        {
-            CreateDynamicObject(obj, desc.dynamicType);
-        }
+
     }
     _mapObjList.push_back(obj);
     return obj;
@@ -341,6 +380,17 @@ void MapManager::AddMapObj(shared_ptr<MapObjDesc> obj)
     if (obj->isBillBoard == true)
     {
         CreateBillBoardMesh(obj);
+    }
+    else if (obj->isAnim == true)
+    {
+        models->_model = make_shared<Model>();
+        {
+            models->_model->ReadModel(obj->filename);
+            models->_model->ReadMaterial(obj->filename);
+        }
+        models->_shader = make_shared<Shader>(obj->shadername);
+      
+        //models->_model->ReadAnimation(obj->filename, AnimationState::Idle);
     }
     else if (obj->isMesh != true)
     {
@@ -611,6 +661,9 @@ bool MapManager::ExportMapObj(wstring _fileName)
     for (int i = 0; i < length; i++)
     {
         MapObjDesc dec;
+        dec.isAnim = (_mapObjList[i]->GetModelAnimator() == nullptr) ? false : true;
+        fwrite(&dec.isAnim, sizeof(bool), 1, fp);
+
         dec.isDynamic = (_mapObjList[i]->GetDynamicObj() == nullptr) ? false : true;
         fwrite(&dec.isDynamic, sizeof(bool), 1, fp);
         if(dec.isDynamic == true)
@@ -651,6 +704,10 @@ bool MapManager::ExportMapObj(wstring _fileName)
             continue;
         }
 
+        if (dec.isAnim == true)
+        {
+            dec.filename = _mapObjList[i]->GetModelAnimator()->GetModel()->GetTextureName();
+        }
         else if (dec.isMesh != true)
         {
             dec.filename = _mapObjList[i]->GetModelRenderer()->GetModel()->GetTextureName();
@@ -665,7 +722,11 @@ bool MapManager::ExportMapObj(wstring _fileName)
         fwrite(&dec.fileLength, sizeof(int), 1, fp);
         fwrite(&szLoadfilename, sizeof(wchar_t), dec.fileLength, fp);
 
-        if (dec.isMesh != true)
+        if (dec.isAnim == true)
+        {
+            dec.shadername = _mapObjList[i]->GetModelAnimator()->GetShader()->GetFile();
+        }
+        else if (dec.isMesh != true)
         {
             dec.shadername = _mapObjList[i]->GetModelRenderer()->GetShader()->GetFile();
         }
@@ -706,6 +767,8 @@ bool MapManager::ImportMapObj(wstring _fileName)
     MapObjDesc dec;
     for (int i = 0; i < lengths; i++)
     {
+        fread(&dec.isAnim, sizeof(bool), 1, fp);
+
         fread(&dec.isDynamic, sizeof(bool), 1, fp);
         if (dec.isDynamic == true)
         {
@@ -786,6 +849,11 @@ void MapManager::CreateDynamicObject(shared_ptr<GameObject> obj,DynamicType type
         obj->AddComponent(make_shared<SaveObj>(DynamicType::Save));
     }
         break;
+    case DynamicType::Heal:
+    {
+        obj->AddComponent(make_shared<HealObj>(DynamicType::Heal));
+    }
+    break;
     default:
         break;
     }

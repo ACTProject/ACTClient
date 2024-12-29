@@ -178,6 +178,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="DebugManager.h" />
     <ClInclude Include="DynamicObj.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="HealObj.h" />
     <ClInclude Include="HitBox.h" />
     <ClInclude Include="JumpObj.h" />
     <ClInclude Include="MapManager.h" />
@@ -230,6 +231,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="ResourceBase.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="SaveManager.h" />
     <ClInclude Include="SaveObj.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
@@ -271,6 +273,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="DynamicObj.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="HealObj.cpp" />
     <ClCompile Include="HitBox.cpp" />
     <ClCompile Include="JumpObj.cpp" />
     <ClCompile Include="MapManager.cpp" />
@@ -346,6 +349,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="ResourceBase.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
+    <ClCompile Include="SaveManager.cpp" />
     <ClCompile Include="SaveObj.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
