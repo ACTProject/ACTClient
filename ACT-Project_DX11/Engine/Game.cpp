@@ -54,7 +54,10 @@ WPARAM Game::Run(uint32 num)
     if (_scenes[_num].tag == SceneTag::INGAME)
         MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
     if (_scenes[_num].tag == SceneTag::INGAME2)
+    {
+        MAP->ClearMap();
         MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists02.txt");
+    }
 
 	SCENE->Start();
 
