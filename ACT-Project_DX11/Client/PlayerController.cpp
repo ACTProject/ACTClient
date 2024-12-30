@@ -301,6 +301,7 @@ void PlayerController::HandlePortal()
 
         if (collider->Intersects(playerCollider))
         {
+            TaskQueue::GetInstance().Stop();
             GAME->ChangeScene(2);
             break;
         }

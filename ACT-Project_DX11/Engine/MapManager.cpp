@@ -1063,7 +1063,7 @@ void MapManager::RemoveMapObj(shared_ptr<GameObject> obj)
         }
 
         SCENE->GetCurrentScene()->Remove(obj);
-        COLLISION->GetInstance()->Remove(obj);
+        //COLLISION->GetInstance()->Remove(obj);
 
 
         obj.reset();
