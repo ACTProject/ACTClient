@@ -293,6 +293,7 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
             {
                 _spoil++;
+                SOUND->PlayEffect(L"player_pickupItem");
                 collider->GetGameObject()->Destroy();
                 std::cout << "spoil : " << _spoil << std::endl;
                 break;

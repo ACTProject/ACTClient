@@ -85,6 +85,7 @@ void Client::Init()
             SOUND->Load(L"player_hurt4", L"player/hurt4");
             SOUND->Load(L"player_jump", L"player/jump");
             SOUND->Load(L"player_excite", L"player/Player_Excite_1");
+            SOUND->Load(L"player_pickupItem", L"player/Pickup_Item_World");
         }
 
         //Melle
