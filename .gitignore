@@ -398,6 +398,7 @@ FodyWeavers.xsd
 *.sln.iml
 ACT-Project_DX11/Binaries/
 !/ACT-Project_DX11/Binaries/assimp-vc143-mtd.dll
+!/ACT-Project_DX11/Binaries/fmod.dll
 ACT-Project_DX11/Intermediate/
 ACT-Project_DX11/Libraries/Include/Engine/*.h
 ACT-Project_DX11/Libraries/Lib/Engine/*
