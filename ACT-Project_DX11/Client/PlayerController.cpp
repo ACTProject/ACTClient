@@ -85,13 +85,6 @@ void PlayerController::Update()
 
     // 포탈 충돌 처리
     HandlePortal();
-
-    // 세이브 충돌 처리
-    HandleSave();
-
-    // 힐 충돌
-    HandleHeal();
-    
 }
 
 void PlayerController::HandleInput()
@@ -167,6 +160,8 @@ void PlayerController::HandleMovement()
             if (collider->GetGameObject()->GetRigidbody() != nullptr)
                 continue;
             if (collider->GetGameObject()->GetHitBox() != nullptr)
+                continue;
+            if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
                 continue;
 
             float distance = 0.0f;
@@ -277,13 +272,34 @@ void PlayerController::HandleInteraction()
 
     for (const auto& collider : nearbyColliders)
     {
-        if (collider->GetGameObject()->GetObjectType() != ObjectType::Shell)
-            return;
-
         if (collider->Intersects(playerCollider) && INPUT->GetButtonDown(KEY_TYPE::E))
         {
-            InteractWithShell(collider->GetGameObject());
-            break;
+            // Shell 상호작용
+            if (collider->GetGameObject()->GetObjectType() == ObjectType::Shell)
+            {
+                InteractWithShell(collider->GetGameObject());
+                break;
+            }
+            // 전리품 상호작용
+            if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
+            {
+                _spoil++;
+                collider->GetGameObject()->Destroy();
+                std::cout << "spoil : " << _spoil << std::endl;
+                break;
+            }
+            // 힐 상호작용
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Heal)
+            {
+                HealPlayer();
+                break;
+            }
+            // 세이브 상호작용
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
+            {
+                SAVE->SaveGame(collider->GetGameObject());
+                break;
+            }
         }
         
     }
@@ -308,49 +324,7 @@ void PlayerController::HandlePortal()
 
     }
 }
-void PlayerController::HandleSave()
-{
-    auto playerCollider = GetGameObject()->GetCollider();
-    // 옥트리에서 충돌 가능한 객체 가져오기
-    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(playerCollider);
 
-    for (const auto& collider : nearbyColliders)
-    {
-        if (collider->GetGameObject()->GetDynamicObj() == nullptr)
-            return;
-
-        if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() != DynamicType::Save)
-            return;
-
-        if (collider->Intersects(playerCollider) && INPUT->GetButtonDown(KEY_TYPE::E))
-        {
-            SAVE->SaveGame(collider->GetGameObject());
-            break;
-        }
-    }
-}
-
-void PlayerController::HandleHeal()
-{
-    auto playerCollider = GetGameObject()->GetCollider();
-    // 옥트리에서 충돌 가능한 객체 가져오기
-    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(playerCollider);
-
-    for (const auto& collider : nearbyColliders)
-    {
-        if (collider->GetGameObject()->GetDynamicObj() == nullptr)
-            return;
-
-        if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() != DynamicType::Heal)
-            return;
-
-        if (collider->Intersects(playerCollider) && INPUT->GetButtonDown(KEY_TYPE::E))
-        {
-            HealPlayer();
-            break;
-        }
-    }
-}
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];

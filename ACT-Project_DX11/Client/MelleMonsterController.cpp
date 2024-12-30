@@ -305,6 +305,7 @@ void MelleMonsterController::OnDeath()
 void MelleMonsterController::DropItem()
 {
     auto item = make_shared<GameObject>();
+    item->SetObjectType(ObjectType::Spoils);
     item->GetOrAddTransform()->SetPosition(EnemyPos);
     item->GetOrAddTransform()->SetLocalRotation(Vec3(XMConvertToRadians(90),0,0));
     item->GetOrAddTransform()->SetScale(Vec3(0.05f));

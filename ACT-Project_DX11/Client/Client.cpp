@@ -564,7 +564,7 @@ void Client::Init()
 	shared_ptr<HitBox> hitbox = make_shared<HitBox>();
 	hitboxGO->AddComponent(hitbox);
 	hitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
-	hitbox->Craete(player, Vec3(1.5f));
+	hitbox->Craete(player, Vec3(2.0f));
 	CUR_SCENE->Add(hitboxGO);
 
     // Dust Material 생성

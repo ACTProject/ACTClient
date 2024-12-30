@@ -33,6 +33,7 @@ enum class ObjectType
     Portal,
     MapMesh,
     Map,
+    Spoils,
     // ...
 
     Unknown,
