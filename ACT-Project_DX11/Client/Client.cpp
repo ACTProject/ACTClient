@@ -51,6 +51,11 @@ void Client::Init()
     // Player
     auto player = make_shared<GameObject>();
 
+    // Sound
+    {
+        SOUND->Release();
+    }
+
 	// Camera
 	{
 		auto camera = make_shared<GameObject>();

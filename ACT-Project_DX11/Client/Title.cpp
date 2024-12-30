@@ -22,12 +22,27 @@
 #include "Billboard.h"
 #include "CameraController.h"
 #include "Client.h"
+#include "SoundManager.h"
 
 
 void Title::Init()
 {
     shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
     shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
+
+    // BGM
+    {
+        SOUND->Release();
+        if (!SOUND->Initialize())
+        {
+            std::cout << "Failed to init SoundManager" << std::endl;
+        }
+        SOUND->Load(L"bgm", L"title/Lobby_Sound");
+        SOUND->Load(L"hover", L"title/ClickHigh4");
+        SOUND->Load(L"click", L"title/UI_Confirm_Soft");
+
+        SOUND->Play(L"bgm", true);
+    }
 
     // UI_Camera
     {
@@ -43,7 +58,6 @@ void Title::Init()
         CUR_SCENE->Add(camera);
     }
 
-
     // Material
     {
         shared_ptr<Material> material = make_shared<Material>();
@@ -56,10 +70,6 @@ void Title::Init()
         desc.specular = Vec4(1.f);
         RESOURCES->Add(L"RedBar", material);
     }
-
-
-
-
 
     // BackGround Material
     {
@@ -183,10 +193,18 @@ void Title::Init()
 
         obj->GetButton()->Create(Vec3(250, 300, 0.3), Vec2(166, 44), RESOURCES->Get<Material>(L"StartBtn"));
         obj->GetMeshRenderer()->SetAlphaBlend(true);
-        obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn_Hover")); });
-        obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn")); });
+        obj->GetButton()->AddOnHoverEvent([obj]() { 
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn_Hover"));
+            SOUND->PlayEffect(L"hover");
+            });
+        obj->GetButton()->AddOnHoverEndEvent([obj]() { 
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn")); 
+            });
 
-        obj->GetButton()->AddOnClickedEvent([]() { GAME->ChangeScene(1); });
+        obj->GetButton()->AddOnClickedEvent([]() { 
+            GAME->ChangeScene(1);
+            SOUND->PlayEffect(L"click");
+            });
 
         CUR_SCENE->Add(obj);
     }
@@ -197,9 +215,17 @@ void Title::Init()
 
         obj->GetButton()->Create(Vec3(250, 360, 0.3), Vec2(166, 44), RESOURCES->Get<Material>(L"EndBtn"));
         obj->GetMeshRenderer()->SetAlphaBlend(true);
-        obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"EndBtn_Hover")); });
-        obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"EndBtn")); });
-        obj->GetButton()->AddOnClickedEvent([]() { GAME->GameEnd(); });
+        obj->GetButton()->AddOnHoverEvent([obj]() { 
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"EndBtn_Hover"));
+            SOUND->PlayEffect(L"hover");
+            });
+        obj->GetButton()->AddOnHoverEndEvent([obj]() {
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"EndBtn"));
+            });
+        obj->GetButton()->AddOnClickedEvent([]() { 
+            GAME->GameEnd();
+            SOUND->PlayEffect(L"click"); 
+            });
 
         CUR_SCENE->Add(obj);
     }

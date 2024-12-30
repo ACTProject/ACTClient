@@ -2,94 +2,182 @@
 #include "SoundManager.h"
 #include "Utils.h"
 
-bool   SoundManager::Load(std::wstring filename)
+bool SoundManager::Load(wstring key, wstring filename, bool isStream)
 {
-    m_fVolume = 0.5f;  // 0 ~ 1	
-    FMOD_RESULT hr = m_pFmodSystem->createSound(Utils::ToString(filename).c_str(),
-        FMOD_DEFAULT, 0, &m_pSound);
-    if (hr == FMOD_OK)
-    {
-        return true;
+    FMOD::Sound* sound = nullptr;
+    FMOD_MODE mode = isStream ? FMOD_CREATESTREAM : FMOD_DEFAULT;
+
+    wstring fullpath = L"../Resources/Sound/" + filename + L".wav";
+
+    FMOD_RESULT result = m_pSystem->createSound(Utils::ToString(fullpath).c_str(), mode, nullptr, &sound);
+    if (result != FMOD_OK) {
+        std::cout << "Failed to load sound: " << &key << std::endl;
+        return false;
     }
-    return false;
+
+    m_SoundMap[key] = sound;
+    return true;
 }
 
-void  SoundManager::PlayEffect() // 단순한(짧은) 이펙트 용도
+void SoundManager::Play(wstring key, bool loop)
 {
-    FMOD::Channel* pChannel = nullptr;
-    FMOD_RESULT hr = m_pFmodSystem->playSound(m_pSound,
-        nullptr, false, &pChannel);
-    if (hr == FMOD_OK)
-    {
+    auto it = m_SoundMap.find(key);
+    if (it == m_SoundMap.end()) {
+        std::cout << "Sound not found: " << &key << std::endl;
+        return;
+    }
+
+    FMOD::Sound* sound = it->second;
+    if (loop) {
+        sound->setMode(FMOD_LOOP_NORMAL);
+    }
+    else {
+        sound->setMode(FMOD_LOOP_OFF);
+    }
+
+    FMOD::Channel* channel = nullptr;
+    FMOD_RESULT result = m_pSystem->playSound(sound, nullptr, false, &channel);
+    if (result != FMOD_OK) {
+        std::cout << "Failed to play sound: " << &key << std::endl;
+        return;
+    }
+
+    channel->setPaused(false); // 일시정지 해제
+    m_ChannelMap[key] = channel;
+}
+
+void SoundManager::PlayFromTime(wstring key, float startTime, bool loop)
+{
+    auto it = m_SoundMap.find(key);
+    if (it == m_SoundMap.end()) {
+        std::cerr << "Sound not found: " << &key << std::endl;
+        return;
+    }
+
+    FMOD::Sound* sound = it->second;
+
+    if (loop) {
+        sound->setMode(FMOD_LOOP_NORMAL);
+    }
+    else {
+        sound->setMode(FMOD_LOOP_OFF);
+    }
+
+    FMOD::Channel* channel = nullptr;
+    FMOD_RESULT result = m_pSystem->playSound(sound, nullptr, true, &channel); // 재생을 일시정지 상태로 시작
+    if (result != FMOD_OK) {
+        std::cerr << "Failed to play sound: " << &key << std::endl;
+        return;
+    }
+
+    float startTimems = startTime * 1000;
+    // 특정 시간부터 재생 시작
+    result = channel->setPosition(startTimems, FMOD_TIMEUNIT_MS);
+    if (result != FMOD_OK) {
+        std::cerr << "Failed to set position for sound: " << &key << std::endl;
+        channel->stop();
+        return;
+    }
+
+    channel->setPaused(false);
+    m_ChannelMap[key] = channel;
+
+    std::cout << "Playing sound: " << &key << " from " << startTime << "ms" << std::endl;
+
+}
+
+void SoundManager::PlayEffect(wstring key)
+{
+    auto it = m_SoundMap.find(key);
+    if (it == m_SoundMap.end()) {
+        std::cerr << "Effect sound not found: " << &key << std::endl;
+        return;
+    }
+
+    FMOD::Sound* sound = it->second;
+
+    // 루프 없이 재생
+    sound->setMode(FMOD_LOOP_OFF);
+
+    FMOD::Channel* channel = nullptr;
+    FMOD_RESULT result = m_pSystem->playSound(sound, nullptr, false, &channel);
+    if (result != FMOD_OK) {
+        std::cerr << "Failed to play effect sound: " << &key << std::endl;
+        return;
+    }
+
+    std::cout << "Playing effect sound: " << &key << std::endl;
+}
+
+void   SoundManager::SetVolume(wstring key, float volume)
+{
+    if (volume < 0.0f) volume = 0.0f;
+    if (volume > 1.0f) volume = 1.0f;
+
+    auto it = m_ChannelMap.find(key);
+    if (it != m_ChannelMap.end() && it->second) {
+        it->second->setVolume(volume);
     }
 }
 
-FMOD::Channel* SoundManager::Play(bool bLoop) // 트루일 시 무한 반복
+void   SoundManager::Paused(wstring key, bool pause) // 토클기능 on or off
 {
-    // 채널 : 실행되는 사운드 제어를 담당한다.
-    FMOD::Channel* pChannel = nullptr;
-    FMOD_RESULT hr = m_pFmodSystem->playSound(m_pSound,
-        nullptr, false, &pChannel);
-
-    m_pChannel = pChannel;
-    if (hr == FMOD_OK)
-    {
-        m_pChannel->setVolume(m_fVolume);
-        m_pSound->getLength(&m_SizeMS, FMOD_TIMEUNIT_MS);
-        if (bLoop)
-        {
-            m_pChannel->setMode(FMOD_LOOP_NORMAL); // 무한반복
+    auto it = m_ChannelMap.find(key);
+    if (it != m_ChannelMap.end() && it->second) {
+        FMOD_RESULT result = it->second->setPaused(pause);
+        if (result != FMOD_OK) {
+            std::cerr << "Failed to pause sound: " << std::endl;
         }
-        else
-        {
-            m_pChannel->setMode(FMOD_LOOP_OFF);
+        else {
+            std::cout << (pause ? "Paused" : "Resumed") << " sound: "<< &key << std::endl;
         }
     }
-    return pChannel;
-}
-
-
-void   SoundManager::SetVolume(float value)
-{
-    if (value < 0.0f) value = 0.0f;
-    if (value > 1.0f) value = 1.0f;
-
-    m_fVolume = value;
-
-    if (m_pChannel)
-    {
-        m_pChannel->setVolume(m_fVolume);
+    else {
+        std::cerr << "Channel not found or invalid for key: " << &key << std::endl;
     }
 }
 
-void   SoundManager::Paused() // 토클기능 on or off
+void   SoundManager::Stop(wstring key)
 {
-    if (m_pChannel == nullptr) return;
-
-    // 현재 일시정지 여부 파악
-    bool bPlay = false;
-    m_pChannel->isPlaying(&bPlay);
-    if (bPlay == true)
-    {
-        bool paused;
-        m_pChannel->getPaused(&paused);
-        m_pChannel->setPaused(!paused);
+    auto it = m_ChannelMap.find(key);
+    if (it != m_ChannelMap.end() && it->second) {
+        it->second->stop();
     }
 }
 
-void   SoundManager::Stop()
+bool SoundManager::Initialize()
 {
-    if (m_pChannel != nullptr)
-    {
-        m_pChannel->stop();
+    FMOD_RESULT hr = FMOD::System_Create(&m_pSystem);
+    if (hr != FMOD_OK) {
+        std::cout << "FMOD system creation failed!" << std::endl;
+        return false;
     }
+
+    hr = m_pSystem->init(512, FMOD_INIT_NORMAL, nullptr);
+    if (hr != FMOD_OK) {
+        std::cout << "FMOD system initialization failed!" << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 void   SoundManager::Release()
 {
-    if (m_pSound)
-    {
-        m_pSound->release();
+    for (auto& soundPair : m_SoundMap) {
+        soundPair.second->release();
     }
-    m_pSound = nullptr;
+    m_SoundMap.clear();
+
+    if (m_pSystem) {
+        m_pSystem->close();
+        m_pSystem->release();
+    }
+}
+
+void   SoundManager::Update()
+{
+    if (m_pSystem) {
+        m_pSystem->update();
+    }
 }
