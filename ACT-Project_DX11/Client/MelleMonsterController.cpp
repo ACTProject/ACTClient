@@ -72,7 +72,7 @@ void MelleMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 
 void MelleMonsterController::Punch(int type)
 {
-    if (animPlayingTime >= animDuration / 2.0f)
+    if (animPlayingTime >= animDuration / 1.4f)
     {
         if (!playingSound)
         {
@@ -147,7 +147,13 @@ void MelleMonsterController::Update()
         }
         playingSound = false;
         DropItem();
-        _hpBar->Destroy();
+
+        CUR_SCENE->Remove(_hpBar);
+        TaskQueue::GetInstance().AddTask([this]() {
+            std::cout << "Destroying object in TaskQueue..." << std::endl;
+            _hpBar->Destroy();
+        });
+        
         Super::OnDeath();
         std::cout << "Melle Monster Died!" << std::endl;
 
