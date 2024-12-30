@@ -38,6 +38,7 @@
 #include "Frustum.h"
 #include "Shadow.h"
 #include "Particle.h"
+#include "SoundManager.h"
 
 void Client::Init()
 {
@@ -616,7 +617,9 @@ void Client::Init()
         ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
         ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
         ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
+
     }
+    
     
 
 	// Skybox

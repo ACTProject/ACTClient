@@ -35,6 +35,7 @@ public:
 
 public:
     void OnDeath();
+    void DropItem();
     bool PlayingHitMotion = false;
 private:
     bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false

@@ -55,6 +55,7 @@ public:
 
 public:
     void OnDeath() override;
+    void DropItem();
     bool PlayingHitMotion = false;
 private:
     float _speed;

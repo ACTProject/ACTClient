@@ -26,7 +26,7 @@ void AssimpTool::Init()
     }
 
 	// Player
-	{
+	 {
 		{
 			shared_ptr<Converter> converter = make_shared<Converter>();
 			converter->ReadAssetFile(L"Player/Player.fbx");
@@ -94,8 +94,9 @@ void AssimpTool::Init()
             converter->ExportAnimationData(L"Player/Crab_Death");
         }
 	}
+    
 	// Enemy
-	{
+	 {
 		{
 			shared_ptr<Converter> converter = make_shared<Converter>();
 			converter->ReadAssetFile(L"Enemy/Rangoon_mesh.fbx");
@@ -350,6 +351,19 @@ void AssimpTool::Init()
             }
         }
 	}
+    
+    {
+        shared_ptr<Converter> converter = make_shared<Converter>();
+        converter->ReadAssetFile(L"Enemy/can.fbx");
+        converter->ExportMaterialData(L"Enemy/can");
+        converter->ExportModelData(L"Enemy//can");
+    }
+    {
+        shared_ptr<Converter> converter = make_shared<Converter>();
+        converter->ReadAssetFile(L"Enemy/cap.fbx");
+        converter->ExportMaterialData(L"Enemy/cap");
+        converter->ExportModelData(L"Enemy//cap");
+    }
 	// MapObject
     {
         {
@@ -460,7 +474,7 @@ void AssimpTool::Init()
             converter->ExportMaterialData(L"MapObject/rock2");
             converter->ExportModelData(L"MapObject/rock2");
         }
-        //
+        
         {
             shared_ptr<Converter> converter = make_shared<Converter>();
             converter->ReadAssetFile(L"MapObject/Urock01.fbx");
@@ -510,7 +524,7 @@ void AssimpTool::Init()
             converter->ExportModelData(L"MapObject/Udrock04");
         }
 
-        //
+        
         {
             shared_ptr<Converter> converter = make_shared<Converter>();
             converter->ReadAssetFile(L"MapObject/Chips.fbx");
@@ -622,6 +636,7 @@ void AssimpTool::Init()
 
         }
 	}
+    */
 }
 
 void AssimpTool::Update()

@@ -152,7 +152,8 @@ void ShootingMonsterController::Update()
         {
             return;
         }
-
+        DropItem();
+        _hpBar->Destroy();
         Super::OnDeath();
         std::cout << "Shooting Monster Died!" << std::endl;
 
@@ -171,17 +172,6 @@ void ShootingMonsterController::Update()
 
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
-
-    if (_hp < 0.f)
-    {
-        animPlayingTime += DT;
-        SetAnimationState(AnimationState::Die);
-        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
-        {
-            Remove(GetGameObject());
-        }
-        return;
-    }
 
     // 범위 검사
     if (rangeDis > 50.f) // 초기 위치에서 너무 멀리 떨어지면 복귀
@@ -304,4 +294,34 @@ bool ShootingMonsterController::PlayCheckAnimating(AnimationState state)
     }
 
     return true; // 플레이 중
+}
+
+void ShootingMonsterController::DropItem()
+{
+    auto item = make_shared<GameObject>();
+    item->GetOrAddTransform()->SetPosition(EnemyPos);
+    item->GetOrAddTransform()->SetLocalRotation(Vec3(XMConvertToRadians(90), 0, 0));
+    item->GetOrAddTransform()->SetScale(Vec3(0.05f));
+
+    std::cout << "item drop" << std::endl;
+    shared_ptr<Model> objModel = make_shared<Model>();
+    // Model
+    objModel->ReadModel(L"Enemy/cap");
+    objModel->ReadMaterial(L"Enemy/cap");
+
+    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
+
+    item->AddComponent(make_shared<ModelRenderer>(renderShader));
+    {
+        item->GetModelRenderer()->SetModel(objModel);
+        item->GetModelRenderer()->SetPass(4);
+    }
+
+    auto collider = make_shared<AABBBoxCollider>();
+    collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f)));
+    collider->SetOffset(Vec3(0.f, 0.5f, 0.f));
+    OCTREE->InsertCollider(collider);
+    item->AddComponent(collider);
+
+    CUR_SCENE->Add(item);
 }

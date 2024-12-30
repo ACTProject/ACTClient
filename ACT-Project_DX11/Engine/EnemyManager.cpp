@@ -33,7 +33,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
         rangoon->AddComponent(ma2);
         {
             rangoon->GetModelAnimator()->SetModel(enemyModel);
-            rangoon->GetModelAnimator()->SetPass(2);
+            rangoon->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<MelleMonsterController> rangoonScript = make_shared<MelleMonsterController>();
 
@@ -112,7 +112,7 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos, int num)
         PistolShrimp->AddComponent(ma2);
         {
             PistolShrimp->GetModelAnimator()->SetModel(enemyModel);
-            PistolShrimp->GetModelAnimator()->SetPass(2);
+            PistolShrimp->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<ShootingMonsterController> ShrimpScript = make_shared<ShootingMonsterController>();
 
@@ -209,7 +209,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         FinalBoss->AddComponent(ma2);
         {
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
-            FinalBoss->GetModelAnimator()->SetPass(2);
+            FinalBoss->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<FinalBossMonsterFirstPhaseController> BossScript = make_shared<FinalBossMonsterFirstPhaseController>();
 
@@ -317,7 +317,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         FinalBoss->AddComponent(ma2);
         {
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
-            FinalBoss->GetModelAnimator()->SetPass(2);
+            FinalBoss->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<FinalBossMonsterSecondPhaseController> BossScript = make_shared<FinalBossMonsterSecondPhaseController>();
 
