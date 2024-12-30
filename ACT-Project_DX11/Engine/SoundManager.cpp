@@ -105,8 +105,6 @@ void SoundManager::PlayEffect(wstring key)
         std::cerr << "Failed to play effect sound: " << &key << std::endl;
         return;
     }
-
-    std::cout << "Playing effect sound: " << &key << std::endl;
 }
 
 void   SoundManager::SetVolume(wstring key, float volume)

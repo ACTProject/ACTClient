@@ -125,7 +125,7 @@ void Game::Update(uint32 _num)
 
 	GRAPHICS->RenderEnd();
 
-
+    SOUND->Update();
 
 
 }

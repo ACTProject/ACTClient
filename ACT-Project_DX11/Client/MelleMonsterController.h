@@ -50,7 +50,6 @@ private:
 	float _speed;
 	float _hp;
 	float _atk;
-	float dt;
 	float _FPS;
 	float animPlayingTime = 0.0f;
     float distance;
@@ -65,10 +64,14 @@ private:
     bool chaseState = true;              //추격
     bool punchState = false;             //펀치 
     bool isExecuted_1 = false;
+    bool playingSound = false;
 
     // 히트 상태
     bool _hit = false;
     bool _isDead = false;
+
+    bool isPauseAfterPunch = false;
+    float pauseEndTime = 0.0f;
 
     Vec3 StartPos;
     Vec3 CurForward;

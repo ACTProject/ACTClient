@@ -111,10 +111,16 @@ void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
 
 void ShootingMonsterController::Aggro()
 {
+    if (!playingSound)
+    {
+        SOUND->PlayEffect(L"shooting_aggro");
+        playingSound = true;
+    }
     if (PlayCheckAnimating(AnimationState::Aggro))
     {
         return;
     }
+    playingSound = false;
     isFirstTime = true;
     _hpBar->SetActive(true);
 }
@@ -148,10 +154,16 @@ void ShootingMonsterController::Update()
 
     if (_isDead)
     {
+        if (!playingSound)
+        {
+            SOUND->PlayEffect(L"shooting_die");
+            playingSound = true;
+        }
         if (PlayCheckAnimating(AnimationState::Die))
         {
             return;
         }
+        playingSound = false;
         DropItem();
         _hpBar->Destroy();
         Super::OnDeath();
@@ -207,7 +219,38 @@ void ShootingMonsterController::Update()
         return;
     }
 
-    if (!chaseState)
+    if (isPauseAfterPunch) // 멈춤 상태 처리
+    {
+        if (currentTime >= pauseEndTime) // 멈춤 시간이 끝났는지 확인
+        {
+            isPauseAfterPunch = false; // 멈춤 상태 해제
+        }
+        else
+        {
+            isPauseAfterPunch = true; // 멈춤 상태에서는 다른 동작 수행하지 않음
+        }
+    }
+
+    if (isPauseAfterPunch)
+    {
+        if (PlayingHitMotion)
+        {
+            if (PlayCheckAnimating(AnimationState::Hit1))
+            {
+                if (!playingSound)
+                {
+                    SOUND->PlayEffect(L"shooting_hit");
+                    playingSound = true;
+                }
+                return;
+            }
+            playingSound = false;
+            PlayingHitMotion = false;
+            pauseEndTime = currentTime + 0.5f;
+        }
+    }
+
+    if (!chaseState && !isPauseAfterPunch)
     {
         Rota(EnemyPos, PlayerPos);
         if (distance < ShootingRange)
@@ -220,25 +263,24 @@ void ShootingMonsterController::Update()
             {
                 if (!shootCount && animPlayingTime >= duration / 2.0f)
                 {
+                    if (!playingSound)
+                    {
+                        SOUND->PlayEffect(L"shooting_fire");
+                        playingSound = true;
+                    }
                     AddBullet(EnemyPos, direction);
                     shootCount = true;
                 }
                 return;
             }
+            isPauseAfterPunch = true;
+            pauseEndTime = currentTime + 1.0f;
+            playingSound = false;
             shootCount = false;
             shootState = false;
         }
         else
         {
-            int randomHit = rand() % 3;
-            if (PlayingHitMotion && randomHit == 0)
-            {
-                if (PlayCheckAnimating(AnimationState::Hit1))
-                {
-                    return;
-                }
-            }
-            PlayingHitMotion = false;
             Move(EnemyPos, PlayerPos, _speed);
         }
     }

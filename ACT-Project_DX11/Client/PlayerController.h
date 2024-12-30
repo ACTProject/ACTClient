@@ -125,6 +125,10 @@ private:
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
 
+    // Sound
+    float _footstepTimer = 0.0f;
+    float _runningInterval = 0.3f;
+    float _walkingInterval = 0.2f;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }
