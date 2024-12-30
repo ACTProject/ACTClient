@@ -16,40 +16,6 @@ Slider::~Slider()
 void Slider::Update()
 {
     Super::PreUpdate();
-
-    ImGui::Begin("Slider");
-    if (_uiID == "PlayerHP")
-    {
-        ImGui::Text("PlayerHP");
-        if (ImGui::Button("Decrease HP"))
-        {
-            _uvRatio -= 0.1f;
-            if (_uvRatio < 0.0f) _uvRatio = 0.0f;
-        }
-        ImGui::SliderFloat("HP Control", &_uvRatio, 0.0f, 1.0f);
-    }
-    else if (_uiID == "PlayerArmor")
-    {
-        ImGui::Text("PlayerArmor");
-        if (ImGui::Button("Decrease Armor"))
-        {
-            _uvRatio -= 0.1f;
-            if (_uvRatio < 0.0f) _uvRatio = 0.0f;
-        }
-        ImGui::SliderFloat("Armor Control", &_uvRatio, 0.0f, 1.0f);
-    }
-
-    else if (_uiID == "Enemy")
-    {
-        ImGui::Text("Enemy Slider");
-        if (ImGui::Button("Decrease Enemy"))
-        {
-            _uvRatio -= 0.1f;
-            if (_uvRatio < 0.0f) _uvRatio = 0.0f;
-        }
-        ImGui::SliderFloat("Enemy Control", &_uvRatio, 0.0f, 1.0f);
-    }
-    ImGui::End();
     UpdateScale();
 }
 
