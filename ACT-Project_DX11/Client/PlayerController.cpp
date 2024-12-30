@@ -309,15 +309,25 @@ void PlayerController::HandleInteraction()
                 std::cout << "spoil : " << _spoil << std::endl;
                 break;
             }
+
+            if (collider->GetGameObject()->GetDynamicObj() == nullptr)
+                return;
+
             // 힐 상호작용
             if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Heal)
             {
                 HealPlayer();
+                
+                // 힐 오브젝트를 비활성화
+                collider->GetGameObject()->SetActive(false);
                 OCTREE->RemoveCollider(collider);
-                CUR_SCENE->Remove(collider->GetGameObject());
+
+                // 작업 큐에 활성화 작업 추가
+                constexpr float respawnTime = 5.0f; // 리스폰 대기 시간 (초)
                 TaskQueue::GetInstance().AddTask([collider]() {
-                    std::cout << "Destroying object in TaskQueue..." << std::endl;
-                    collider->GetGameObject()->Destroy();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(respawnTime * 1000)));                    
+                    collider->GetGameObject()->SetActive(true);
+                    OCTREE->InsertCollider(collider);
                 });
                 break;
             }
@@ -539,7 +549,7 @@ void PlayerController::UpdateHitBox()
 
 void PlayerController::StartHit()
 {
-    if (_hit)
+    if (_hit && _isAttacking)
         return;
     
     _hit = true;
