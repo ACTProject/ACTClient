@@ -512,6 +512,7 @@ void PlayerController::UpdateHit()
     {
         _hit = false;
         _isPlayeringHitAnimation = false;
+        SetAnimationState(AnimationState::Idle);
     }
 }
 
