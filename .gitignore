@@ -401,3 +401,4 @@ ACT-Project_DX11/Binaries/
 ACT-Project_DX11/Intermediate/
 ACT-Project_DX11/Libraries/Include/Engine/*.h
 ACT-Project_DX11/Libraries/Lib/Engine/*
+ACT-Project_DX11/Vertices.csv
