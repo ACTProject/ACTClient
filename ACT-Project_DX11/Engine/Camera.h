@@ -28,6 +28,8 @@ public:
     void SetCameraZoomForTerrain(const shared_ptr<class Terrain>& terrain);
     void RestrictCameraAboveTerrain(const shared_ptr<Terrain>& terrain);
 
+    void MoveTo(const Vec3& start, const Vec3& end, const Vec3 forward, float duration);
+
 	void SetProjectionType(ProjectionType type) { _type = type; }
 	ProjectionType GetProjectionType() { return _type; }
 

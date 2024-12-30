@@ -179,6 +179,9 @@ void Camera::FreeCameraMovement()	// WASD 키로 이동, 마우스로 회전
     );
     forward.Normalize();
     _focusPosition = _cameraPosition + forward;
+
+    cout << " forward X :" << forward.x << " forward Y :" << forward.y << " forward Z :" << forward.z << "\n";
+    cout << " _cameraPosition X :" << _cameraPosition.x << " _cameraPosition Y :" << _cameraPosition.y << " _cameraPosition Z :" << _cameraPosition.z << "\n";
 }
 
 void Camera::UpdateCameraWithMouseInput()
@@ -293,4 +296,19 @@ void Camera::RestrictCameraAboveTerrain(const shared_ptr<Terrain>& terrain)
         // 카메라를 뒤로 이동시켜 Terrain과의 충돌을 완벽히 방지
         _cameraPosition -= directionToFocus * 0.1f; // 0.1f는 조정 가능
     }
+}
+
+void Camera::MoveTo(const Vec3& start, const Vec3& end, const Vec3 forward, float duration)
+{
+    //_forward = forward
+    //Vec3 direction = (end - start); direction.Normalize();
+    //float distance = (end - start).Length();
+
+    //while (distance > 0.1f)
+    //{
+    //    _cameraPosition += direction * _normalSpeed * TIME->GetDeltaTime();
+    //    distance = (end - start).Length();
+    //}
+
+    //UpdateMatrix();
 }
