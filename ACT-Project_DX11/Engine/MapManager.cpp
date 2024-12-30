@@ -279,7 +279,6 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
             collider->SetOffset(_mapSelectDesc->offset);
             obj->AddComponent(collider);
             OCTREE->InsertCollider(collider);
-            COLLISION->AddCollider(collider);
         }
 
         if (_mapSelectDesc->isDynamic == true)
@@ -354,7 +353,6 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
             collider->SetOffset(desc.offset);
             collider->SetBoundingBox(BoundingBox(collider->GetBoundingBox().Center, desc.extent));
             OCTREE->InsertCollider(collider);
-            COLLISION->AddCollider(collider);
         }
 
 
