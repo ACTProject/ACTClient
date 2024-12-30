@@ -42,7 +42,7 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/WallLeft", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
 
-        src = make_shared<MapObjDesc>(L"MapObject/Bottle", L"23. RenderDemo.fx", false, true, DynamicType::Heal, true);
+        src = make_shared<MapObjDesc>(L"MapObject/Bottle", L"23. RenderDemo.fx");
         MAP->AddMapObj(src);
 
         src = make_shared<MapObjDesc>(L"MapObject/CardHouseEntity", L"23. RenderDemo.fx");
@@ -128,10 +128,14 @@ void MapManager::Init()
         MAP->AddMapObj(src);                                  
         src = make_shared<MapObjDesc>(L"MapObject/SeaObj07", L"normalRender.fx");
         MAP->AddMapObj(src);
+        src = make_shared<MapObjDesc>(L"MapObject/Portal", L"23. RenderDemo.fx", false, true, DynamicType::Save, true);
+        MAP->AddMapObj(src);
+        src = make_shared<MapObjDesc>(L"MapObject/mushroom", L"23. RenderDemo.fx", false, true, DynamicType::Heal, true);
+        MAP->AddMapObj(src);
 
         src = make_shared<MapObjDesc>(L"MapObject/Medieval_Door", L"23. RenderDemo.fx" , false, true, DynamicType::Potal);
         MAP->AddMapObj(src);  
-        src = make_shared<MapObjDesc>(L"MapObject/Dynamic/MagicGate", L"23. RenderDemo.fx", true, true, DynamicType::Save,true);
+        src = make_shared<MapObjDesc>(L"MapObject/Dynamic/MagicGate", L"23. RenderDemo.fx", true, false);
         MAP->AddMapObj(src);
 
         // 바닥텍스처
@@ -306,15 +310,15 @@ shared_ptr<GameObject> MapManager::Create(MapObjDesc& desc)
         {
             if (desc.isAnim == true)
             {
-                //shared_ptr<ModelAnimator> ma2 = make_shared<ModelAnimator>(it->second->_shader);
-                //obj->AddComponent(ma2);
-                //obj->GetModelAnimator()->SetModel(it->second->_model);
-                //obj->GetModelAnimator()->SetPass(2);
+                shared_ptr<ModelAnimator> ma2 = make_shared<ModelAnimator>(it->second->_shader);
+                obj->AddComponent(ma2);
+                obj->GetModelAnimator()->SetModel(it->second->_model);
+                obj->GetModelAnimator()->SetPass(2);
 
-                auto modelrender = make_shared<ModelRenderer>(it->second->_shader);
-                obj->AddComponent(modelrender);
-                obj->GetModelRenderer()->SetModel(it->second->_model);
-                obj->GetModelRenderer()->SetPass(1);
+                //auto modelrender = make_shared<ModelRenderer>(it->second->_shader);
+                //obj->AddComponent(modelrender);
+                //obj->GetModelRenderer()->SetModel(it->second->_model);
+                //obj->GetModelRenderer()->SetPass(1);
             }
             else if (desc.isMesh == true)
             {
@@ -388,7 +392,7 @@ void MapManager::AddMapObj(shared_ptr<MapObjDesc> obj)
         }
         models->_shader = make_shared<Shader>(obj->shadername);
       
-        //models->_model->ReadAnimation(obj->filename, AnimationState::Idle);
+        models->_model->ReadAnimation(obj->filename, AnimationState::Idle);
     }
     else if (obj->isMesh != true)
     {

@@ -49,6 +49,9 @@ void PlayerController::Start()
     }
 
     std::cout << "PlayerController Start()" << std::endl;
+
+    // 로드 이벤트 등록.
+    SAVE->AddLoadEvent(std::bind(&PlayerController::LoadPlayer,this,std::placeholders::_1));
 }
 
 void PlayerController::Update()
@@ -563,6 +566,11 @@ void PlayerController::HealPlayer()
         float hpRatio = _hp / _maxHp;
         hpSlider->SetRatio(hpRatio);
     }
+}
+
+void PlayerController::LoadPlayer(SaveData data)
+{
+    _transform->SetLocalPosition(data.playerPos);
 }
 
 void PlayerController::OnDeath()

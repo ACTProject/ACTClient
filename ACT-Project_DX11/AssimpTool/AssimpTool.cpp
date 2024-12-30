@@ -629,12 +629,25 @@ void AssimpTool::Init()
         }
         {
             shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/Portal.fbx");
+            converter->ExportMaterialData(L"MapObject/Portal");
+            converter->ExportModelData(L"MapObject/Portal");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/mushroom.fbx");
+            converter->ExportMaterialData(L"MapObject/mushroom");
+            converter->ExportModelData(L"MapObject/mushroom");
+        }
+       /* {
+            shared_ptr<Converter> converter = make_shared<Converter>();
             converter->ReadAssetFile(L"MapObject/Dynamic/MagicGate.fbx");
             converter->ExportMaterialData(L"MapObject/Dynamic/MagicGate");
             converter->ExportModelData(L"MapObject/Dynamic/MagicGate");
-            converter->ExportAnimationData(L"MapObject/Dynamic/MagicGate");
 
-        }
+            converter->ReadAssetFile(L"MapObject/Dynamic/MagicGate_idle.fbx");
+            converter->ExportAnimationData(L"MapObject/Dynamic/MagicGate");
+        }*/
 	}
     */
 }
