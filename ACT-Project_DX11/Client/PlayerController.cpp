@@ -287,7 +287,12 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
             {
                 _spoil++;
-                collider->GetGameObject()->Destroy();
+                OCTREE->RemoveCollider(collider);
+                CUR_SCENE->Remove(collider->GetGameObject());
+                TaskQueue::GetInstance().AddTask([collider]() {
+                    std::cout << "Destroying object in TaskQueue..." << std::endl;
+                    collider->GetGameObject()->Destroy();
+                });
                 std::cout << "spoil : " << _spoil << std::endl;
                 break;
             }
@@ -295,6 +300,12 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Heal)
             {
                 HealPlayer();
+                OCTREE->RemoveCollider(collider);
+                CUR_SCENE->Remove(collider->GetGameObject());
+                TaskQueue::GetInstance().AddTask([collider]() {
+                    std::cout << "Destroying object in TaskQueue..." << std::endl;
+                    collider->GetGameObject()->Destroy();
+                });
                 break;
             }
             // 세이브 상호작용

@@ -36,7 +36,8 @@ public:
     void HandleJump();          // 점프 처리
     void HandleMovement();      // 이동 처리
     void HandleInteraction();   // 상호작용 처리
-    void HandlePortal();
+    void HandlePortal();        // 포탈 상호작용 처리
+    void HandleHit();           // 히트 상태 처리
 
 
     // Attack
@@ -47,6 +48,10 @@ public:
 
     // Shell
     bool GetIsBlocking() { return _isBlocking; }
+    
+    // Hit
+    bool GetHit() { return _hit; }
+    void SetHit(bool hit) { _hit = hit; }
 
     // Dodge
     bool GetIsInvincible() { return _isInvincible; }
@@ -114,7 +119,10 @@ private:
     // Shell
     bool _isShellEquipped = false;      // 등껍질 장착 상태 여부
     bool _isBlocking = false;           // 막고 있는 상태인지 여부
-    float _crawlSpeed = 2.f;            // 기어가는 속도       
+    float _crawlSpeed = 2.f;            // 기어가는 속도  
+
+    // Hit
+    bool _hit = false;                // 히트 상태인지 여부
 
     // 애니메이션 진행 중인지 여부
 	bool _isPlayeringJumpAnimation = false; // 점프 애니메이션 재생 중인지 여부 확인
