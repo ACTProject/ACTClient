@@ -54,6 +54,60 @@ void Client::Init()
     // Sound
     {
         SOUND->Release();
+        if (!SOUND->Initialize())
+        {
+            std::cout << "Failed to init SoundManager" << std::endl;
+        }
+
+        SOUND->Load(L"bgm", L"bgm/Scene1_bgm");
+
+        //Player
+        {
+            SOUND->Load(L"player_atk1", L"player/atk_main_1");
+            SOUND->Load(L"player_atk2", L"player/atk_main_2");
+            SOUND->Load(L"player_atk3", L"player/atk_main_3");
+            SOUND->Load(L"player_atk4", L"player/atk_main_4");
+            SOUND->Load(L"player_atk1_md", L"player/atk_md_1");
+            SOUND->Load(L"player_atk2_md", L"player/atk_md_2");
+            SOUND->Load(L"player_atk3_md", L"player/atk_md_3");
+            SOUND->Load(L"player_atk4_md", L"player/atk_md_4");
+            SOUND->Load(L"player_atk1_sw", L"player/atk_sweetner_1");
+            SOUND->Load(L"player_atk2_sw", L"player/atk_sweetner_2");
+            SOUND->Load(L"player_atk3_sw", L"player/atk_sweetner_3");
+            SOUND->Load(L"player_atk4_sw", L"player/atk_sweetner_4");
+            SOUND->Load(L"player_dash", L"player/dash");
+            SOUND->Load(L"player_footstep_default", L"player/footstep_default");
+            SOUND->Load(L"player_footstep_sand", L"player/footstep_sand");
+            SOUND->Load(L"player_hit1", L"player/hurt1");
+            SOUND->Load(L"player_hit2", L"player/hurt2");
+            SOUND->Load(L"player_hit3", L"player/hurt3");
+            SOUND->Load(L"player_hit4", L"player/hurt4");
+            SOUND->Load(L"player_hurt4", L"player/hurt4");
+            SOUND->Load(L"player_jump", L"player/jump");
+            SOUND->Load(L"player_excite", L"player/Player_Excite_1");
+            SOUND->Load(L"player_pickupItem", L"player/Pickup_Item_World");
+        }
+
+        //Melle
+        {
+            SOUND->Load(L"melle_aggro", L"monster/melle/aggro");
+            SOUND->Load(L"melle_die", L"monster/melle/die");
+            SOUND->Load(L"melle_hit", L"monster/melle/hurt");
+            SOUND->Load(L"melle_footstep", L"monster/melle/footstep");
+            SOUND->Load(L"melle_swing0", L"monster/melle/swing_1");
+            SOUND->Load(L"melle_swing1", L"monster/melle/swing_2");
+            SOUND->Load(L"melle_swing2", L"monster/melle/slash");
+        }
+        
+        //Shooting
+        {
+            SOUND->Load(L"shooting_aggro", L"monster/shooting/aggro");
+            SOUND->Load(L"shooting_die", L"monster/shooting/die");
+            SOUND->Load(L"shooting_fire", L"monster/shooting/fire");
+            SOUND->Load(L"shooting_hit", L"monster/shooting/hit");
+        }
+
+        SOUND->Play(L"bgm", true);
     }
 
 	// Camera

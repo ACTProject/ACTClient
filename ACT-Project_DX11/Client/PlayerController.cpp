@@ -194,6 +194,15 @@ void PlayerController::HandleMovement()
             CreateDustEffect();
             _dustTimer = 0.0f; // 타이머 초기화
         }
+
+        float _footstepInterval = (speed == _speed) ? _runningInterval : _walkingInterval;
+        _footstepTimer += DT;
+        if (_footstepTimer >= _footstepInterval)
+        {
+            SOUND->PlayEffect(L"player_footstep_sand");
+            _footstepTimer = 0.0f;
+        }
+
     }
 }
 
@@ -287,6 +296,7 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
             {
                 _spoil++;
+                SOUND->PlayEffect(L"player_pickupItem");
                 collider->GetGameObject()->Destroy();
                 std::cout << "spoil : " << _spoil << std::endl;
                 break;
@@ -349,6 +359,13 @@ void PlayerController::StartAttack()
 
 	float duration = _attackDurations[_attackStage - 1] / _FPS;
 
+    {
+        SOUND->PlayEffect(L"player_atk1");
+        SOUND->PlayEffect(L"player_atk1_md");
+        //SOUND->SetVolume(L"player_atk1_md", 0.25f);
+        SOUND->PlayEffect(L"player_atk1_sw");
+    }
+
 	// 1타 공격 애니메이션 재생
 	PlayAttackAnimation(_attackStage);
 	MyCoroutine attackCoroutine = PlayAttackCoroutine(this, duration);
@@ -366,6 +383,38 @@ void PlayerController::ContinueAttack()
 		float duration = _attackDurations[_attackStage - 1] / _FPS;
         _attackMoveDistance = 1.0f;
         _isHit = false;
+
+        {   // sound
+            switch (_attackStage)
+            {
+                case 2:
+                {
+                    SOUND->PlayEffect(L"player_atk2");
+                    SOUND->PlayEffect(L"player_atk2_md");
+                    //SOUND->SetVolume(L"player_atk2_md", 0.25f);
+                    SOUND->PlayEffect(L"player_atk2_sw");
+                    break;
+                }
+                case 3:
+                {
+                    SOUND->PlayEffect(L"player_atk3");
+                    SOUND->PlayEffect(L"player_atk3_md");
+                    //SOUND->SetVolume(L"player_atk3_md", 0.25f);
+                    SOUND->PlayEffect(L"player_atk3_sw");
+                    break;
+                }
+                case 4:
+                {
+                    SOUND->PlayEffect(L"player_atk4");
+                    SOUND->PlayEffect(L"player_atk4_md");
+                    //SOUND->SetVolume(L"player_atk4_md", 0.25f);
+                    SOUND->PlayEffect(L"player_atk4_sw");
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
 
 		// 다음 공격 애니메이션 재생
 		PlayAttackAnimation(_attackStage);
@@ -474,6 +523,7 @@ void PlayerController::StartDodge()
     if (_isDodging)
         return;
 
+    SOUND->PlayEffect(L"player_dash");
     _isDodging = true;
     _dodgeTimer = 0.0f;
     _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Dodge)); // 회피 동작 시간
@@ -517,6 +567,7 @@ void PlayerController::Jump()
     auto rigidbody = _rigidbody;
     if (rigidbody->GetIsGrounded())
     {
+        SOUND->PlayEffect(L"player_jump");
         _isJumping = true;
         auto velocity = rigidbody->GetVelocity();
         velocity.y = _jumpSpeed;

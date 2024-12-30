@@ -80,6 +80,7 @@ private:
     bool shootCount = false;
     bool hasDealing = false;
     bool isFirstTime = false;
+    bool playingSound = false;
 
     bool BackToStart = false;
     bool chaseState = true;
@@ -88,6 +89,9 @@ private:
     // 히트 상태
     bool _hit = false;
     bool _isDead = false;
+
+    bool isPauseAfterPunch = false;
+    float pauseEndTime = 0.0f;
 
     string objID;
     shared_ptr<Model> _enemy;
