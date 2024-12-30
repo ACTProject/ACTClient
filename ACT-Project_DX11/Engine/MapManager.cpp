@@ -877,7 +877,10 @@ void MapManager::ClearMap()
     // terrain은 이거 전에 set해놔서 reset기달.
     _terrain.reset();
 
-    // ImportMapObj 위치 클라이언트CPP에 있음 주의.
+    for (auto& obj : _mapObjList)
+    {
+        RemoveMapObj(obj);
+    }
     _mapObjList.clear();
     _mapInfoList.clear();
     _mapInitInfoList.clear();

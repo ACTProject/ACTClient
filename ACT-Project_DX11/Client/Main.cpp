@@ -17,7 +17,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         desc.width = 800;
         desc.height = 600;
         desc.clearColor = Color(0.f, 0.5f, 1.0f, 0.5f);
-        desc.app = make_shared<Client2>(); // 0
+        desc.app = make_shared<Title>(); // 0
         desc.tag = SceneTag::TITLE;
         GAME->AddScene(desc);
     }
@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         GAME->AddScene(desc);
     }
 
-	GAME->Run(1);
+	GAME->Run(0);
 
 	return 0;
 }

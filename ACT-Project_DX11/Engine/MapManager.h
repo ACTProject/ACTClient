@@ -58,7 +58,7 @@ public:
 
     Matrix UpdateWaveMat();
 
-
+    void ClearMap();
 	// 파일에 맵 오브젝트 정보 추가하는 함수
 	bool ExportMapObj(wstring _fileName);
 	// 파일을 읽어 들이는 함수
@@ -67,7 +67,6 @@ private:
     // 동적맵오브젝트 생성 함수.
     void CreateDynamicObject(shared_ptr<GameObject> obj, DynamicType type);
 
-    void ClearMap();
     // 빌보드 요소 추가 함수
     void AddBillBoard(Vec3 pos);
 
