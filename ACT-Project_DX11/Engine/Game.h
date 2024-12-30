@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Cutscene.h"
 class Iexecute;
 
 enum class SceneTag
@@ -43,7 +43,8 @@ private:
     void ShowFps();
 
     static LRESULT CALLBACK WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
-
+    // CutScene
+    void PlayIntroCutscene();
 private:
     GameDesc _desc;
     vector<GameDesc> _scenes;
@@ -51,5 +52,9 @@ private:
     bool _changeScene = false;
     uint32 _num = 0;
     bool _init = false;
+
+    // Cutscene
+    Cutscene _introCutscene; // 게임 첫 시작 컷신
+    bool _hasPlayedIntroCutscene = false; // 첫 컷신 재생 여부 확인 변수
 };
 

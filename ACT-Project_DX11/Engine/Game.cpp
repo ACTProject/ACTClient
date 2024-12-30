@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "IExecute.h"
+#include "Cutscene.h"
 
 HWND g_hWnd = nullptr;
 
@@ -70,6 +71,12 @@ WPARAM Game::Run(uint32 num)
         ///////////////////
     }
 
+    // ** 첫 번째 컷신 실행** (한 번만)
+    //if (_scenes[_num].tag == SceneTag::INGAME && !_hasPlayedIntroCutscene)
+    //{
+    //    _hasPlayedIntroCutscene = true;
+    //    PlayIntroCutscene();
+    //}
 
     _init = true;
 
@@ -212,4 +219,32 @@ LRESULT CALLBACK Game::WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM 
 	default:
 		return ::DefWindowProc(handle, message, wParam, lParam);
 	}
+}
+
+void Game::PlayIntroCutscene()
+{
+    // 컷신 이벤트 추가
+    _introCutscene.AddEvent([]() {
+        std::cout << "Character: Welcome to the game!" << std::endl;
+        });
+
+    _introCutscene.AddEvent([]() {
+        std::cout << "Character: Let's begin your adventure!" << std::endl;
+        });
+
+    _introCutscene.AddEvent([]() {
+        std::cout << "Game Tips: Press W, A, S, D to move." << std::endl;
+        });
+
+    // 컷신 시작
+    _introCutscene.Play();
+
+    // 컷신 실행 루프
+    while (_introCutscene.IsPlaying())
+    {
+        INPUT->Update();
+        _introCutscene.Update();
+    }
+
+    std::cout << "Intro Cutscene Finished!" << std::endl;
 }

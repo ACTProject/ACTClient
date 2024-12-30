@@ -101,7 +101,7 @@ private:
     float _zoomCameraDistance = 5.0f;
 	float _sensitivity = 0.005f;	// 마우스 감도
 
-	float _normalSpeed = 15.0f;  // 일반 이동 속도
+	float _normalSpeed = 30.0f;  // 일반 이동 속도
 	float _fastSpeed = 100.0f;   // 빠른 이동 속도 (Shift 키)
 
 	// 디버깅 모드 이전 상태 저장
