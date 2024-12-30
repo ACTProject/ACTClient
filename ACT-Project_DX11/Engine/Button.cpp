@@ -40,7 +40,13 @@ void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> materi
 
 	go->GetMeshRenderer()->SetMaterial(material);
 
-	auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+    if (RESOURCES->Get<Mesh>(L"Quad") == nullptr)
+    {
+        shared_ptr<Mesh> mes = make_shared<Mesh>();
+        mes->CreateQuad();
+        RESOURCES->Add(L"Quad", mes);
+    }
+    auto mesh = RESOURCES->Get<Mesh>(L"Quad");
 	go->GetMeshRenderer()->SetMesh(mesh);
 	go->GetMeshRenderer()->SetPass(0);
 
@@ -58,7 +64,8 @@ void Button::AddOnClickedEvent(std::function<void(void)> func)
 
 void Button::InvokeOnClicked()
 {
-	if (_onClicked)
+    bool isActive = GetGameObject()->IsActive();
+	if (_onClicked && isActive)
 		_onClicked();
 }
 
