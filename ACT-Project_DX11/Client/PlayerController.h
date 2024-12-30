@@ -65,6 +65,9 @@ public:
 
     void HealPlayer();
 
+    // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
+    void LoadPlayer(SaveData data);
+
 public:
     void OnDeath() override;
 

@@ -10,20 +10,26 @@ bool SaveManager::Init()
     return true;
 }
 
+void SaveManager::AddLoadEvent(SaveDataFuncPtr func)
+{
+    _loadObjList.push_back(func);
+}
+
+
 void SaveManager::CreateSaveUI()
 {
     //shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
-    //// option Material
+    ////// save Material
     //{
     //    shared_ptr<Material> material = make_shared<Material>();
     //    material->SetShader(renderUIShader);
-    //    auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\option.png");
+    //    auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\save.png");
     //    material->SetDiffuseMap(texture);
     //    MaterialDesc& desc = material->GetMaterialDesc();
     //    desc.ambient = Vec4(1.f);
     //    desc.diffuse = Vec4(1.f);
     //    desc.specular = Vec4(1.f);
-    //    RESOURCES->Add(L"Option", material);
+    //    RESOURCES->Add(L"Save", material);
     //}
 
 
@@ -31,7 +37,7 @@ void SaveManager::CreateSaveUI()
     //    auto obj = make_shared<GameObject>();
     //    obj->AddComponent(make_shared<Button>());
 
-    //    obj->GetButton()->Create(Vec3(400.f, 250.f, 0.4f), Vec2(595, 404), RESOURCES->Get<Material>(L"Option"));
+    //    obj->GetButton()->Create(Vec3(400.f, 250.f, 0.4f), Vec2(200, 200), RESOURCES->Get<Material>(L"Save"));
     //    obj->GetMeshRenderer()->SetAlphaBlend(true);
     //    obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
 
@@ -126,8 +132,6 @@ bool SaveManager::CheckSaveFile(int key)
         SaveData savedata = *it;
         LoadGame(savedata);
     }
-
-
     return true;
 }
 
@@ -135,6 +139,10 @@ bool SaveManager::LoadGame(SaveData& data)
 {
     // 플레이어만 바꿀지.
     // 아님 그냥 GameInit부터 시작할지.
+    //for (auto& func : _loadObjList)
+    //{
+    //    func(data);
+    //}
     return true;
 }
 
