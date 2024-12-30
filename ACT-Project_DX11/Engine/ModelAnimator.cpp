@@ -121,8 +121,6 @@ void ModelAnimator::RenderSingle()
 	
 	UpdateTweenData();
 
-	ImGui::InputFloat("Speed", &_tweenDesc.curr.speed, 0.5f, 4.f);
-
 	// 현재 프레임 정보를 렌더러에 전달
 	_shader->PushTweenData(GetTweenDesc());
 

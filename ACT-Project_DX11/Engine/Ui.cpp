@@ -9,8 +9,6 @@ void Ui::SetOwner(weak_ptr<GameObject> obj)
 
 void Ui::PreUpdate()
 {
-    ImGui::Checkbox("visible", &_isVisible);
-
     shared_ptr<GameObject> owner = _owner.lock();
     if (owner != nullptr)
     {
