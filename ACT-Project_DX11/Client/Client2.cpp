@@ -38,6 +38,7 @@
 #include "Frustum.h"
 #include "Shadow.h"
 #include "Particle.h"
+#include "SoundManager.h"
 
 void Client2::Init()
 {

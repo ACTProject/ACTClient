@@ -28,6 +28,7 @@ public:										\
 #define MAP			GET_SINGLE(MapManager)
 #define COLLISION	GET_SINGLE(CollisionManager)
 #define ENEMY   	GET_SINGLE(EnemyManager)
+#define SOUND   	GET_SINGLE(SoundManager)
 #define OCTREE		GET_SINGLE(Octree)
 #define FRUSTUM		GET_SINGLE(Frustum)
 #define SHADOW      GET_SINGLE(Shadow)

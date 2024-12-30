@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Materials>
+    <Material>
+        <Name>07 - Default</Name>
+        <DiffuseFile>cap_albedo.png</DiffuseFile>
+        <SpecularFile>cap_specular.png</SpecularFile>
+        <NormalFile>cap_normal.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.58823532" G="0.58823532" B="0.58823532" A="1"/>
+        <Specular R="0.58823532" G="0.58823532" B="0.58823532" A="2.0000007"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+</Materials>

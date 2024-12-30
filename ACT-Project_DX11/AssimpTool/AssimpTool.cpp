@@ -360,9 +360,9 @@ void AssimpTool::Init()
     }
     {
         shared_ptr<Converter> converter = make_shared<Converter>();
-        converter->ReadAssetFile(L"Enemy/clip.fbx");
-        converter->ExportMaterialData(L"Enemy/clip");
-        converter->ExportModelData(L"Enemy//clip");
+        converter->ReadAssetFile(L"Enemy/cap.fbx");
+        converter->ExportMaterialData(L"Enemy/cap");
+        converter->ExportModelData(L"Enemy//cap");
     }
 	// MapObject
 	/*{
