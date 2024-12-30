@@ -52,7 +52,10 @@ WPARAM Game::Run(uint32 num)
     _scenes[_num].app->Init(); // 게임오브젝트 생성
 
     if (_scenes[_num].tag == SceneTag::INGAME)
+    {
         MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
+        SAVE->AddScene();
+    }
     if (_scenes[_num].tag == SceneTag::INGAME2)
     {
         MAP->ClearMap();

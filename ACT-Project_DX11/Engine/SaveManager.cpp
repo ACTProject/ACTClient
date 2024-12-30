@@ -15,35 +15,52 @@ void SaveManager::AddLoadEvent(SaveDataFuncPtr func)
     _loadObjList.push_back(func);
 }
 
+void SaveManager::AddScene()
+{
+    for (auto& ui : saveOptionUIGroup)
+    {
+        CUR_SCENE->Add(ui);
+    }
+
+
+}
+
 
 void SaveManager::CreateSaveUI()
 {
-    //shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
+    shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     ////// save Material
-    //{
-    //    shared_ptr<Material> material = make_shared<Material>();
-    //    material->SetShader(renderUIShader);
-    //    auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\save.png");
-    //    material->SetDiffuseMap(texture);
-    //    MaterialDesc& desc = material->GetMaterialDesc();
-    //    desc.ambient = Vec4(1.f);
-    //    desc.diffuse = Vec4(1.f);
-    //    desc.specular = Vec4(1.f);
-    //    RESOURCES->Add(L"Save", material);
-    //}
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\save.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Save", material);
+    }
 
 
-    //{
-    //    auto obj = make_shared<GameObject>();
-    //    obj->AddComponent(make_shared<Button>());
+    {
+        auto obj = make_shared<GameObject>();
+        obj->AddComponent(make_shared<Button>());
 
-    //    obj->GetButton()->Create(Vec3(400.f, 250.f, 0.4f), Vec2(200, 200), RESOURCES->Get<Material>(L"Save"));
-    //    obj->GetMeshRenderer()->SetAlphaBlend(true);
-    //    obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
+        obj->GetButton()->Create(Vec3(100.f, 100.f, 0.1f), Vec2(200, 140), RESOURCES->Get<Material>(L"Save"));
+        obj->SetObjectType(ObjectType::UI);
+        obj->GetMeshRenderer()->SetAlphaBlend(true);
+        obj->GetButton()->AddOnClickedEvent([]() { SAVE->SaveGame(CUR_SCENE->GetPlayer()); });
+        obj->SetActive(false);
+        saveOptionUIGroup.push_back(obj);
+    }
 
-    //    obj->SetActive(!obj->IsActive());
-    //    saveOptionUIGroup.push_back(obj);
-    //}
+    // 기존에 있던 세이브파일 로드
+    for (auto& ui : _saveDataList)
+    {
+        CreateButton();
+    }
+
 
     //// Mesh
     //{
@@ -84,9 +101,30 @@ void SaveManager::CreateSaveUI()
 
 void SaveManager::OpenSaveUI()
 {
+    _isActive = !_isActive;
+    
+    if (_isActive)
+    {
+        for (auto& ui : saveOptionUIGroup)
+        {
+            ui->SetActive(true);
 
 
 
+        }
+
+
+    }
+    else
+    {
+        for (auto& ui : saveOptionUIGroup)
+        {
+           
+            
+            
+            ui->SetActive(false);
+        }
+    }
 }
 
 bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
@@ -118,8 +156,26 @@ bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
     _fcloseall();
 
     _saveDataList.push_back(data);
+
     _saveFileIndex++;
     return true;
+}
+
+void SaveManager::CreateButton()
+{
+    auto obj = make_shared<GameObject>();
+    obj->AddComponent(make_shared<Button>());
+    obj->GetButton()->Create(Vec3(300.f, startY + (padding * index), 0.1f), Vec2(200, 140), RESOURCES->Get<Material>(L"Save"));
+    obj->GetButton()->SetID(_btnIndex);
+    obj->SetObjectType(ObjectType::UI);
+    obj->GetMeshRenderer()->SetAlphaBlend(true);
+    int button = _btnIndex;
+    obj->GetButton()->AddOnClickedEvent([this, button]() {  SAVE->CheckSaveFile(button); });
+    obj->SetActive(false);
+
+    _btnIndex++;
+    index++;
+    saveOptionUIGroup.push_back(obj);
 }
 
 bool SaveManager::CheckSaveFile(int key)
@@ -139,10 +195,10 @@ bool SaveManager::LoadGame(SaveData& data)
 {
     // 플레이어만 바꿀지.
     // 아님 그냥 GameInit부터 시작할지.
-    //for (auto& func : _loadObjList)
-    //{
-    //    func(data);
-    //}
+    for (auto& func : _loadObjList)
+    {
+        func(data);
+    }
     return true;
 }
 

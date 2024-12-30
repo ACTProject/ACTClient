@@ -300,7 +300,7 @@ void PlayerController::HandleInteraction()
             // 세이브 상호작용
             if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
             {
-                SAVE->SaveGame(collider->GetGameObject());
+                SAVE->OpenSaveUI();
                 break;
             }
         }
