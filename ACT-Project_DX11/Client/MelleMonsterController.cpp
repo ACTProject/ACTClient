@@ -72,7 +72,7 @@ void MelleMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
 
 void MelleMonsterController::Punch(int type)
 {
-    if (animPlayingTime >= animDuration / 2.0f)
+    if (animPlayingTime >= animDuration - 0.01f)
     {
         UpdateHitBox();
     }

@@ -55,7 +55,7 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
                 auto hpSlider = dynamic_pointer_cast<Slider>(ui);
                 float hpRatio = _hp / _maxHp;
                 hpSlider->SetRatio(hpRatio);
-                player->SetHit(true);
+                player->StartHit();
             }
         }
         break;

@@ -88,6 +88,9 @@ void PlayerController::Update()
 
     // 포탈 충돌 처리
     HandlePortal();
+
+    // 히트 상태 처리
+    HandleHit();
 }
 
 void PlayerController::HandleInput()
@@ -205,7 +208,7 @@ void PlayerController::HandleAnimations()
     if (_isBlocking)
         targetState = (_moveDir.LengthSquared() > 0.0f) ? AnimationState::BlockingCrawl : AnimationState::BlockingIdle;
 
-    if (!_isPlayeringAttackAnimation && !_isPlayeringDodgeAnimation && !_isPlayeringJumpAnimation)
+    if (!_isPlayeringAttackAnimation && !_isPlayeringDodgeAnimation && !_isPlayeringJumpAnimation && !_isPlayeringHitAnimation)
     {
         if (_currentAnimationState != targetState)
             SetAnimationState(targetState);
@@ -339,6 +342,11 @@ void PlayerController::HandlePortal()
     }
 }
 
+void PlayerController::HandleHit()
+{
+    if (_hit)
+        UpdateHit();
+}
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];
@@ -477,6 +485,33 @@ void PlayerController::UpdateHitBox()
             }
             _isHit = true;
         }
+    }
+}
+
+void PlayerController::StartHit()
+{
+    if (_hit)
+        return;
+    
+    _hit = true;
+    _hitTimer = 0.0f;
+    _hitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Hit1)); // 히트 동작 시간
+    _hitDuration /= _FPS;
+
+    _isPlayeringHitAnimation = true;
+    SetAnimationState(AnimationState::Hit1);
+}
+void PlayerController::UpdateHit()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _hitTimer += dt;
+
+    // 회피 종료 처리
+    if (_hitTimer >= _hitDuration)
+    {
+        _hit = false;
+        _isPlayeringHitAnimation = false;
     }
 }
 

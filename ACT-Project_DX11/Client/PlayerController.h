@@ -50,8 +50,8 @@ public:
     bool GetIsBlocking() { return _isBlocking; }
     
     // Hit
-    bool GetHit() { return _hit; }
-    void SetHit(bool hit) { _hit = hit; }
+    void StartHit();
+    void UpdateHit();
 
     // Dodge
     bool GetIsInvincible() { return _isInvincible; }
@@ -123,11 +123,14 @@ private:
 
     // Hit
     bool _hit = false;                // 히트 상태인지 여부
+    float _hitDuration = 0.0f;        // 히트 동작 시간
+    float _hitTimer = 0.0f;         
 
     // 애니메이션 진행 중인지 여부
 	bool _isPlayeringJumpAnimation = false; // 점프 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringAttackAnimation = false; // 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringDodgeAnimation = false; // 회피 애니메이션 재생 중인지 여부 확인
+	bool _isPlayeringHitAnimation = false; // 히트 애니메이션 재생 중인지 여부 확인
 
 	AnimationState _currentAnimationState = AnimationState::Idle;
 

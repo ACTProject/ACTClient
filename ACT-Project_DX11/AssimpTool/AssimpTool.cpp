@@ -93,6 +93,11 @@ void AssimpTool::Init()
             converter->ReadAssetFile(L"Player/Crab_Death.fbx");
             converter->ExportAnimationData(L"Player/Crab_Death");
         }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Player/Crab_Hit.fbx");
+            converter->ExportAnimationData(L"Player/Crab_Hit");
+        }
 	}
     
 	// Enemy
@@ -649,7 +654,6 @@ void AssimpTool::Init()
             converter->ExportAnimationData(L"MapObject/Dynamic/MagicGate");
         }*/
 	}
-    */
 }
 
 void AssimpTool::Update()
