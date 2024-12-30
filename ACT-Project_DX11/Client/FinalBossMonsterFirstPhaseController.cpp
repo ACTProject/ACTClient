@@ -307,7 +307,6 @@ void FinalBossMonsterFirstPhaseController::makeBubble(Vec3 pos, Vec3 dir)
     bulletComponent->Add(objModel);
     bulletComponent->SetDirection({ dir.x,dir.y - 3.0f,dir.z });
     bulletComponent->SetSpeed(30.0f);
-    bulletComponent->Add(objModel);
 
     // HitBox
     shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();

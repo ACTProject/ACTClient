@@ -265,6 +265,7 @@
     <ClCompile Include="SaveObj.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
+    <ClCompile Include="SoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelMesh.h">
@@ -543,6 +544,7 @@
     <ClInclude Include="SaveObj.h">
       <Filter>04. Component</Filter>
     </ClInclude>
+    <ClInclude Include="SoundManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. Engine">

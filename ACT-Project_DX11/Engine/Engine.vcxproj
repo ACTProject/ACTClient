@@ -239,6 +239,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="SnowBillboard.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="TaskQueue.h" />
@@ -355,6 +356,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Slider.cpp" />
     <ClCompile Include="SnowBillboard.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="TaskQueue.cpp" />

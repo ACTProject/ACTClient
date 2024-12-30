@@ -5,28 +5,28 @@
 void AssimpTool::Init()
 {
 	// Weapon
-	{
-		shared_ptr<Converter> converter = make_shared<Converter>();
+	//{
+	//	shared_ptr<Converter> converter = make_shared<Converter>();
 
-		// FBX -> Memory
-		converter->ReadAssetFile(L"Fork/Fork.fbx");
+	//	// FBX -> Memory
+	//	converter->ReadAssetFile(L"Fork/Fork.fbx");
 
-		// Memory -> CustomData (File)
-		converter->ExportMaterialData(L"Fork/Fork");
-		converter->ExportModelData(L"Fork/Fork");
+	//	// Memory -> CustomData (File)
+	//	converter->ExportMaterialData(L"Fork/Fork");
+	//	converter->ExportModelData(L"Fork/Fork");
 
-		// CustomData (File) -> Memory
-	}
+	//	// CustomData (File) -> Memory
+	//}
     // Shell
-    {
+    /*{
         shared_ptr<Converter> converter = make_shared<Converter>();
         converter->ReadAssetFile(L"Shell/Shell_SodaCan.fbx");
         converter->ExportMaterialData(L"Shell/Shell_SodaCan");
         converter->ExportModelData(L"Shell/Shell_SodaCan");
-    }
+    }*/
 
 	// Player
-	{
+	/* {
 		{
 			shared_ptr<Converter> converter = make_shared<Converter>();
 			converter->ReadAssetFile(L"Player/Player.fbx");
@@ -94,8 +94,9 @@ void AssimpTool::Init()
             converter->ExportAnimationData(L"Player/Crab_Death");
         }
 	}
+    */
 	// Enemy
-	{
+	/* {
 		{
 			shared_ptr<Converter> converter = make_shared<Converter>();
 			converter->ReadAssetFile(L"Enemy/Rangoon_mesh.fbx");
@@ -350,8 +351,21 @@ void AssimpTool::Init()
             }
         }
 	}
+    */
+    {
+        shared_ptr<Converter> converter = make_shared<Converter>();
+        converter->ReadAssetFile(L"Enemy/can.fbx");
+        converter->ExportMaterialData(L"Enemy/can");
+        converter->ExportModelData(L"Enemy//can");
+    }
+    {
+        shared_ptr<Converter> converter = make_shared<Converter>();
+        converter->ReadAssetFile(L"Enemy/clip.fbx");
+        converter->ExportMaterialData(L"Enemy/clip");
+        converter->ExportModelData(L"Enemy//clip");
+    }
 	// MapObject
-	{
+	/*{
 		{
 			shared_ptr<Converter> converter = make_shared<Converter>();
 			converter->ReadAssetFile(L"MapObject/recyclingBox01.fbx");
@@ -579,6 +593,7 @@ void AssimpTool::Init()
         //}
 
 	}
+    */
 }
 
 void AssimpTool::Update()

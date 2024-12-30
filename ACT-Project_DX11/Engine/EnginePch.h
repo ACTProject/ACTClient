@@ -48,6 +48,10 @@ using namespace Microsoft::WRL;
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 
+// FMod
+#include "Fmod/fmod.hpp"
+#include "Fmod/fmod_errors.h"
+
 // Libs
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")

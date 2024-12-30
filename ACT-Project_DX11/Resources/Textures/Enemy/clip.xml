@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Materials>
+    <Material>
+        <Name>PaperClip</Name>
+        <DiffuseFile>PaperClip_AO.png</DiffuseFile>
+        <SpecularFile>PaperClip_AO.png</SpecularFile>
+        <NormalFile>PaperClip_AO.png</NormalFile>
+        <Ambient R="0" G="0" B="0" A="1"/>
+        <Diffuse R="0.50857711" G="0.50857711" B="0.50857711" A="1"/>
+        <Specular R="0.50857711" G="0.50857711" B="0.50857711" A="72.479912"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Material>
+</Materials>
