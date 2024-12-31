@@ -47,10 +47,10 @@ void Particle::Update()
         }
         return;
     }
-    if (_isReusable && _elapsedTime >= _lifetime)
+    /*if (_isReusable && _elapsedTime >= _lifetime)
     {
         _elapsedTime = 0.0f;
-    }
+    }*/
 
     if (_drawCount != _prevCount)
     {

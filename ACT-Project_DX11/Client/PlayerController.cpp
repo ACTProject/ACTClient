@@ -14,6 +14,7 @@
 #include "FinalBossMonsterSecondPhaseController.h"
 #include "Material.h"
 #include "Particle.h"
+#include "MeshRenderer.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -122,9 +123,42 @@ void PlayerController::HandleInput()
 
         _isPlayeringAttackAnimation = true;
         if (!_isAttacking)
+        {
             StartAttack();
+            Vec3 playerLook = _transform->GetLook();
+            Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
+            playerLook.Normalize();
+            cameraForward.Normalize();
+
+            float dot = playerLook.Dot(cameraForward);
+            if (dot > 0.0f)
+            {
+                // 플레이어가 카메라 방향을 보고 있음 -> 기본 리소스
+                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+            }
+            else
+            {
+                // 플레이어가 카메라 방향의 반대쪽을 보고 있음 -> 뒤쪽 리소스
+                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
+            }
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+            Vec3 effectTransform = _transform->GetPosition();
+            effectTransform += _transform->GetLook() * 2.f;
+            effectTransform.y += 2.f;
+            _effect->GetOrAddTransform()->SetPosition(effectTransform);
+            _effect->GetParticle()->SetElapsedTime(0.0f);
+        }
+            
         else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
+        {
             ContinueAttack();
+            Vec3 effectTransform = _transform->GetPosition();
+            effectTransform += _transform->GetLook() * 2.f;
+            effectTransform.y += 2.f;
+            _effect->GetOrAddTransform()->SetPosition(effectTransform);
+            _effect->GetParticle()->SetElapsedTime(0.0f);
+        }
+            
     }
 
     if (_isShellEquipped == true && INPUT->GetButton(KEY_TYPE::RBUTTON))
@@ -332,10 +366,11 @@ void PlayerController::ContinueAttack()
 		_attackStage++;
 		_attackTimer = 0.0f;
 		EndAttackCoroutine();
-
 		float duration = _attackDurations[_attackStage - 1] / _FPS;
         _attackMoveDistance = 1.0f;
         _isHit = false;
+        //std::wstring effectName = L"HitEffect" + std::to_wstring(_attackStage);
+        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
 
 		// 다음 공격 애니메이션 재생
 		PlayAttackAnimation(_attackStage);
@@ -401,6 +436,7 @@ void PlayerController::UpdateHitBox()
                 if (melleMonster)
                     melleMonster->OnDamage(GetGameObject(), _atk);
                     melleMonster->PlayingHitMotion = true;
+                    //
                 break;
             }
             case MonoBehaviourType::ShootingMonster:
@@ -409,6 +445,7 @@ void PlayerController::UpdateHitBox()
                 if (shootingMonster)
                     shootingMonster->OnDamage(GetGameObject(), _atk);
                     shootingMonster->PlayingHitMotion = true;
+                    //
                 break;
             }
             case MonoBehaviourType::FinalBossMonster_1:
@@ -418,6 +455,7 @@ void PlayerController::UpdateHitBox()
                 {
                     FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
+                    //
                 }
                 break;
             }
@@ -428,6 +466,7 @@ void PlayerController::UpdateHitBox()
                 {
                     FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
+                    //
                 }
                 break;
             }

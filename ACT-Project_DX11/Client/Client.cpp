@@ -389,35 +389,7 @@ void Client::Init()
             }
         }
     }
-    // HitEffect
-    {
-        
-        {
-            auto obj = make_shared<GameObject>();
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
-            obj->AddComponent(make_shared<Particle>());
-            {
-                //material
-                shared_ptr<Material> material = make_shared<Material>();
-                material->SetShader(effectShader);
-                auto texture = RESOURCES->Load<Texture>(L"HitEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
-                material->SetDiffuseMap(texture);
-                MaterialDesc& desc = material->GetMaterialDesc();
-                desc.ambient = Vec4(1.f);
-                desc.diffuse = Vec4(1.f);
-                desc.specular = Vec4(1.f);
-                RESOURCES->Add(L"HitEffect", material);
-
-                obj->GetParticle()->SetMaterial(material);
-            }
-            obj->GetMeshRenderer()->SetParticleRender(true);
-            obj->GetParticle()->SetLifetime(0.5f);
-            obj->GetParticle()->SetfadeStart(0.25f);
-            obj->GetParticle()->SetReuse(true);
-            obj->GetParticle()->Add(Vec3(40,0,40), Vec2(5.0f, 5.0f));
-            CUR_SCENE->Add(obj);
-        }
-    }
+    
 	// Light
 	{
 		auto light = make_shared<GameObject>();
@@ -571,6 +543,47 @@ void Client::Init()
     RESOURCES->Add(L"Dust", dustMaterial);
     
 
+    // Effect obj  
+    auto effectObj = make_shared<GameObject>();
+    effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+    effectObj->AddComponent(make_shared<Particle>());
+    {
+        //material
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(effectShader);
+        auto texture = RESOURCES->Load<Texture>(L"AttackEffect2", L"..\\Resources\\Textures\\Effect\\TestEffect2.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"AttackEffect2", material);
+
+        effectObj->GetParticle()->SetMaterial(material);
+    }
+    {
+        //material
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(effectShader);
+        auto texture = RESOURCES->Load<Texture>(L"AttackEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"AttackEffect", material);
+
+        effectObj->GetParticle()->SetMaterial(material);
+    }
+
+    effectObj->GetParticle()->SetLifetime(1.f);
+    effectObj->GetParticle()->SetfadeStart(0.6f);
+    effectObj->GetParticle()->SetReuse(true);
+    effectObj->GetParticle()->Add(Vec3(0,0,0), Vec2(5.0f, 5.0f));
+    CUR_SCENE->Add(effectObj);
+        
+
+
 	// Player::PlayerScript
 	shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
@@ -578,6 +591,7 @@ void Client::Init()
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
     playerScript->SetDust(dustMaterial);
+    playerScript->SetEffect(effectObj);
 
     player->SetController(playerScript);
 	player->AddComponent(playerScript);
