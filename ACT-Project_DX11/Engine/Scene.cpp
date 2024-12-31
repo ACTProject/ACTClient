@@ -32,18 +32,23 @@ void Scene::Start()
 
 void Scene::Update()
 {
-	unordered_set<shared_ptr<GameObject>> objects = _objects;
+    unordered_set<shared_ptr<GameObject>> objects = _objects;
 
-	for (shared_ptr<GameObject> object : objects)
-	{
+    for (shared_ptr<GameObject> object : objects)
+    {
         if (!object->IsActive())
             continue;
 
-		object->Update();
-	}
+        object->Update();
+    }
 
-	UpdateUI();
+    UpdateUI();
 
+    if (INPUT->GetButtonDown(KEY_TYPE::ESC))
+    {
+        SAVE->OpenSaveUI();
+    }
+    
 	MAP->Update();
 
 }

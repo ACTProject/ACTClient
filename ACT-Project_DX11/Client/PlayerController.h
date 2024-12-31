@@ -184,7 +184,7 @@ private:
     float _healHp = 50;
 
     // 전리품
-    float _spoil = 0;
+    int _spoil = 0;
 
     bool _playerActive = true;
 };
