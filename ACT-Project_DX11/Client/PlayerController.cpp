@@ -65,32 +65,37 @@ void PlayerController::Update()
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
 
-    // 입력 처리
-    HandleInput();
+    if (_playerActive == true)
+    {
+        // 입력 처리
+        HandleInput();
 
-    // 이동 처리
-    HandleMovement();
+        // 이동 처리
+        HandleMovement();
 
-    // 애니메이션 처리
-    HandleAnimations();
+        // 애니메이션 처리
+        HandleAnimations();
 
-    // 공격 처리
-    HandleAttack();
+        // 공격 처리
+        HandleAttack();
 
-    // 회피 처리
-    HandleDodge();
+        // 회피 처리
+        HandleDodge();
 
-    // 점프 처리
-    HandleJump();
+        // 점프 처리
+        HandleJump();
 
+        // 히트 상태 처리
+        HandleHit();
+    }
+  
     // 상호작용 처리
     HandleInteraction();
 
     // 포탈 충돌 처리
     HandlePortal();
 
-    // 히트 상태 처리
-    HandleHit();
+
 }
 
 void PlayerController::HandleInput()
@@ -335,6 +340,7 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
             {
                 SAVE->OpenSaveUI();
+                _playerActive = !_playerActive;
                 break;
             }
         }
