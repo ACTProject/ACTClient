@@ -71,7 +71,7 @@ void PlayerController::Update()
         // 입력 처리
         HandleInput();
     }
-
+    
     // 이동 처리
     HandleMovement();
 
@@ -98,6 +98,8 @@ void PlayerController::Update()
 
     // 포탈 충돌 처리
     HandlePortal();
+
+    SOUND->SetVolume(L"bgm", 0.3);
 
     if (!_isAttacking && !_isAirAttacking)
         _isHit = false;
@@ -226,7 +228,7 @@ void PlayerController::HandleMovement()
         _footstepTimer += DT;
         if (_footstepTimer >= _footstepInterval)
         {
-            SOUND->PlayEffect(L"player_footstep_sand");
+            SOUND->PlayEffect(L"player_footstep");
             _footstepTimer = 0.0f;
         }
     }

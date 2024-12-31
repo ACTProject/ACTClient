@@ -71,8 +71,7 @@ void Client::Init()
             SOUND->Load(L"player_atk3_sw", L"player/atk_sweetner_3");
             SOUND->Load(L"player_atk4_sw", L"player/atk_sweetner_4");
             SOUND->Load(L"player_dash", L"player/dash");
-            SOUND->Load(L"player_footstep_default", L"player/footstep_default");
-            SOUND->Load(L"player_footstep_sand", L"player/footstep_sand");
+            SOUND->Load(L"player_footstep", L"player/footstep_sand");
             SOUND->Load(L"player_hit1", L"player/hurt1");
             SOUND->Load(L"player_hit2", L"player/hurt2");
             SOUND->Load(L"player_hit3", L"player/hurt3");
@@ -115,7 +114,6 @@ void Client::Init()
         }
 
         SOUND->Play(L"bgm", true); 
-        SOUND->SetVolume(L"bgm", 0.5);
     }
 
 	// Camera
@@ -519,7 +517,6 @@ void Client::Init()
     // player
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
-    //player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 0.5f));
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
 	player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
