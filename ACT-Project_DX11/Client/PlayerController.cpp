@@ -152,15 +152,12 @@ void PlayerController::HandleInput()
             float dot = playerLook.Dot(cameraForward);
             if (dot > 0.0f)
             {
-                // 플레이어가 카메라 방향을 보고 있음 -> 기본 리소스
                 _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
             }
             else
             {
-                // 플레이어가 카메라 방향의 반대쪽을 보고 있음 -> 뒤쪽 리소스
                 _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
             }
-            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
             Vec3 effectTransform = _transform->GetPosition();
             effectTransform += _transform->GetLook() * 2.f;
             effectTransform.y += 2.f;
@@ -494,7 +491,7 @@ void PlayerController::ContinueAttack()
         _attackMoveDistance = 1.0f;
         _isHit = false;
         //std::wstring effectName = L"HitEffect" + std::to_wstring(_attackStage);
-        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
 
         {   // sound
             switch (_attackStage)
