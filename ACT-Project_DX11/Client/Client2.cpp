@@ -53,6 +53,8 @@ void Client2::Init()
         SOUND->Stop(L"bgm");
         SOUND->Load(L"bgm", L"bgm/boss_bgm");
 
+        SOUND->Load(L"player_footstep", L"plyaer/footstep_default");
+
         //Boss
         {
             SOUND->Load(L"boss_footstep1", L"monster/boss/sbc_footstep1");
@@ -63,15 +65,33 @@ void Client2::Init()
             SOUND->Load(L"boss_punch2", L"monster/boss/punch2");
             SOUND->Load(L"boss_punch3", L"monster/boss/punch3");
             SOUND->Load(L"boss_punch4", L"monster/boss/punch4");
+            SOUND->Load(L"boss_punch_vo1", L"monster/boss/punch_vo1");
+            SOUND->Load(L"boss_punch_vo2", L"monster/boss/punch_vo2");
+            SOUND->Load(L"boss_punch_vo3", L"monster/boss/punch_vo3");
             SOUND->Load(L"boss_bubbleMove", L"monster/boss/bubbleBulletMovement");
             SOUND->Load(L"boss_bubbleSpawn", L"monster/boss/bubbleBulletSpawn");
+            SOUND->Load(L"boss_bubbleBullet_vo", L"monster/boss/bubbleBullet_vo");
             SOUND->Load(L"boss_moenySpawn", L"monster/boss/moenyFire");
             SOUND->Load(L"boss_moenyMove", L"monster/boss/moneyMovement");
             SOUND->Load(L"boss_slam", L"monster/boss/slam");
+            SOUND->Load(L"boss_down", L"monster/boss/down");
+            SOUND->Load(L"boss_die", L"monster/boss/die");
+            SOUND->Load(L"boss_hit1", L"monster/boss/hit1");
+            SOUND->Load(L"boss_hit2", L"monster/boss/Nephro_Hurt_1");
+            SOUND->Load(L"boss_hit3", L"monster/boss/Nephro_Hurt_3");
+            SOUND->Load(L"boss_narrate_init", L"monster/boss/narrate_init");
+            SOUND->Load(L"boss_narrate_intro", L"monster/boss/Nephro Intro 1");
+            SOUND->Load(L"boss_narrate_laugh_short", L"monster/boss/narrate_laugh_short");
+            SOUND->Load(L"boss_narrate_laugh_full", L"monster/boss/narrate_laugh_full");
+            SOUND->Load(L"boss_narrate_1", L"monster/boss/narrate_1");
+            SOUND->Load(L"boss_narrate_2", L"monster/boss/narrate_2");
+            SOUND->Load(L"boss_narrate_3", L"monster/boss/narrate_3");
+            SOUND->Load(L"boss_narrate_4", L"monster/boss/narrate_4");
+            SOUND->Load(L"boss_narrate_5", L"monster/boss/narrate_5");
+            SOUND->Load(L"boss_narrate_6", L"monster/boss/narrate_6");
+            SOUND->Load(L"boss_narrate_7", L"monster/boss/narrate_7");
         }
 
-
-        SOUND->SetVolume(L"bgm", 0.1f);
         SOUND->Play(L"bgm", true);
     }
 
@@ -623,7 +643,7 @@ void Client2::Init()
         auto player = make_shared<GameObject>();
 
         player->SetObjectType(ObjectType::Player);
-        player->GetOrAddTransform()->SetPosition(Vec3(3, 0, 3));
+        player->GetOrAddTransform()->SetPosition(Vec3(30, 0, 30));
         player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
         player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 

@@ -71,7 +71,7 @@ void PlayerController::Update()
         // 입력 처리
         HandleInput();
     }
-
+    
     // 이동 처리
     HandleMovement();
 
@@ -226,7 +226,7 @@ void PlayerController::HandleMovement()
         _footstepTimer += DT;
         if (_footstepTimer >= _footstepInterval)
         {
-            SOUND->PlayEffect(L"player_footstep_sand");
+            SOUND->PlayEffect(L"player_footstep");
             _footstepTimer = 0.0f;
         }
     }

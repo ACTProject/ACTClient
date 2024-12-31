@@ -71,7 +71,7 @@ void FinalBossMonsterFirstPhaseController::Update()
         return;
     }
     _FPS = static_cast<float>(TIME->GetFps());
-
+    
     bossPos = _transform->GetPosition();
     playerPos = _player->GetTransform()->GetPosition();
 
@@ -79,17 +79,22 @@ void FinalBossMonsterFirstPhaseController::Update()
     distance = direction.Length();
 
     Rota(bossPos, playerPos);
+    SOUND->SetVolume(L"bgm", 0.1);
 
     Phase_1();
 }
 
 void FinalBossMonsterFirstPhaseController::Phase_1()
 {
-    if (!isFirstTime) // 조우 ( 편의상 안되게 해놨음 )
+    if (!isFirstTime)
     {
-        DEBUG->Log(L"Boss 1st Phase Start");
-        if (currentTime > 5.f) // 실행되는데 걸리는 시간으로 인한 애니메이션이 짤리는 현상때문에 설정
+        if (currentTime > 3.f) // 실행되는데 걸리는 시간으로 인한 애니메이션이 짤리는 현상때문에 설정
         {
+            if (!playingSound)
+            {
+                SOUND->PlayEffect(L"boss_narrate_intro");
+                playingSound = true;
+            }
             Appear();
             return;
         }
@@ -128,6 +133,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
                     randPunchType = rand() % 4;
                     patternCnt++;
                     punchState = false;
+                    playingSound = false;
                     ResetHit();
                 }
             }
@@ -165,11 +171,17 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
         int randomHit = rand() % 3;
         if (PlayingHitMotion && randomHit == 0)
         {
+            if (!playingSound)
+            {
+                SOUND->PlayEffect(L"boss_hit" + std::to_wstring(rand() % 3 + 1));
+                playingSound = true;
+            }
             if (PlayCheckAnimating(AnimationState::Hit1))
             {
                 return;
             }
         }
+        playingSound = false;
         PlayingHitMotion = false;
         Rota(bossPos, playerPos);
     }
@@ -185,6 +197,7 @@ void FinalBossMonsterFirstPhaseController::Appear()
     _hpBar->SetActive(true);
     isFirstTime = true;
     lastTime = currentTime;
+    playingSound = false;
 }
 
 void FinalBossMonsterFirstPhaseController::Move(Vec3 objPos, Vec3 targetPos, float speed)
@@ -288,12 +301,17 @@ void FinalBossMonsterFirstPhaseController::Run(float speed)
 
 void FinalBossMonsterFirstPhaseController::Punch()
 {
-    if (animPlayingTime >= duration / 2.0f)
+    if (animPlayingTime >= duration / 3.0f)
     {
         UpdateHitBox();
         {
-            wstring s = L"boss_punch" + std::to_wstring(randPunchType + 1);
-            SOUND->PlayEffect(s);
+            if (!playingSound)
+            {
+                wstring s = L"boss_punch" + std::to_wstring(randPunchType + 1);
+                SOUND->PlayEffect(s);
+                SOUND->PlayEffect(L"boss_punch_vo" + to_wstring(rand() % 3 + 1));
+                playingSound = true;
+            }
         }
     }
     if (_hit && !hasDealing)
@@ -316,6 +334,7 @@ void FinalBossMonsterFirstPhaseController::Fireball()
         float randY = rand() % 10 / 5.f;
         float randZ = rand() % 10 / 5.f;
         makeBubble({ bossPos.x + randX, bossPos.y + randY , bossPos.z + randZ }, playerPos - bossPos);
+        SOUND->PlayEffect(L"boss_bubbleSpawn");
     }
 }
 

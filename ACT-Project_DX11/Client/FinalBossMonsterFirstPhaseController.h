@@ -101,8 +101,9 @@ public:
     // Sound
     float _footstepTimer = 0.0f;
     int _footstepType = 1;
-    float _runningInterval = 0.15f;
-    float _walkingInterval = 0.3f;
+    float _runningInterval = 0.3f;
+    float _walkingInterval = 0.5f;
+    bool playingSound = false;
 
     shared_ptr<Model> _enemy;
     shared_ptr<GameObject> _hitbox;

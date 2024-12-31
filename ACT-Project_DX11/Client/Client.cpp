@@ -71,8 +71,7 @@ void Client::Init()
             SOUND->Load(L"player_atk3_sw", L"player/atk_sweetner_3");
             SOUND->Load(L"player_atk4_sw", L"player/atk_sweetner_4");
             SOUND->Load(L"player_dash", L"player/dash");
-            SOUND->Load(L"player_footstep_default", L"player/footstep_default");
-            SOUND->Load(L"player_footstep_sand", L"player/footstep_sand");
+            SOUND->Load(L"player_footstep", L"player/footstep_sand");
             SOUND->Load(L"player_hit1", L"player/hurt1");
             SOUND->Load(L"player_hit2", L"player/hurt2");
             SOUND->Load(L"player_hit3", L"player/hurt3");
