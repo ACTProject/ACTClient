@@ -51,7 +51,7 @@ void Client2::Init()
     // SOUND
     {
         SOUND->Stop(L"bgm");
-        SOUND->Load(L"bgm", L"bgm/boss_bgm");
+        SOUND->Load(L"bgm", L"bgm/Nephro Draft ogg");
 
         SOUND->Load(L"player_footstep", L"plyaer/footstep_default");
 

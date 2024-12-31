@@ -58,8 +58,8 @@ void FinalBossMonsterFirstPhaseController::Update()
             return;
         }
         _hpBar->SetActive(false);
-        //_secondPhase->SetActive(true);
-        //_secondPhase->GetTransform()->SetPosition(bossPos);
+        _secondPhase->SetActive(true);
+        _secondPhase->GetTransform()->SetPosition(bossPos);
         Super::OnDeath();
         std::cout << "FinalBoss Phase_1 has been ended!" << std::endl;
 
@@ -79,7 +79,6 @@ void FinalBossMonsterFirstPhaseController::Update()
     distance = direction.Length();
 
     Rota(bossPos, playerPos);
-    SOUND->SetVolume(L"bgm", 0.1);
 
     Phase_1();
 }
@@ -160,6 +159,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
             }
             else
             {
+                playingSound = false;
                 lastTime = currentTime;
                 shootTime = 0.0f;
                 patternCnt = 1;
@@ -335,6 +335,11 @@ void FinalBossMonsterFirstPhaseController::Fireball()
         float randZ = rand() % 10 / 5.f;
         makeBubble({ bossPos.x + randX, bossPos.y + randY , bossPos.z + randZ }, playerPos - bossPos);
         SOUND->PlayEffect(L"boss_bubbleSpawn");
+        if (!playingSound)
+        {
+            SOUND->PlayEffect(L"boss_bubbleBullet_vo");
+            playingSound = true;
+        }
     }
 }
 

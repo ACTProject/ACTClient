@@ -99,6 +99,8 @@ void PlayerController::Update()
     // 포탈 충돌 처리
     HandlePortal();
 
+    SOUND->SetVolume(L"bgm", 0.3);
+
     if (!_isAttacking && !_isAirAttacking)
         _isHit = false;
 }

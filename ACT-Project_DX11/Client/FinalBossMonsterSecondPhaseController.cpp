@@ -81,6 +81,7 @@ void FinalBossMonsterSecondPhaseController::Update()
 
     Rota(bossPos, playerPos);
 
+    SOUND->SetVolume(L"bgm", 0.3f);
     Phase_2();
 }
 
@@ -90,6 +91,9 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
     {
         if (!Phase2Flag) // 한번만 실행
         {
+            SOUND->Stop(L"bgm");
+            SOUND->Load(L"bgm", L"bgm/Nephro ogg 117bpm final");
+            SOUND->Play(L"bgm");
             _hp = 500.0f;
             DEBUG->Log(L"Boss 2nd Phase Start");
             Phase2Flag = true;

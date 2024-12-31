@@ -114,7 +114,6 @@ void Client::Init()
         }
 
         SOUND->Play(L"bgm", true); 
-        SOUND->SetVolume(L"bgm", 0.5);
     }
 
 	// Camera
@@ -518,7 +517,6 @@ void Client::Init()
     // player
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
-    //player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 0.5f));
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
 	player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 

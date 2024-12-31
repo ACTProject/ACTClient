@@ -99,6 +99,7 @@ void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
     hitbox->Craete(bullet, Vec3(0.05f));
     CUR_SCENE->Add(hitboxGO);
 
+    dir.y -= 3.0f;
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
     bulletComponent->SetSpeed(50.0f);
