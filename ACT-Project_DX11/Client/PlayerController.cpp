@@ -16,6 +16,7 @@
 #include "Particle.h"
 #include "MeshRenderer.h"
 #include "DynamicObj.h"
+#include "MathUtils.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -794,6 +795,8 @@ void PlayerController::Jump()
 
         SetAnimationState(AnimationState::Jump);
         _isPlayeringJumpAnimation = true;
+
+        CreateBubbleEffect(10, Vec3(2.f,1.f,1.f),1.f, -1.f);
     }
 }
 void PlayerController::ResetToIdleState() {
@@ -818,6 +821,44 @@ void PlayerController::CreateDustEffect()
     dustObject->GetParticle()->SetMaterial(_dustMaterial);
     dustObject->GetParticle()->Add(dustPosition, Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(dustObject);
+}
+
+void PlayerController::SetBubble(shared_ptr<Material> bubble)
+{
+    _bubbleMaterial = bubble;
+    RESOURCES->Add(L"Dust", bubble);
+}
+void PlayerController::CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook)
+{
+    for (int i = 0; i < numBubbles; i++)
+    {
+        auto obj = make_shared<GameObject>();
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
+        obj->AddComponent(make_shared<Particle>());
+
+        Vec3 bubblePosition = _transform->GetPosition();
+        bubblePosition += _transform->GetLook() * positionLook;
+        bubblePosition.y += positionY;
+
+        // 플레이어 기준 X, Z 방향 랜덤 위치
+        Vec3 lookDirection = _transform->GetLook();     // 플레이어가 바라보는 방향
+        Vec3 rightDirection = _transform->GetRight();   // 플레이어의 오른쪽 방향
+
+        // XZ 평면에서 플레이어 방향을 기준으로 랜덤 이동
+        bubblePosition += lookDirection * MathUtils::Random(-bubbleSpread.z, bubbleSpread.z); // Z축 이동
+        bubblePosition += rightDirection * MathUtils::Random(-bubbleSpread.x, bubbleSpread.x); // X축 이동
+
+        // Y축 랜덤 이동
+        bubblePosition.y += MathUtils::Random(-bubbleSpread.y / 2, bubbleSpread.y / 2);
+
+        float randomSize = MathUtils::Random(0.2f, 0.4f);
+
+        obj->GetParticle()->SetMaterial(_bubbleMaterial);
+        obj->GetParticle()->SetLifetime(1.0f);
+        obj->GetParticle()->SetfadeStart(0.3f);
+        obj->GetParticle()->Add(bubblePosition, Vec2(randomSize));
+        CUR_SCENE->Add(obj);
+    }
 }
 
 void PlayerController::HealPlayer()

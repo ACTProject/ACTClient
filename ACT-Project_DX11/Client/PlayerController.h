@@ -28,6 +28,7 @@ public:
 	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airhitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
     void SetDust(shared_ptr<Material> dust);
+    void SetBubble(shared_ptr<Material> bubble);
     void SetEffect(shared_ptr<GameObject> effect) { _effect = effect; }
     void SetHitEffect(shared_ptr<GameObject> hitEffect) { _hitEffect = hitEffect; }
 
@@ -82,7 +83,10 @@ public:
 
     // DustEffect
     void CreateDustEffect();
-
+    // BubbleEffect     순서대로 한번에 생성되는 버블 개수, 플레이어 방향기준 x,y,z로 버블이 퍼져있는 정도, y축으로 +-, 플레이어가 보는 방향으로 +-
+    //                  마지막 두 변수를 0, 0으로 하면 기본 위치는 _transform->GetPosition();
+    void CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook);
+    
     void HealPlayer();
 
     // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
@@ -170,6 +174,9 @@ private:
     shared_ptr<Material> _dustMaterial;
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
+
+    // Bubble
+    shared_ptr<Material> _bubbleMaterial;
 
     // Sound
     float _footstepTimer = 0.0f;
