@@ -14,6 +14,7 @@
 #include "FinalBossMonsterSecondPhaseController.h"
 #include "Material.h"
 #include "Particle.h"
+#include "MeshRenderer.h"
 #include "DynamicObj.h"
 
 // Coroutine
@@ -64,10 +65,12 @@ void PlayerController::Update()
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
-    
-    // 입력 처리
-    HandleInput();
 
+    if (_playerActive == true)
+    {
+        // 입력 처리
+        HandleInput();
+    }
     // 이동 처리
     HandleMovement();
 
@@ -83,14 +86,19 @@ void PlayerController::Update()
     // 점프 처리
     HandleJump();
 
+    // 히트 상태 처리
+    HandleHit();
+  
+    // 공중 공격 처리
+    HandleAirAttack();
+
     // 상호작용 처리
     HandleInteraction();
 
     // 포탈 충돌 처리
     HandlePortal();
 
-    // 히트 상태 처리
-    HandleHit();
+
 }
 
 void PlayerController::HandleInput()
@@ -118,6 +126,10 @@ void PlayerController::HandleInput()
     if (INPUT->GetButton(KEY_TYPE::SPACE))
         Jump();
 
+    // 플레이어가 땅에 붙어있지 않으면 return 처리
+    if (!GetGameObject()->GetRigidbody()->GetIsGrounded())  
+        return;
+
     // 회피 입력 처리
     if (INPUT->GetButtonDown(KEY_TYPE::CTRL))
         StartDodge();
@@ -130,9 +142,42 @@ void PlayerController::HandleInput()
 
         _isPlayeringAttackAnimation = true;
         if (!_isAttacking)
+        {
             StartAttack();
+            Vec3 playerLook = _transform->GetLook();
+            Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
+            playerLook.Normalize();
+            cameraForward.Normalize();
+
+            float dot = playerLook.Dot(cameraForward);
+            if (dot > 0.0f)
+            {
+                // 플레이어가 카메라 방향을 보고 있음 -> 기본 리소스
+                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+            }
+            else
+            {
+                // 플레이어가 카메라 방향의 반대쪽을 보고 있음 -> 뒤쪽 리소스
+                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
+            }
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+            Vec3 effectTransform = _transform->GetPosition();
+            effectTransform += _transform->GetLook() * 2.f;
+            effectTransform.y += 2.f;
+            _effect->GetOrAddTransform()->SetPosition(effectTransform);
+            _effect->GetParticle()->SetElapsedTime(0.0f);
+        }
+            
         else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
+        {
             ContinueAttack();
+            Vec3 effectTransform = _transform->GetPosition();
+            effectTransform += _transform->GetLook() * 2.f;
+            effectTransform.y += 2.f;
+            _effect->GetOrAddTransform()->SetPosition(effectTransform);
+            _effect->GetParticle()->SetElapsedTime(0.0f);
+        }
+            
     }
 
     if (_isShellEquipped == true && INPUT->GetButton(KEY_TYPE::RBUTTON))
@@ -256,6 +301,26 @@ void PlayerController::HandleAttack()
         ResetToIdleState();
     }
 }
+void PlayerController::HandleAirAttack()
+{       
+    if (_isAirAttacking)
+        UpdateAirAttack();
+    else
+    {
+        _isHit = false;
+
+        if (_airhitbox)
+            _airhitbox->GetCollider()->SetActive(false);
+        return;
+    }
+
+}
+
+void PlayerController::HandleChargeAttack()
+{
+    //if (_isChargeAttacking)
+        //UpdateChargeAttack();
+}
 
 void PlayerController::HandleDodge()
 {
@@ -269,6 +334,14 @@ void PlayerController::HandleJump()
     {
         _isJumping = false;
         _isPlayeringJumpAnimation = false;
+    }
+
+    if (!_rigidbody->GetIsGrounded())
+    {
+        if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
+        {
+            StartAirAttack();
+        }
     }
 }
 
@@ -334,6 +407,7 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
             {
                 SAVE->OpenSaveUI();
+                _playerActive = !_playerActive;
                 break;
             }
             // 점프대
@@ -416,10 +490,11 @@ void PlayerController::ContinueAttack()
 		_attackStage++;
 		_attackTimer = 0.0f;
 		EndAttackCoroutine();
-
 		float duration = _attackDurations[_attackStage - 1] / _FPS;
         _attackMoveDistance = 1.0f;
         _isHit = false;
+        //std::wstring effectName = L"HitEffect" + std::to_wstring(_attackStage);
+        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
 
         {   // sound
             switch (_attackStage)
@@ -495,6 +570,27 @@ void PlayerController::UpdateHitBox()
         _transform->GetPosition() + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.0f
     );
 
+    CheckAtk(hitboxCollider);
+}
+
+void PlayerController::UpdateAirHitBox()
+{
+    if (!_airhitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _airhitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _airhitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _airhitbox->GetHitBox()->GetOffSet()
+    );
+
+    CheckAtk(hitboxCollider);
+}
+
+void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
+{
     vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
 
     for (const auto& collider : nearbyColliders)
@@ -516,7 +612,8 @@ void PlayerController::UpdateHitBox()
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
                     melleMonster->OnDamage(GetGameObject(), _atk);
-                    melleMonster->PlayingHitMotion = true;
+
+                melleMonster->PlayingHitMotion = true;
                 break;
             }
             case MonoBehaviourType::ShootingMonster:
@@ -524,7 +621,9 @@ void PlayerController::UpdateHitBox()
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
                     shootingMonster->OnDamage(GetGameObject(), _atk);
-                    shootingMonster->PlayingHitMotion = true;
+
+                shootingMonster->PlayingHitMotion = true;
+
                 break;
             }
             case MonoBehaviourType::FinalBossMonster_1:
@@ -534,6 +633,7 @@ void PlayerController::UpdateHitBox()
                 {
                     FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
+                    //
                 }
                 break;
             }
@@ -544,6 +644,7 @@ void PlayerController::UpdateHitBox()
                 {
                     FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
+                    //
                 }
                 break;
             }
@@ -552,6 +653,39 @@ void PlayerController::UpdateHitBox()
             }
             _isHit = true;
         }
+    }
+}
+void PlayerController::StartAirAttack()
+{
+    if (_isAirAttacking)
+        return;
+
+    _isAirAttacking = true;
+    _airAttackTimer = 0.0f;
+    _airAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AirAttack));
+    _airAttackDuration /= _FPS;
+
+    _isPlayeringAirAttackAnimation = true;
+    SetAnimationState(AnimationState::AirAttack);
+}
+
+void PlayerController::UpdateAirAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _airAttackTimer += dt;
+
+    UpdateAirHitBox();
+
+    // 공중 공격 종료 처리
+    if (_airAttackTimer >= _airAttackDuration)
+    {
+        _isAirAttacking = false;
+        _isPlayeringAirAttackAnimation = false;
+        if (GetGameObject()->GetRigidbody()->GetIsGrounded())
+            SetAnimationState(AnimationState::Idle);
+        else
+            SetAnimationState(AnimationState::Jump);
     }
 }
 
@@ -627,6 +761,7 @@ void PlayerController::UpdateDodge()
         _isDodging = false;
         _isInvincible = false; // 무적 상태 해제
         _isPlayeringDodgeAnimation = false;
+        SetAnimationState(AnimationState::Idle);
     }
 }
 

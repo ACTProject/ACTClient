@@ -24,19 +24,25 @@ V_OUT VS(VertexInput input)
 {
     V_OUT output;
 
+    // 월드 변환
     float4 position = mul(input.position, W);
 
+    // 카메라 방향 계산
     float3 up = float3(0, 1, 0);
-    //float3 forward = float3(0, 0, 1); // TODO
-    float3 forward = position.xyz - CameraPosition(); // BillBoard
+    float3 forward = normalize(position.xyz - CameraPosition()); // 카메라를 향한 빌보드 방향
     float3 right = normalize(cross(up, forward));
 
-    position.xyz += (input.uv.x - 0.5f) * right * input.scale.x;
+    // 옆에서 보이는 문제 보정 (lerp 사용)
+    float3 adjustedForward = lerp(forward, float3(0, 0, 1), 0.5f); // 0.5f는 보정 강도 (0~1)
+    float3 adjustedRight = normalize(cross(up, adjustedForward));
+
+    // 빌보드 평면 조정
+    position.xyz += (input.uv.x - 0.5f) * adjustedRight * input.scale.x;
     position.xyz += (1.0f - input.uv.y - 0.5f) * up * input.scale.y;
     position.w = 1.0f;
 
+    // 카메라 변환
     output.position = mul(mul(position, V), P);
-
     output.uv = input.uv;
 
     return output;

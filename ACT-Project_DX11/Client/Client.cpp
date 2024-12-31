@@ -466,35 +466,6 @@ void Client::Init()
             }
         }
     }
-    // HitEffect
-    {
-        
-        {
-            auto obj = make_shared<GameObject>();
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
-            obj->AddComponent(make_shared<Particle>());
-            {
-                //material
-                shared_ptr<Material> material = make_shared<Material>();
-                material->SetShader(effectShader);
-                auto texture = RESOURCES->Load<Texture>(L"HitEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
-                material->SetDiffuseMap(texture);
-                MaterialDesc& desc = material->GetMaterialDesc();
-                desc.ambient = Vec4(1.f);
-                desc.diffuse = Vec4(1.f);
-                desc.specular = Vec4(1.f);
-                RESOURCES->Add(L"HitEffect", material);
-
-                obj->GetParticle()->SetMaterial(material);
-            }
-            //obj->GetMeshRenderer()->SetParticleRender(true);
-            obj->GetParticle()->SetLifetime(0.5f);
-            obj->GetParticle()->SetfadeStart(0.25f);
-            obj->GetParticle()->SetReuse(true);
-            obj->GetParticle()->Add(Vec3(40,0,40), Vec2(5.0f, 5.0f));
-            CUR_SCENE->Add(obj);
-        }
-    }
 	// Light
 	{
 		auto light = make_shared<GameObject>();
@@ -594,6 +565,8 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_BlockingCrawl", AnimationState::BlockingCrawl);
         playerModel->ReadAnimation(L"Player/Crab_Death", AnimationState::Die);
         playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
+        playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
+        playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -638,6 +611,14 @@ void Client::Init()
 	hitbox->Craete(player, Vec3(2.0f));
 	CUR_SCENE->Add(hitboxGO);
 
+    // AirHitBox
+    shared_ptr<GameObject> airhitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> airhitbox = make_shared<HitBox>();
+    airhitboxGO->AddComponent(airhitbox);
+    airhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    airhitbox->AirHitCraete(player, Vec3(3.5f, 1.0f, 3.5f));
+    CUR_SCENE->Add(airhitboxGO);
+
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
     dustMaterial->SetShader(particleShader);
@@ -650,13 +631,56 @@ void Client::Init()
     RESOURCES->Add(L"Dust", dustMaterial);
     
 
+    // Effect obj  
+    auto effectObj = make_shared<GameObject>();
+    effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+    effectObj->AddComponent(make_shared<Particle>());
+    {
+        //material
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(effectShader);
+        auto texture = RESOURCES->Load<Texture>(L"AttackEffect2", L"..\\Resources\\Textures\\Effect\\TestEffect2.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"AttackEffect2", material);
+
+        effectObj->GetParticle()->SetMaterial(material);
+    }
+    {
+        //material
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(effectShader);
+        auto texture = RESOURCES->Load<Texture>(L"AttackEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"AttackEffect", material);
+
+        effectObj->GetParticle()->SetMaterial(material);
+    }
+
+    effectObj->GetParticle()->SetLifetime(1.f);
+    effectObj->GetParticle()->SetfadeStart(0.6f);
+    effectObj->GetParticle()->SetReuse(true);
+    effectObj->GetParticle()->Add(Vec3(0,0,0), Vec2(5.0f, 5.0f));
+    CUR_SCENE->Add(effectObj);
+        
+
+
 	// Player::PlayerScript
 	shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
+	playerScript->SetAirHitBox(airhitboxGO);
     playerScript->SetDust(dustMaterial);
+    playerScript->SetEffect(effectObj);
 
     player->SetController(playerScript);
 	player->AddComponent(playerScript);
@@ -670,24 +694,24 @@ void Client::Init()
         int cnt = 0;
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
-        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
+        //ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
 
-        cnt = 0;
-        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
+        //cnt = 0;
+        //ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
 
     }
     
