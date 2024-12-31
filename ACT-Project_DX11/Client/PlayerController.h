@@ -26,6 +26,7 @@ public:
 	void InteractWithShell(shared_ptr<GameObject> gameObject);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airhitbox = hitbox; }
+	void SetChargeHitBox(shared_ptr<GameObject> hitbox) { _chargehitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
     void SetDust(shared_ptr<Material> dust);
     void SetEffect(shared_ptr<GameObject> effect) { _effect = effect; }
@@ -35,7 +36,7 @@ public:
     void HandleAnimations();    // 애니메이션 관리
     void HandleAttack();        // 공격 처리
     void HandleAirAttack();     // 공중 공격 상태 처리
-    void HandleChargeAttack();     // 차지 공격 상태 처리
+    void HandleChargeAttack();  // 차지 공격 상태 처리
     void HandleDodge();         // 회피 처리
     void HandleJump();          // 점프 처리
     void HandleMovement();      // 이동 처리
@@ -51,7 +52,7 @@ public:
     void UpdateHitBox();
     void UpdateAirHitBox();
     void UpdateChargeHitBox();
-    void CheckAtk(shared_ptr<BaseCollider> hitboxCollider);
+    void CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage);
 
     // Air Attack
     void StartAirAttack();
@@ -130,7 +131,7 @@ private:
     bool _isCharging = false;              // 차지 중인지 여부
     bool _isChargeAttacking = false;       // 차지 공격 중인지 여부
     float _chargeAttackDuration = 0.0f;    // 차지 공격 동작 시간
-    float _chargeThreshold = 0.5f;         // 차지 공격 발동 시간 (초)
+    float _chargeThreshold = 0.2f;         // 차지 공격 발동 시간 (초)
     float _chargeTimer = 0.0f;             // 차지 발동 시간 (초)
     float _chargeAttackTimer = 0.0f;       // 차지 공격 발동 시간
     // AttackMove
