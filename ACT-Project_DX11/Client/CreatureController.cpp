@@ -38,6 +38,7 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
 
             if (auto ui = UIMANAGER->GetUi("PlayerArmor"))
             {
+                SOUND->PlayEffect(L"player_impachShell");
                 shellHp -= damage;
                 player->SetShellHP(shellHp);
 

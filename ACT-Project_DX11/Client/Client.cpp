@@ -84,11 +84,15 @@ void Client::Init()
             SOUND->Load(L"player_shellConfirm", L"player/ShellConfirm");
             SOUND->Load(L"player_springSound", L"player/ImpactShell_SpringL11");
             SOUND->Load(L"player_impachShell", L"player/ImpactShell_MetalL11");
-            SOUND->Load(L"player_scream", L"player/Kril_Fall_Die_1");
+            SOUND->Load(L"player_scream", L"player/23_Kril_Aaaa");
             SOUND->Load(L"player_enterPortal", L"player/MSS Enter New");
             SOUND->Load(L"player_landing", L"player/Player Land Sand Sweetner 1");
-            SOUND->Load(L"player_heal", L"player/Heal");
+            SOUND->Load(L"player_heal", L"player/HealingMunch4");
             SOUND->Load(L"player_warning", L"player/Health Low Warning");
+            SOUND->Load(L"player_aerialAtk_md", L"player/Kril_Yeet_2");
+            SOUND->Load(L"player_aerialAtk", L"player/aeiral_attack");
+            SOUND->Load(L"player_chargeAtk", L"player/Kril_Heavy_Attack_XL_4");
+            SOUND->Load(L"player_chargeUp", L"player/Firth_Charge_Up");
         }
 
         //Melle
@@ -541,8 +545,8 @@ void Client::Init()
     }
     // player
     player->SetObjectType(ObjectType::Player);
-	//player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
-    player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 0.5f));
+	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
+    //player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 0.5f));
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
 	player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
@@ -694,24 +698,24 @@ void Client::Init()
         int cnt = 0;
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
-        //ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
-        //ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
-        //ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
-        //ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
-        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
-        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
-        //ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
+        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
 
-        //cnt = 0;
-        //ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
-        //ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
+        cnt = 0;
+        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
 
     }
     

@@ -34,6 +34,8 @@ enum class ObjectType
     MapMesh,
     Map,
     Spoils,
+    JumpObj,
+    HealItem,
     // ...
 
     Unknown,

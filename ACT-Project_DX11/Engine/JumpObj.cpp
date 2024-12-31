@@ -20,6 +20,9 @@ void JumpObj::Start()
 
         COLLISION->AddRigidbody(rigidBody);
     }
+    {
+        obj->SetObjectType(ObjectType::JumpObj);
+    }
 }
 
 void JumpObj::Update()
