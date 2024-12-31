@@ -595,6 +595,8 @@ void Client2::Init()
             playerModel->ReadAnimation(L"Player/Crab_BlockingCrawl", AnimationState::BlockingCrawl);
             playerModel->ReadAnimation(L"Player/Crab_Death", AnimationState::Die);
             playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
+            playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
+            playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
 
             // Weapon
             shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -639,12 +641,21 @@ void Client2::Init()
         hitbox->Craete(player, Vec3(2.0f));
         CUR_SCENE->Add(hitboxGO);
 
+        // AirHitBox
+        shared_ptr<GameObject> airhitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> airhitbox = make_shared<HitBox>();
+        airhitboxGO->AddComponent(airhitbox);
+        airhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+        airhitbox->AirHitCraete(player, Vec3(3.5f, 1.0f, 3.5f));
+        CUR_SCENE->Add(airhitboxGO);
+
         // Player::PlayerScript
         shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
         playerScript->SetPlayer(playerModel);
         playerScript->SetModelAnimator(ma1);
         playerScript->SetHitBox(hitboxGO);
+        playerScript->SetAirHitBox(airhitboxGO);
         playerScript->SetDust(dustMaterial);
 
         player->SetController(playerScript);

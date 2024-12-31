@@ -71,6 +71,7 @@ void PlayerController::Update()
         // 입력 처리
         HandleInput();
     }
+
     // 이동 처리
     HandleMovement();
 
@@ -98,7 +99,8 @@ void PlayerController::Update()
     // 포탈 충돌 처리
     HandlePortal();
 
-
+    if (!_isAttacking && !_isAirAttacking)
+        _isHit = false;
 }
 
 void PlayerController::HandleInput()
@@ -272,8 +274,6 @@ void PlayerController::HandleAttack()
 {
     if (!_isAttacking)
     {
-        _isHit = false;
-
         if (_hitbox)
             _hitbox->GetCollider()->SetActive(false);
         return;
@@ -302,13 +302,11 @@ void PlayerController::HandleAttack()
     }
 }
 void PlayerController::HandleAirAttack()
-{       
+{
     if (_isAirAttacking)
         UpdateAirAttack();
     else
     {
-        _isHit = false;
-
         if (_airhitbox)
             _airhitbox->GetCollider()->SetActive(false);
         return;
@@ -711,7 +709,7 @@ void PlayerController::UpdateHit()
 
     _hitTimer += dt;
 
-    // 회피 종료 처리
+    // 히트 상태 종료 처리
     if (_hitTimer >= _hitDuration)
     {
         _hit = false;
