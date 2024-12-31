@@ -43,7 +43,7 @@ private:
     bool LoadSaveFiles();
 private:
     float startY = 100.f;
-    float padding = 40.f;
+    float padding = 60.f;
     int index = 0;
     int _btnIndex = 0;
 

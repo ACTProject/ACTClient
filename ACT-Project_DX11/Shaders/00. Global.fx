@@ -27,8 +27,13 @@ cbuffer WaveBuffer
 
 cbuffer ShadowBuffer
 {
-    //matrix SVP;
     matrix S;
+};
+
+cbuffer GameTimeBuffer
+{
+    float gameTime;
+    float3 padding;
 };
 
 ////////////////

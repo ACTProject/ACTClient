@@ -19,6 +19,8 @@ bool Button::Picked(POINT screenPos)
 	return ::PtInRect(&_rect, screenPos);
 }
 
+
+
 void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> material)
 {
 	auto go = _gameObject.lock();
@@ -68,6 +70,8 @@ void Button::InvokeOnClicked()
 	if (_onClicked && isActive)
 		_onClicked();
 }
+
+
 
 void Button::AddOnHoverEvent(std::function<void(void)> func)
 {

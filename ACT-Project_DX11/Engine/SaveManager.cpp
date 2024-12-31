@@ -21,8 +21,6 @@ void SaveManager::AddScene()
     {
         CUR_SCENE->Add(ui);
     }
-
-
 }
 
 
@@ -33,7 +31,7 @@ void SaveManager::CreateSaveUI()
     {
         shared_ptr<Material> material = make_shared<Material>();
         material->SetShader(renderUIShader);
-        auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\save.png");
+        auto texture = RESOURCES->Load<Texture>(L"Save", L"..\\Resources\\Textures\\UI\\save01.png");
         material->SetDiffuseMap(texture);
         MaterialDesc& desc = material->GetMaterialDesc();
         desc.ambient = Vec4(1.f);
@@ -41,13 +39,23 @@ void SaveManager::CreateSaveUI()
         desc.specular = Vec4(1.f);
         RESOURCES->Add(L"Save", material);
     }
-
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"Load", L"..\\Resources\\Textures\\UI\\load01.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Load", material);
+    }
 
     {
         auto obj = make_shared<GameObject>();
         obj->AddComponent(make_shared<Button>());
 
-        obj->GetButton()->Create(Vec3(100.f, 100.f, 0.1f), Vec2(200, 140), RESOURCES->Get<Material>(L"Save"));
+        obj->GetButton()->Create(Vec3(100.f, 100.f, 0.1f), Vec2(180, 80), RESOURCES->Get<Material>(L"Save"));
         obj->SetObjectType(ObjectType::UI);
         obj->GetMeshRenderer()->SetAlphaBlend(true);
         obj->GetButton()->AddOnClickedEvent([]() { SAVE->SaveGame(CUR_SCENE->GetPlayer()); });
@@ -60,43 +68,6 @@ void SaveManager::CreateSaveUI()
     {
         CreateButton();
     }
-
-
-    //// Mesh
-    //{
-    //    auto obj = make_shared<GameObject>();
-    //    obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.5f));
-    //    obj->GetOrAddTransform()->SetScale(Vec3(800.f, 600.f, 0.f));
-    //    obj->AddComponent(make_shared<MeshRenderer>());
-
-    //    obj->SetLayerIndex(Layer_UI);
-    //    {
-    //        obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Background"));
-    //    }
-    //    {
-    //        auto mesh = RESOURCES->Get<Mesh>(L"Quad");
-    //        obj->GetMeshRenderer()->SetMesh(mesh);
-    //        obj->GetMeshRenderer()->SetPass(0);
-    //    }
-
-    //    CUR_SCENE->Add(obj);
-    //}
-
-
-    //// Button Mesh
-    //{
-    //    auto obj = make_shared<GameObject>();
-    //    obj->AddComponent(make_shared<Button>());
-
-    //    obj->GetButton()->Create(Vec3(250, 300, 0.3), Vec2(166, 44), RESOURCES->Get<Material>(L"StartBtn"));
-    //    obj->GetMeshRenderer()->SetAlphaBlend(true);
-    //    obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn_Hover")); });
-    //    obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"StartBtn")); });
-
-    //    obj->GetButton()->AddOnClickedEvent([]() { GAME->ChangeScene(1); });
-
-    //    CUR_SCENE->Add(obj);
-    //}
 }
 
 void SaveManager::OpenSaveUI()
@@ -108,20 +79,12 @@ void SaveManager::OpenSaveUI()
         for (auto& ui : saveOptionUIGroup)
         {
             ui->SetActive(true);
-
-
-
         }
-
-
     }
     else
     {
         for (auto& ui : saveOptionUIGroup)
         {
-           
-            
-            
             ui->SetActive(false);
         }
     }
@@ -157,6 +120,11 @@ bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
 
     _saveDataList.push_back(data);
 
+    CreateButton();
+    shared_ptr<GameObject> uiObj = saveOptionUIGroup.back();
+    uiObj->SetActive(true);
+    CUR_SCENE->Add(uiObj);
+
     _saveFileIndex++;
     return true;
 }
@@ -165,12 +133,12 @@ void SaveManager::CreateButton()
 {
     auto obj = make_shared<GameObject>();
     obj->AddComponent(make_shared<Button>());
-    obj->GetButton()->Create(Vec3(300.f, startY + (padding * index), 0.1f), Vec2(200, 140), RESOURCES->Get<Material>(L"Save"));
+    obj->GetButton()->Create(Vec3(300.f, startY + (padding * index), 0.1f), Vec2(180, 40), RESOURCES->Get<Material>(L"Load"));
     obj->GetButton()->SetID(_btnIndex);
     obj->SetObjectType(ObjectType::UI);
     obj->GetMeshRenderer()->SetAlphaBlend(true);
     int button = _btnIndex;
-    obj->GetButton()->AddOnClickedEvent([this, button]() {  SAVE->CheckSaveFile(button); });
+       obj->GetButton()->AddOnClickedEvent([this, button]() {  SAVE->CheckSaveFile(button); });
     obj->SetActive(false);
 
     _btnIndex++;
@@ -180,7 +148,7 @@ void SaveManager::CreateButton()
 
 bool SaveManager::CheckSaveFile(int key)
 {
-    auto it = std::find_if(_saveDataList.begin(), _saveDataList.end(), [&key](const SaveData& data) {return data.fileIndex == key; });
+     auto it = std::find_if(_saveDataList.begin(), _saveDataList.end(), [&key](const SaveData& data) {return data.fileIndex == key; });
 
     if (it != _saveDataList.end())
     {

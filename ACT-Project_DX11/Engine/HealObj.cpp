@@ -11,6 +11,7 @@ HealObj::~HealObj()
 
 void HealObj::Start()
 {
+    GetGameObject()->GetModelRenderer()->SetPass(10);
 }
 
 void HealObj::Update()

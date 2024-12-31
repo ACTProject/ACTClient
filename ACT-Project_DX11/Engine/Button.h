@@ -10,7 +10,7 @@ public:
 	Button();
 	virtual ~Button();
 
-	bool Picked(POINT screenPos);
+    bool Picked(POINT screenPos);
 
 	void Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> material);
 	void AddOnClickedEvent(std::function<void(void)> func);
