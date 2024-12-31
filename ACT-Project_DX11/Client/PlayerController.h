@@ -183,5 +183,7 @@ private:
 
     // 전리품
     float _spoil = 0;
+
+    bool _playerActive = true;
 };
 

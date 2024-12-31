@@ -371,7 +371,7 @@ void MelleMonsterController::DropItem()
     item->AddComponent(make_shared<ModelRenderer>(renderShader));
     {
         item->GetModelRenderer()->SetModel(objModel);
-        item->GetModelRenderer()->SetPass(4);
+        item->GetModelRenderer()->SetPass(7);
     }
 
     auto collider = make_shared<AABBBoxCollider>();
