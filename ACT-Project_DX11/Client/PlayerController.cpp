@@ -417,15 +417,7 @@ void PlayerController::HandleInteraction()
                 _playerActive = !_playerActive;
                 break;
             }
-            // 점프대
-            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
-            {
-                SOUND->PlayEffect(L"player_springSound");
-                SOUND->PlayEffect(L"player_scream");
-                break;
-            }
         }
-        
     }
 }
 void PlayerController::HandlePortal()
@@ -668,6 +660,11 @@ void PlayerController::StartAirAttack()
     if (_isAirAttacking)
         return;
 
+    {
+        SOUND->PlayEffect(L"player_aerialAtk");
+        SOUND->PlayEffect(L"player_aerialAtk_md");
+    }
+
     _isAirAttacking = true;
     _airAttackTimer = 0.0f;
     _airAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AirAttack));
@@ -827,6 +824,7 @@ void PlayerController::HealPlayer()
         auto hpSlider = dynamic_pointer_cast<Slider>(ui);
         float hpRatio = _hp / _maxHp;
         hpSlider->SetRatio(hpRatio);
+        SOUND->PlayEffect(L"player_heal");
     }
 }
 

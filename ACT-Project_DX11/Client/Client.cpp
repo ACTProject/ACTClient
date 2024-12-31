@@ -84,11 +84,15 @@ void Client::Init()
             SOUND->Load(L"player_shellConfirm", L"player/ShellConfirm");
             SOUND->Load(L"player_springSound", L"player/ImpactShell_SpringL11");
             SOUND->Load(L"player_impachShell", L"player/ImpactShell_MetalL11");
-            SOUND->Load(L"player_scream", L"player/Kril_Fall_Die_1");
+            SOUND->Load(L"player_scream", L"player/23_Kril_Aaaa");
             SOUND->Load(L"player_enterPortal", L"player/MSS Enter New");
             SOUND->Load(L"player_landing", L"player/Player Land Sand Sweetner 1");
-            SOUND->Load(L"player_heal", L"player/Heal");
+            SOUND->Load(L"player_heal", L"player/HealingMunch4");
             SOUND->Load(L"player_warning", L"player/Health Low Warning");
+            SOUND->Load(L"player_aerialAtk_md", L"player/Kril_Yeet_2");
+            SOUND->Load(L"player_aerialAtk", L"player/aeiral_attack");
+            SOUND->Load(L"player_chargeAtk", L"player/Kril_Heavy_Attack_XL_4");
+            SOUND->Load(L"player_chargeUp", L"player/Firth_Charge_Up");
         }
 
         //Melle

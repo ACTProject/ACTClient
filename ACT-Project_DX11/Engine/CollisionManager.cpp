@@ -97,6 +97,22 @@ void CollisionManager::HandleCollision(shared_ptr<BaseCollider> colliderA, share
 	// 충돌 상태 설정
 	colliderA->SetColliding(true);
 	colliderB->SetColliding(true);
+
+    if (colliderA->GetGameObject()->GetObjectType() == ObjectType::JumpObj ||
+        colliderB->GetGameObject()->GetObjectType() == ObjectType::JumpObj)
+    {
+        if (colliderA->GetGameObject()->GetObjectType() == ObjectType::Player ||
+            colliderB->GetGameObject()->GetObjectType() == ObjectType::Player)
+        {
+            SOUND->PlayEffect(L"player_springSound");
+            SOUND->PlayEffect(L"player_scream");
+        }
+        else if (colliderA->GetGameObject()->GetObjectType() == ObjectType::Monster ||
+                 colliderB->GetGameObject()->GetObjectType() == ObjectType::Monster)
+        {
+            SOUND->PlayEffect(L"player_springSound");
+        }
+    }
 }
 
 void CollisionManager::ApplyForce(shared_ptr<Rigidbody> rigidbody, const Vec3& target, const Vec3& source, float massDifference)
