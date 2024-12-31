@@ -112,9 +112,7 @@ struct WaveDesc
 
 struct ShadowDesc
 {
-    //Matrix ShadowVP = Matrix::Identity;
     Matrix Shadow = Matrix::Identity;
-    //Vec4 bias = { 1,0,0,0 };
 };
 
 struct ParticleDesc
@@ -123,4 +121,10 @@ struct ParticleDesc
     float lifetime;
     float fadeStart;
     float padding;
+};
+
+struct GameTimeDesc
+{
+    float gameTime;
+    Vec3 padding;
 };

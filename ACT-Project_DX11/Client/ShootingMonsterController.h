@@ -34,6 +34,9 @@ public:
     void SetModelRenderer(shared_ptr<ModelRenderer> modelRenderer) { _modelRenderer = modelRenderer; }
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
     void SetAnimationState(AnimationState state);
+    void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
+    string GetObjID() { return objID; }
+    void SetObjID(string str) { objID = str; }
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 
     void ResetToIdleState();
@@ -52,6 +55,7 @@ public:
 
 public:
     void OnDeath() override;
+    void DropItem();
     bool PlayingHitMotion = false;
 private:
     float _speed;
@@ -76,6 +80,7 @@ private:
     bool shootCount = false;
     bool hasDealing = false;
     bool isFirstTime = false;
+    bool playingSound = false;
 
     bool BackToStart = false;
     bool chaseState = true;
@@ -85,12 +90,17 @@ private:
     bool _hit = false;
     bool _isDead = false;
 
+    bool isPauseAfterPunch = false;
+    float pauseEndTime = 0.0f;
+
+    string objID;
     shared_ptr<Model> _enemy;
     shared_ptr<GameObject> _hitbox;
     shared_ptr<ModelRenderer> _modelRenderer;
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;
+    shared_ptr<GameObject> _hpBar;
     AnimationState _currentAnimationState = AnimationState::Idle;
 };
 

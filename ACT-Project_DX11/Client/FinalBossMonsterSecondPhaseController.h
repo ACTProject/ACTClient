@@ -37,9 +37,12 @@ public:
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void SetAnimationState(AnimationState state);
+    void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
+    string GetObjID() { return objID; }
+    void SetObjID(string str) { objID = str; }
 
     void ResetToIdleState();
-    void UpdateHitBox();
+    void UpdateHitBox(float f);
     void ResetHit();
     bool PlayingHitMotion = false;
 
@@ -54,11 +57,12 @@ private:
     void Sprint();
     void Run(float speed);
 
+    void Slash();
+    void Slam();
     void Punch();                            // 펀치 공격
     void Fireball();
     void FireMoney();
     void Choke_lift();
-    void GrabSlam();
     void Hurricane();
     Matrix CalculateWorldTransform(shared_ptr<ModelBone> bone);
     void makeBubble(Vec3 pos, Vec3 dir);
@@ -70,6 +74,7 @@ public:
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float _FPS;                         //게임 FPS = 60
     float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
+    float duration;
 
     Vec3 bossPos;                       //보스 위치
     Vec3 playerPos;                     //플레이어 위치
@@ -110,6 +115,8 @@ public:
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;
     shared_ptr<ModelBone> rightHand;
+    shared_ptr<GameObject> _hpBar;
+    string objID;
     AnimationState _currentAnimationState = AnimationState::Idle;
 };
 

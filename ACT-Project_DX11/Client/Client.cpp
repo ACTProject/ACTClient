@@ -38,6 +38,7 @@
 #include "Frustum.h"
 #include "Shadow.h"
 #include "Particle.h"
+#include "SoundManager.h"
 
 void Client::Init()
 {
@@ -49,6 +50,65 @@ void Client::Init()
 
     // Player
     auto player = make_shared<GameObject>();
+
+    // Sound
+    {
+        SOUND->Release();
+        if (!SOUND->Initialize())
+        {
+            std::cout << "Failed to init SoundManager" << std::endl;
+        }
+
+        SOUND->Load(L"bgm", L"bgm/Scene1_bgm");
+
+        //Player
+        {
+            SOUND->Load(L"player_atk1", L"player/atk_main_1");
+            SOUND->Load(L"player_atk2", L"player/atk_main_2");
+            SOUND->Load(L"player_atk3", L"player/atk_main_3");
+            SOUND->Load(L"player_atk4", L"player/atk_main_4");
+            SOUND->Load(L"player_atk1_md", L"player/atk_md_1");
+            SOUND->Load(L"player_atk2_md", L"player/atk_md_2");
+            SOUND->Load(L"player_atk3_md", L"player/atk_md_3");
+            SOUND->Load(L"player_atk4_md", L"player/atk_md_4");
+            SOUND->Load(L"player_atk1_sw", L"player/atk_sweetner_1");
+            SOUND->Load(L"player_atk2_sw", L"player/atk_sweetner_2");
+            SOUND->Load(L"player_atk3_sw", L"player/atk_sweetner_3");
+            SOUND->Load(L"player_atk4_sw", L"player/atk_sweetner_4");
+            SOUND->Load(L"player_dash", L"player/dash");
+            SOUND->Load(L"player_footstep_default", L"player/footstep_default");
+            SOUND->Load(L"player_footstep_sand", L"player/footstep_sand");
+            SOUND->Load(L"player_hit1", L"player/hurt1");
+            SOUND->Load(L"player_hit2", L"player/hurt2");
+            SOUND->Load(L"player_hit3", L"player/hurt3");
+            SOUND->Load(L"player_hit4", L"player/hurt4");
+            SOUND->Load(L"player_hurt4", L"player/hurt4");
+            SOUND->Load(L"player_jump", L"player/jump");
+            SOUND->Load(L"player_excite", L"player/Player_Excite_1");
+            SOUND->Load(L"player_pickupItem", L"player/Pickup_Item_World");
+        }
+
+        //Melle
+        {
+            SOUND->Load(L"melle_aggro", L"monster/melle/aggro");
+            SOUND->Load(L"melle_die", L"monster/melle/die");
+            SOUND->Load(L"melle_hit", L"monster/melle/hurt");
+            SOUND->Load(L"melle_footstep", L"monster/melle/footstep");
+            SOUND->Load(L"melle_swing0", L"monster/melle/swing_1");
+            SOUND->Load(L"melle_swing1", L"monster/melle/swing_2");
+            SOUND->Load(L"melle_swing2", L"monster/melle/slash");
+        }
+        
+        //Shooting
+        {
+            SOUND->Load(L"shooting_aggro", L"monster/shooting/aggro");
+            SOUND->Load(L"shooting_die", L"monster/shooting/die");
+            SOUND->Load(L"shooting_fire", L"monster/shooting/fire");
+            SOUND->Load(L"shooting_hit", L"monster/shooting/hit");
+        }
+
+        SOUND->Play(L"bgm", true);
+    }
 
 	// Camera
 	{
@@ -174,10 +234,12 @@ void Client::Init()
         healPosition.y = -260.f;
         armorPosition.x = healPosition.x + 2.f;
         armorPosition.y = healPosition.y + 40.f;
+      
         // MeshHealBar_Shadow
         {
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.2f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
@@ -197,33 +259,12 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
-        // MeshArmorBar_Shadow
-        {
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
-            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
-            obj->AddComponent(make_shared<MeshRenderer>());
-
-            obj->SetLayerIndex(Layer_UI);
-            {
-                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"ArmorBar_Shadow"));
-
-            }
-            {
-                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
-                obj->GetMeshRenderer()->SetMesh(mesh);
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
-                obj->GetMeshRenderer()->SetPass(0);
-            }
-
-            CUR_SCENE->Add(obj);
-        }
 
         // MeshHealBar
         {
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
@@ -243,10 +284,50 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
+        // RedBar HPMesh
+        {
+            // 슬라이더 컴포넌트 추가.
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
+            obj->AddComponent(make_shared<Slider>());
+            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
+            obj->GetUI()->SetUIID("PlayerHP");
+
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+
+            CUR_SCENE->Add(obj);
+        }
+
+        // MeshArmorBar_Shadow
+        {
+            auto obj = make_shared<GameObject>();
+            obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
+            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
+            obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
+            obj->AddComponent(make_shared<MeshRenderer>());
+
+            obj->SetLayerIndex(Layer_UI);
+            {
+                obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"ArmorBar_Shadow"));
+
+            }
+            {
+                auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+                obj->GetMeshRenderer()->SetMesh(mesh);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetMeshRenderer()->SetPass(0);
+            }
+
+            CUR_SCENE->Add(obj);
+        }
+
         // MeshArmorBar
         {
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
             obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
@@ -265,25 +346,17 @@ void Client::Init()
 
             CUR_SCENE->Add(obj);
         }
-        // RedBar HPMesh
-        {
-            // 슬라이더 컴포넌트 추가.
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
-            obj->GetUI()->SetUIID("HP");
-            CUR_SCENE->Add(obj);
-        }
 
-        // RedBar ARmor Mesh
+        // RedBar ArmorMesh
         {
             // 슬라이더 컴포넌트 추가.
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
-            obj->GetUI()->SetUIID("Armor");
+            obj->GetUI()->SetUIID("PlayerArmor");
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
     }
@@ -389,7 +462,6 @@ void Client::Init()
             }
         }
     }
-    
 	// Light
 	{
 		auto light = make_shared<GameObject>();
@@ -409,7 +481,7 @@ void Client::Init()
     {
         auto shell = make_shared<GameObject>();
         shell->SetObjectType(ObjectType::Shell);
-        shell->GetOrAddTransform()->SetPosition(Vec3(35, 0.f, 35));
+        shell->GetOrAddTransform()->SetPosition(Vec3(35, -5.f, 35));
         shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> shellModel = make_shared<Model>();
@@ -487,6 +559,9 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_BlockingIdle", AnimationState::BlockingIdle);
         playerModel->ReadAnimation(L"Player/Crab_BlockingCrawl", AnimationState::BlockingCrawl);
         playerModel->ReadAnimation(L"Player/Crab_Death", AnimationState::Die);
+        playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
+        playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
+        playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -528,8 +603,16 @@ void Client::Init()
 	shared_ptr<HitBox> hitbox = make_shared<HitBox>();
 	hitboxGO->AddComponent(hitbox);
 	hitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
-	hitbox->Craete(player, Vec3(1.5f));
+	hitbox->Craete(player, Vec3(2.0f));
 	CUR_SCENE->Add(hitboxGO);
+
+    // AirHitBox
+    shared_ptr<GameObject> airhitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> airhitbox = make_shared<HitBox>();
+    airhitboxGO->AddComponent(airhitbox);
+    airhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    airhitbox->AirHitCraete(player, Vec3(3.5f, 1.0f, 3.5f));
+    CUR_SCENE->Add(airhitboxGO);
 
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
@@ -590,6 +673,7 @@ void Client::Init()
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
+	playerScript->SetAirHitBox(airhitboxGO);
     playerScript->SetDust(dustMaterial);
     playerScript->SetEffect(effectObj);
 
@@ -600,30 +684,32 @@ void Client::Init()
 	CUR_SCENE->SetPlayer(player);
 
 
-	// Enemy
+    // Enemy
     {
-        ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f });
-        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f });
-        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f });
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f });
-        ENEMY->CreateMeleeMonster({ 305.0f, 0.f, 130.0f });
-        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f });
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f });
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f });
-        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f });
+        int cnt = 0;
+        ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
+        //ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
 
-        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f });
-        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f });
-        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f });
-        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f });
-        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f });
-        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f });
-        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f });
-        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f });
-        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f });
+        //cnt = 0;
+        //ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
 
-        //ENEMY->CreateFinalBoss({ 10.0f,0.f,10.0f });
     }
+    
     
 
 	// Skybox
@@ -664,7 +750,7 @@ void Client::Init()
 				obj->GetSkybox()->Create(i, RESOURCES->Get<Material>(materialName));
 				//obj->GetMeshRenderer()->SetMesh(RESOURCES->Get<Mesh>); // Quad mesh for each face
 				obj->GetMeshRenderer()->SetPass(0);
-
+                auto ab = RESOURCES->Get<Material>(L"Save");
 				CUR_SCENE->Add(obj);
 			};
 			//앞 뒤 위 아래 왼쪽 오른쪽
@@ -786,7 +872,6 @@ void Client::Init()
         CUR_SCENE->Add(obj);
     }
 
-    MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists.txt");
 
 }
 

@@ -111,11 +111,18 @@ void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
 
 void ShootingMonsterController::Aggro()
 {
+    if (!playingSound)
+    {
+        SOUND->PlayEffect(L"shooting_aggro");
+        playingSound = true;
+    }
     if (PlayCheckAnimating(AnimationState::Aggro))
     {
         return;
     }
+    playingSound = false;
     isFirstTime = true;
+    _hpBar->SetActive(true);
 }
 
 void ShootingMonsterController::Patrol(Vec3 Target)
@@ -147,11 +154,22 @@ void ShootingMonsterController::Update()
 
     if (_isDead)
     {
+        if (!playingSound)
+        {
+            SOUND->PlayEffect(L"shooting_die");
+            playingSound = true;
+        }
         if (PlayCheckAnimating(AnimationState::Die))
         {
             return;
         }
-
+        playingSound = false;
+        DropItem();
+        CUR_SCENE->Remove(_hpBar);
+        TaskQueue::GetInstance().AddTask([this]() {
+            std::cout << "Destroying object in TaskQueue..." << std::endl;
+            _hpBar->Destroy();
+        });
         Super::OnDeath();
         std::cout << "Shooting Monster Died!" << std::endl;
 
@@ -171,17 +189,6 @@ void ShootingMonsterController::Update()
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
     float currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
-    if (_hp < 0.f)
-    {
-        animPlayingTime += DT;
-        SetAnimationState(AnimationState::Die);
-        if (animPlayingTime >= (_enemy->GetAnimationDuration(AnimationState::Die) / _FPS))
-        {
-            Remove(GetGameObject());
-        }
-        return;
-    }
-
     // 범위 검사
     if (rangeDis > 50.f) // 초기 위치에서 너무 멀리 떨어지면 복귀
     {
@@ -192,12 +199,13 @@ void ShootingMonsterController::Update()
     {
         Move(EnemyPos, StartPos, _speed);
         Rota(EnemyPos, StartPos);
-        _hp = 80.0f;            // 돌아가면 체력 회복
         if (abs(rangeDis) < 1.f)
         {
+            _hp = 50.0f;            // 돌아가면 체력 회복
             BackToStart = false;
             chaseState = true;
             isFirstTime = false;
+            _hpBar->SetActive(false);
         }
         return;
     }
@@ -215,7 +223,38 @@ void ShootingMonsterController::Update()
         return;
     }
 
-    if (!chaseState)
+    if (isPauseAfterPunch) // 멈춤 상태 처리
+    {
+        if (currentTime >= pauseEndTime) // 멈춤 시간이 끝났는지 확인
+        {
+            isPauseAfterPunch = false; // 멈춤 상태 해제
+        }
+        else
+        {
+            isPauseAfterPunch = true; // 멈춤 상태에서는 다른 동작 수행하지 않음
+        }
+    }
+
+    if (isPauseAfterPunch)
+    {
+        if (PlayingHitMotion)
+        {
+            if (PlayCheckAnimating(AnimationState::Hit1))
+            {
+                if (!playingSound)
+                {
+                    SOUND->PlayEffect(L"shooting_hit");
+                    playingSound = true;
+                }
+                return;
+            }
+            playingSound = false;
+            PlayingHitMotion = false;
+            pauseEndTime = currentTime + 0.5f;
+        }
+    }
+
+    if (!chaseState && !isPauseAfterPunch)
     {
         Rota(EnemyPos, PlayerPos);
         if (distance < ShootingRange)
@@ -228,25 +267,24 @@ void ShootingMonsterController::Update()
             {
                 if (!shootCount && animPlayingTime >= duration / 2.0f)
                 {
+                    if (!playingSound)
+                    {
+                        SOUND->PlayEffect(L"shooting_fire");
+                        playingSound = true;
+                    }
                     AddBullet(EnemyPos, direction);
                     shootCount = true;
                 }
                 return;
             }
+            isPauseAfterPunch = true;
+            pauseEndTime = currentTime + 1.0f;
+            playingSound = false;
             shootCount = false;
             shootState = false;
         }
         else
         {
-            int randomHit = rand() % 3;
-            if (PlayingHitMotion && randomHit == 0)
-            {
-                if (PlayCheckAnimating(AnimationState::Hit1))
-                {
-                    return;
-                }
-            }
-            PlayingHitMotion = false;
             Move(EnemyPos, PlayerPos, _speed);
         }
     }
@@ -304,9 +342,33 @@ bool ShootingMonsterController::PlayCheckAnimating(AnimationState state)
     return true; // 플레이 중
 }
 
-void ShootingMonsterController::ResetHit()
+void ShootingMonsterController::DropItem()
 {
-    hasDealing = false;
-    _hit = false;
-    _hitbox->GetCollider()->SetActive(false);
+    auto item = make_shared<GameObject>();
+    item->SetObjectType(ObjectType::Spoils);
+    item->GetOrAddTransform()->SetPosition(EnemyPos);
+    item->GetOrAddTransform()->SetLocalRotation(Vec3(XMConvertToRadians(90), 0, 0));
+    item->GetOrAddTransform()->SetScale(Vec3(0.05f));
+
+    std::cout << "item drop" << std::endl;
+    shared_ptr<Model> objModel = make_shared<Model>();
+    // Model
+    objModel->ReadModel(L"Enemy/cap");
+    objModel->ReadMaterial(L"Enemy/cap");
+
+    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
+
+    item->AddComponent(make_shared<ModelRenderer>(renderShader));
+    {
+        item->GetModelRenderer()->SetModel(objModel);
+        item->GetModelRenderer()->SetPass(7);
+    }
+
+    auto collider = make_shared<AABBBoxCollider>();
+    collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f)));
+    collider->SetOffset(Vec3(0.f, 0.5f, 0.f));
+    OCTREE->InsertCollider(collider);
+    item->AddComponent(collider);
+
+    CUR_SCENE->Add(item);
 }

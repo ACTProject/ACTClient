@@ -41,11 +41,12 @@ float4 PS(MeshOutput input) : SV_TARGET
     
     float distance = length(input.worldPosition - CameraPosition());
     float start = 60.f;
-    float end = 140.f;
+    float end = 160.f;
     float fogFactor = saturate((end - distance) / (end - start));
 	
-    float4 fogColor = float4(0.1, 0.6, 0.9, 1.0);
+    float4 fogColor = float4(0.1, 0.4, 0.8, 1.0);
     float maxFog = 0.0;
+
     if (fogFactor <= maxFog)
     {
         FinalColor.rgb = lerp(fogColor.rgb, FinalColor.rgb, maxFog);
@@ -59,10 +60,7 @@ float4 PS(MeshOutput input) : SV_TARGET
     if (FinalColor.a < 0.3f)
         discard;
     
-    return FinalColor;
-    
-	
-
+    return FinalColor;    	
 }
 
 float4 PS_NoShadow(MeshOutput input) : SV_TARGET
@@ -72,11 +70,12 @@ float4 PS_NoShadow(MeshOutput input) : SV_TARGET
     float distance = length(input.worldPosition - CameraPosition());
 	
     float start = 60.f;
-    float end = 140.f;
+    float end = 160.f;
     float fogFactor = saturate((end - distance) / (end - start));
 	
-    float4 fogColor = float4(0.1, 0.6, 0.9, 1.0);
+    float4 fogColor = float4(0.1, 0.4, 0.9, 1.0);
     float maxFog = 0.0;
+
     if (fogFactor <= maxFog)
     {
         color.rgb = lerp(fogColor.rgb, color.rgb, maxFog);
@@ -92,6 +91,67 @@ float4 PS_NoShadow(MeshOutput input) : SV_TARGET
     return color;
 }
 
+float4 PS_NoShadow_twink(MeshOutput input) : SV_TARGET
+{
+    float4 colors = DiffuseMap.Sample(LinearSampler, input.uv);
+    
+    float glow = abs(sin(gameTime * 2.0));
+    float4 color = colors + float4(glow, glow, glow, 1.0f) * 0.5;
+    
+    
+    float distance = length(input.worldPosition - CameraPosition());
+	
+    float start = 60.f;
+    float end = 160.f;
+    float fogFactor = saturate((end - distance) / (end - start));
+	
+    float4 fogColor = float4(0.1, 0.4, 0.9, 1.0);
+    float maxFog = 0.0;
+
+    if (fogFactor <= maxFog)
+    {
+        color.rgb = lerp(fogColor.rgb, color.rgb, maxFog);
+    }
+    else
+    {
+        color.rgb = lerp(fogColor.rgb, color.rgb, fogFactor);
+    }
+    
+    if (color.a < 0.3f)
+        discard;
+    
+    return color;
+}
+
+float4 PS_NoShadow_Notwink(MeshOutput input) : SV_TARGET
+{
+    float4 colors = DiffuseMap.Sample(LinearSampler, input.uv);
+    
+    float4 color = float4(colors.r + 0.1f, colors.g + 0.1f, colors.b + 0.1f, colors.a);
+    
+    float distance = length(input.worldPosition - CameraPosition());
+	
+    float start = 60.f;
+    float end = 160.f;
+    float fogFactor = saturate((end - distance) / (end - start));
+	
+    float4 fogColor = float4(0.1, 0.4, 0.9, 1.0);
+    float maxFog = 0.0;
+
+    if (fogFactor <= maxFog)
+    {
+        color.rgb = lerp(fogColor.rgb, color.rgb, maxFog);
+    }
+    else
+    {
+        color.rgb = lerp(fogColor.rgb, color.rgb, fogFactor);
+    }
+    
+    if (color.a < 0.3f)
+        discard;
+    
+    return color;
+}
 
 technique11 T0 // 인스턴싱 렌더링
 {
@@ -101,7 +161,12 @@ technique11 T0 // 인스턴싱 렌더링
 	PASS_VP(P3, VS_InstancingMesh, PS_NoShadow)
 	PASS_VP(P4, VS_InstancingModel, PS_NoShadow)
 	PASS_VP(P5, VS_InstancingAnimation, PS_NoShadow)
-
+	PASS_VP(P6, VS_InstancingMesh, PS_NoShadow_twink)
+	PASS_VP(P7, VS_InstancingModel, PS_NoShadow_twink)
+	PASS_VP(P8, VS_InstancingAnimation, PS_NoShadow_twink)
+	PASS_VP(P9, VS_InstancingMesh, PS_NoShadow_Notwink)
+	PASS_VP(P10, VS_InstancingModel, PS_NoShadow_Notwink)
+	PASS_VP(P11, VS_InstancingAnimation, PS_NoShadow_Notwink)
 };
 
 technique11 T1 // 싱글 렌더링
@@ -112,7 +177,12 @@ technique11 T1 // 싱글 렌더링
 	PASS_VP(P3, VS_Mesh, PS_NoShadow)
 	PASS_VP(P4, VS_Model, PS_NoShadow)
     PASS_VP(P5, VS_Animation, PS_NoShadow)
-
+	PASS_VP(P6, VS_Mesh, PS_NoShadow_twink)
+	PASS_VP(P7, VS_Model, PS_NoShadow_twink)
+    PASS_VP(P8, VS_Animation, PS_NoShadow_twink)
+	PASS_VP(P9, VS_Mesh, PS_NoShadow_Notwink)
+	PASS_VP(P10, VS_Model, PS_NoShadow_Notwink)
+    PASS_VP(P11, VS_Animation, PS_NoShadow_Notwink)
 };
 
 technique11 T2 // 와이어프레임 인스턴싱

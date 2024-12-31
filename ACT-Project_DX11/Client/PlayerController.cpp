@@ -15,6 +15,7 @@
 #include "Material.h"
 #include "Particle.h"
 #include "MeshRenderer.h"
+#include "DynamicObj.h"
 
 // Coroutine
 std::coroutine_handle<MyCoroutine::promise_type> currentCoroutine;
@@ -49,6 +50,9 @@ void PlayerController::Start()
     }
 
     std::cout << "PlayerController Start()" << std::endl;
+
+    // 로드 이벤트 등록.
+    SAVE->AddLoadEvent(std::bind(&PlayerController::LoadPlayer,this,std::placeholders::_1));
 }
 
 void PlayerController::Update()
@@ -62,9 +66,11 @@ void PlayerController::Update()
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
 
-    // 입력 처리
-    HandleInput();
-
+    if (_playerActive == true)
+    {
+        // 입력 처리
+        HandleInput();
+    }
     // 이동 처리
     HandleMovement();
 
@@ -80,10 +86,19 @@ void PlayerController::Update()
     // 점프 처리
     HandleJump();
 
+    // 히트 상태 처리
+    HandleHit();
+  
+    // 공중 공격 처리
+    HandleAirAttack();
+
     // 상호작용 처리
     HandleInteraction();
 
+    // 포탈 충돌 처리
     HandlePortal();
+
+
 }
 
 void PlayerController::HandleInput()
@@ -110,6 +125,10 @@ void PlayerController::HandleInput()
     // 점프 입력 처리
     if (INPUT->GetButton(KEY_TYPE::SPACE))
         Jump();
+
+    // 플레이어가 땅에 붙어있지 않으면 return 처리
+    if (!GetGameObject()->GetRigidbody()->GetIsGrounded())  
+        return;
 
     // 회피 입력 처리
     if (INPUT->GetButtonDown(KEY_TYPE::CTRL))
@@ -193,6 +212,8 @@ void PlayerController::HandleMovement()
                 continue;
             if (collider->GetGameObject()->GetHitBox() != nullptr)
                 continue;
+            if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
+                continue;
 
             float distance = 0.0f;
             if (collider->Intersects(ray, distance) && distance <= speed * dt)
@@ -221,6 +242,15 @@ void PlayerController::HandleMovement()
             CreateDustEffect();
             _dustTimer = 0.0f; // 타이머 초기화
         }
+
+        float _footstepInterval = (speed == _speed) ? _runningInterval : _walkingInterval;
+        _footstepTimer += DT;
+        if (_footstepTimer >= _footstepInterval)
+        {
+            SOUND->PlayEffect(L"player_footstep_sand");
+            _footstepTimer = 0.0f;
+        }
+
     }
 }
 
@@ -232,7 +262,7 @@ void PlayerController::HandleAnimations()
     if (_isBlocking)
         targetState = (_moveDir.LengthSquared() > 0.0f) ? AnimationState::BlockingCrawl : AnimationState::BlockingIdle;
 
-    if (!_isPlayeringAttackAnimation && !_isPlayeringDodgeAnimation && !_isPlayeringJumpAnimation)
+    if (!_isPlayeringAttackAnimation && !_isPlayeringDodgeAnimation && !_isPlayeringJumpAnimation && !_isPlayeringHitAnimation)
     {
         if (_currentAnimationState != targetState)
             SetAnimationState(targetState);
@@ -272,6 +302,26 @@ void PlayerController::HandleAttack()
         ResetToIdleState();
     }
 }
+void PlayerController::HandleAirAttack()
+{       
+    if (_isAirAttacking)
+        UpdateAirAttack();
+    else
+    {
+        _isHit = false;
+
+        if (_airhitbox)
+            _airhitbox->GetCollider()->SetActive(false);
+        return;
+    }
+
+}
+
+void PlayerController::HandleChargeAttack()
+{
+    //if (_isChargeAttacking)
+        //UpdateChargeAttack();
+}
 
 void PlayerController::HandleDodge()
 {
@@ -285,6 +335,14 @@ void PlayerController::HandleJump()
     {
         _isJumping = false;
         _isPlayeringJumpAnimation = false;
+    }
+
+    if (!_rigidbody->GetIsGrounded())
+    {
+        if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
+        {
+            StartAirAttack();
+        }
     }
 }
 
@@ -302,13 +360,57 @@ void PlayerController::HandleInteraction()
 
     for (const auto& collider : nearbyColliders)
     {
-        if (collider->GetGameObject()->GetObjectType() != ObjectType::Shell)
-            return;
-
         if (collider->Intersects(playerCollider) && INPUT->GetButtonDown(KEY_TYPE::E))
         {
-            InteractWithShell(collider->GetGameObject());
-            break;
+            // Shell 상호작용
+            if (collider->GetGameObject()->GetObjectType() == ObjectType::Shell)
+            {
+                InteractWithShell(collider->GetGameObject());
+                break;
+            }
+            // 전리품 상호작용
+            if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
+            {
+                _spoil++;
+                SOUND->PlayEffect(L"player_pickupItem");
+                OCTREE->RemoveCollider(collider);
+                CUR_SCENE->Remove(collider->GetGameObject());
+                TaskQueue::GetInstance().AddTask([collider]() {
+                    std::cout << "Destroying object in TaskQueue..." << std::endl;
+                    collider->GetGameObject()->Destroy();
+                });
+                std::cout << "spoil : " << _spoil << std::endl;
+                break;
+            }
+
+            if (collider->GetGameObject()->GetDynamicObj() == nullptr)
+                return;
+
+            // 힐 상호작용
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Heal)
+            {
+                HealPlayer();
+                
+                // 힐 오브젝트를 비활성화
+                collider->GetGameObject()->SetActive(false);
+                OCTREE->RemoveCollider(collider);
+
+                // 작업 큐에 활성화 작업 추가
+                constexpr float respawnTime = 5.0f; // 리스폰 대기 시간 (초)
+                TaskQueue::GetInstance().AddTask([collider]() {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(respawnTime * 1000)));                    
+                    collider->GetGameObject()->SetActive(true);
+                    OCTREE->InsertCollider(collider);
+                });
+                break;
+            }
+            // 세이브 상호작용
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
+            {
+                SAVE->OpenSaveUI();
+                _playerActive = !_playerActive;
+                break;
+            }
         }
         
     }
@@ -326,11 +428,18 @@ void PlayerController::HandlePortal()
 
         if (collider->Intersects(playerCollider))
         {
+            TaskQueue::GetInstance().Stop();
             GAME->ChangeScene(2);
             break;
         }
 
     }
+}
+
+void PlayerController::HandleHit()
+{
+    if (_hit)
+        UpdateHit();
 }
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
@@ -353,6 +462,13 @@ void PlayerController::StartAttack()
 
 	float duration = _attackDurations[_attackStage - 1] / _FPS;
 
+    {
+        SOUND->PlayEffect(L"player_atk1");
+        SOUND->PlayEffect(L"player_atk1_md");
+        //SOUND->SetVolume(L"player_atk1_md", 0.25f);
+        SOUND->PlayEffect(L"player_atk1_sw");
+    }
+
 	// 1타 공격 애니메이션 재생
 	PlayAttackAnimation(_attackStage);
 	MyCoroutine attackCoroutine = PlayAttackCoroutine(this, duration);
@@ -371,6 +487,38 @@ void PlayerController::ContinueAttack()
         _isHit = false;
         //std::wstring effectName = L"HitEffect" + std::to_wstring(_attackStage);
         _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+
+        {   // sound
+            switch (_attackStage)
+            {
+                case 2:
+                {
+                    SOUND->PlayEffect(L"player_atk2");
+                    SOUND->PlayEffect(L"player_atk2_md");
+                    //SOUND->SetVolume(L"player_atk2_md", 0.25f);
+                    SOUND->PlayEffect(L"player_atk2_sw");
+                    break;
+                }
+                case 3:
+                {
+                    SOUND->PlayEffect(L"player_atk3");
+                    SOUND->PlayEffect(L"player_atk3_md");
+                    //SOUND->SetVolume(L"player_atk3_md", 0.25f);
+                    SOUND->PlayEffect(L"player_atk3_sw");
+                    break;
+                }
+                case 4:
+                {
+                    SOUND->PlayEffect(L"player_atk4");
+                    SOUND->PlayEffect(L"player_atk4_md");
+                    //SOUND->SetVolume(L"player_atk4_md", 0.25f);
+                    SOUND->PlayEffect(L"player_atk4_sw");
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
 
 		// 다음 공격 애니메이션 재생
 		PlayAttackAnimation(_attackStage);
@@ -414,6 +562,27 @@ void PlayerController::UpdateHitBox()
         _transform->GetPosition() + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.0f
     );
 
+    CheckAtk(hitboxCollider);
+}
+
+void PlayerController::UpdateAirHitBox()
+{
+    if (!_airhitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _airhitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _airhitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _airhitbox->GetHitBox()->GetOffSet()
+    );
+
+    CheckAtk(hitboxCollider);
+}
+
+void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
+{
     vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
 
     for (const auto& collider : nearbyColliders)
@@ -435,8 +604,8 @@ void PlayerController::UpdateHitBox()
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
                     melleMonster->OnDamage(GetGameObject(), _atk);
-                    melleMonster->PlayingHitMotion = true;
-                    //
+
+                melleMonster->PlayingHitMotion = true;
                 break;
             }
             case MonoBehaviourType::ShootingMonster:
@@ -444,8 +613,9 @@ void PlayerController::UpdateHitBox()
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
                     shootingMonster->OnDamage(GetGameObject(), _atk);
-                    shootingMonster->PlayingHitMotion = true;
-                    //
+
+                shootingMonster->PlayingHitMotion = true;
+
                 break;
             }
             case MonoBehaviourType::FinalBossMonster_1:
@@ -477,12 +647,74 @@ void PlayerController::UpdateHitBox()
         }
     }
 }
+void PlayerController::StartAirAttack()
+{
+    if (_isAirAttacking)
+        return;
+
+    _isAirAttacking = true;
+    _airAttackTimer = 0.0f;
+    _airAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AirAttack));
+    _airAttackDuration /= _FPS;
+
+    _isPlayeringAirAttackAnimation = true;
+    SetAnimationState(AnimationState::AirAttack);
+}
+
+void PlayerController::UpdateAirAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _airAttackTimer += dt;
+
+    UpdateAirHitBox();
+
+    // 공중 공격 종료 처리
+    if (_airAttackTimer >= _airAttackDuration)
+    {
+        _isAirAttacking = false;
+        _isPlayeringAirAttackAnimation = false;
+        if (GetGameObject()->GetRigidbody()->GetIsGrounded())
+            SetAnimationState(AnimationState::Idle);
+        else
+            SetAnimationState(AnimationState::Jump);
+    }
+}
+
+void PlayerController::StartHit()
+{
+    if (_hit && _isAttacking)
+        return;
+    
+    _hit = true;
+    _hitTimer = 0.0f;
+    _hitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Hit1)); // 히트 동작 시간
+    _hitDuration /= _FPS;
+
+    _isPlayeringHitAnimation = true;
+    SetAnimationState(AnimationState::Hit1);
+}
+void PlayerController::UpdateHit()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _hitTimer += dt;
+
+    // 회피 종료 처리
+    if (_hitTimer >= _hitDuration)
+    {
+        _hit = false;
+        _isPlayeringHitAnimation = false;
+        SetAnimationState(AnimationState::Idle);
+    }
+}
 
 void PlayerController::StartDodge()
 {
     if (_isDodging)
         return;
 
+    SOUND->PlayEffect(L"player_dash");
     _isDodging = true;
     _dodgeTimer = 0.0f;
     _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Dodge)); // 회피 동작 시간
@@ -498,7 +730,6 @@ void PlayerController::StartDodge()
     _isPlayeringDodgeAnimation = true;
     SetAnimationState(AnimationState::Dodge);
 
-    // TODO (무적 상태)
     _isInvincible = true;
 }
 
@@ -519,6 +750,7 @@ void PlayerController::UpdateDodge()
         _isDodging = false;
         _isInvincible = false; // 무적 상태 해제
         _isPlayeringDodgeAnimation = false;
+        SetAnimationState(AnimationState::Idle);
     }
 }
 
@@ -527,6 +759,7 @@ void PlayerController::Jump()
     auto rigidbody = _rigidbody;
     if (rigidbody->GetIsGrounded())
     {
+        SOUND->PlayEffect(L"player_jump");
         _isJumping = true;
         auto velocity = rigidbody->GetVelocity();
         velocity.y = _jumpSpeed;
@@ -563,6 +796,24 @@ void PlayerController::CreateDustEffect()
     dustObject->GetParticle()->SetMaterial(_dustMaterial);
     dustObject->GetParticle()->Add(dustPosition, Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(dustObject);
+}
+
+void PlayerController::HealPlayer()
+{
+    if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+    {
+        _hp += _healHp;
+        _hp = std::clamp(_hp, 0.0f, _maxHp);
+
+        auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+        float hpRatio = _hp / _maxHp;
+        hpSlider->SetRatio(hpRatio);
+    }
+}
+
+void PlayerController::LoadPlayer(SaveData data)
+{
+    _transform->SetLocalPosition(data.playerPos);
 }
 
 void PlayerController::OnDeath()

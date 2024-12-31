@@ -46,7 +46,7 @@ void InstancingManager::RenderMeshRenderer(vector<shared_ptr<GameObject>>& gameO
             alphaObjects.push_back(gameObject);
             continue;
         }
-        
+
 		const InstanceID instanceId = gameObject->GetMeshRenderer()->GetInstanceID();
 		cache[instanceId].push_back(gameObject);
 	}

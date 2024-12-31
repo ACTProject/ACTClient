@@ -2,7 +2,7 @@
 #include "FinalBossMonsterFirstPhaseController.h"
 #include "PlayerController.h"
 
-#define AttackRange 7.0f
+#define AttackRange 8.0f
 
 void FinalBossMonsterFirstPhaseController::SetAnimationState(AnimationState state)
 {
@@ -35,7 +35,7 @@ bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState sta
 void FinalBossMonsterFirstPhaseController::Start()
 {
     Super::Start();
-    _maxHp = 500.f;
+    _maxHp = 100.f;
     _hp = 100.0f;
     _atk = 50.0f;
 
@@ -57,6 +57,7 @@ void FinalBossMonsterFirstPhaseController::Update()
         {
             return;
         }
+        _hpBar->SetActive(false);
         //_secondPhase->SetActive(true);
         //_secondPhase->GetTransform()->SetPosition(bossPos);
         Super::OnDeath();
@@ -69,7 +70,6 @@ void FinalBossMonsterFirstPhaseController::Update()
 
         return;
     }
-
     _FPS = static_cast<float>(TIME->GetFps());
 
     bossPos = _transform->GetPosition();
@@ -85,10 +85,10 @@ void FinalBossMonsterFirstPhaseController::Update()
 
 void FinalBossMonsterFirstPhaseController::Phase_1()
 {
-    if (isFirstTime) // 조우 ( 편의상 안되게 해놨음 )
+    if (!isFirstTime) // 조우 ( 편의상 안되게 해놨음 )
     {
         DEBUG->Log(L"Boss 1st Phase Start");
-        if (currentTime > 8.f) // 실행되는데 걸리는 시간으로 인한 애니메이션이 짤리는 현상때문에 설정
+        if (currentTime > 5.f) // 실행되는데 걸리는 시간으로 인한 애니메이션이 짤리는 현상때문에 설정
         {
             Appear();
             return;
@@ -99,7 +99,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
         }
     }
 
-    if (currentTime - lastTime > 1.0f)
+    if (currentTime - lastTime > 0.0f)
     {
         postpone = true;
     }
@@ -125,7 +125,6 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
                 }
                 else
                 {
-                    lastTime = currentTime;
                     randPunchType = rand() % 4;
                     patternCnt++;
                     punchState = false;
@@ -135,9 +134,9 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
             else
             {
                 Rota(bossPos, playerPos);
-                if (distance < 12.0f)
+                if (distance < 30.0f)
                 {
-                    Run(8.0f);
+                    Run(15.0f);
                 }
                 else
                 {
@@ -183,7 +182,8 @@ void FinalBossMonsterFirstPhaseController::Appear()
     {
         return;
     }
-    isFirstTime = false;
+    _hpBar->SetActive(true);
+    isFirstTime = true;
     lastTime = currentTime;
 }
 
@@ -273,8 +273,8 @@ void FinalBossMonsterFirstPhaseController::Fireball()
 {
     Rota(bossPos, playerPos);
     shootTime += DT;
-    float startTime = 208 / 60 - 0.6;
-    float endTime = 208 / 60 - 0.4;
+    float startTime = 208 / 60 - 1.2;
+    float endTime = 208 / 60 - 0.9;
     if ((shootTime <= endTime) && (shootTime > startTime))
     {
         float randX = rand() % 10 / 5.f; // 0 ~ 1.8
@@ -305,9 +305,8 @@ void FinalBossMonsterFirstPhaseController::makeBubble(Vec3 pos, Vec3 dir)
 
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
-    bulletComponent->SetDirection(dir);
+    bulletComponent->SetDirection({ dir.x,dir.y - 3.0f,dir.z });
     bulletComponent->SetSpeed(30.0f);
-    bulletComponent->Add(objModel);
 
     // HitBox
     shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
@@ -337,7 +336,7 @@ void FinalBossMonsterFirstPhaseController::UpdateHitBox()
     hitboxCollider->SetActive(true);
 
     _hitbox->GetTransform()->SetPosition(_transform->GetPosition()
-        + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 5.0f);
+        + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 8.0f);
 
     vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
 

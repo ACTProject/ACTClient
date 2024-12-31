@@ -23,6 +23,7 @@ enum class ComponentType : uint8
     Bullet,
     Raycast,
     Particle,
+    DynamicObject,
 	// ...
 	Script,
 

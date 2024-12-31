@@ -58,7 +58,8 @@ void ModelRenderer::RenderInstancing(shared_ptr<class InstancingBuffer>& buffer)
     // Shadow
      _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
      _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
-     //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
+     
+     _shader->PushTimeData(GameTimeDesc{ TIME->GetGameTime(),{0,0,0} });
 
 	const auto& meshes = _model->GetMeshes();
 	for (auto& mesh : meshes)
@@ -104,7 +105,8 @@ void ModelRenderer::RenderSingle()
     // Shadow
     _shader->PushShadowData(ShadowDesc{ SHADOW->GetShadowDesc() });
     _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
-    //_shader->GetSRV("ShadowColorTexture")->SetResource(GRAPHICS->GetShadowColorSRV().Get());
+    
+    _shader->PushTimeData(GameTimeDesc{ TIME->GetGameTime(),{0,0,0} });
 
 	// Bones
 	BoneDesc boneDesc;

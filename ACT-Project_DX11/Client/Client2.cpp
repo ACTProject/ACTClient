@@ -38,6 +38,7 @@
 #include "Frustum.h"
 #include "Shadow.h"
 #include "Particle.h"
+#include "SoundManager.h"
 
 void Client2::Init()
 {
@@ -391,17 +392,6 @@ void Client2::Init()
 
             CUR_SCENE->Add(obj);
         }
-
-        // Boss HP Slider
-        {
-            // 슬라이더 컴포넌트 추가.
-            auto obj = make_shared<GameObject>();
-            obj->SetObjectType(ObjectType::UI);
-            obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
-            obj->GetUI()->SetUIID("Boss");
-            CUR_SCENE->Add(obj);
-        }
     }
 
     //Option
@@ -618,7 +608,7 @@ void Client2::Init()
         shared_ptr<HitBox> hitbox = make_shared<HitBox>();
         hitboxGO->AddComponent(hitbox);
         hitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
-        hitbox->Craete(player, Vec3(1.5f));
+        hitbox->Craete(player, Vec3(2.0f));
         CUR_SCENE->Add(hitboxGO);
 
         // Player::PlayerScript
@@ -634,6 +624,11 @@ void Client2::Init()
 
         CUR_SCENE->Add(player);
         CUR_SCENE->SetPlayer(player);
+    }
+
+    // Enemy
+    {
+        ENEMY->CreateFinalBoss({ 30.0f,0.f,100.0f });
     }
    
 	// Skybox

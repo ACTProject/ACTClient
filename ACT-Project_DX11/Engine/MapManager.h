@@ -2,10 +2,16 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Terrain.h"
+#include "DynamicObj.h"
+
+
 
 struct MapObjDesc
 {
 public:
+    bool isAnim = false;
+    bool isDynamic = false;
+    DynamicType dynamicType = DynamicType::None;
     bool isMesh = false;
 	bool isCollision = true;
     bool isBillBoard = false;
@@ -20,7 +26,7 @@ public:
 	wstring filename;
 	wstring shadername;
 	MapObjDesc() = default;
-    MapObjDesc(wstring file, wstring sha, bool isColl = true, bool isMes = false, bool isbill = false) : filename(file), shadername(sha), isCollision(isColl), isMesh(isMes), isBillBoard(isbill) {};
+    MapObjDesc(wstring file, wstring sha, bool isanim = false, bool isdynamic = false, DynamicType type = DynamicType::None, bool isColl = true, bool isMes = false, bool isbill = false) : filename(file), shadername(sha),isAnim(isanim), isDynamic(isdynamic), dynamicType(type), isCollision(isColl), isMesh(isMes), isBillBoard(isbill) {};
 };
 
 struct MapModel
@@ -52,13 +58,15 @@ public:
 
     Matrix UpdateWaveMat();
 
-
+    void ClearMap();
 	// 파일에 맵 오브젝트 정보 추가하는 함수
 	bool ExportMapObj(wstring _fileName);
 	// 파일을 읽어 들이는 함수
 	bool ImportMapObj(wstring _fileName);
 private:
-    void ClearMap();
+    // 동적맵오브젝트 생성 함수.
+    void CreateDynamicObject(shared_ptr<GameObject> obj, DynamicType type);
+
     // 빌보드 요소 추가 함수
     void AddBillBoard(Vec3 pos);
 

@@ -28,12 +28,13 @@ public:										\
 #define MAP			GET_SINGLE(MapManager)
 #define COLLISION	GET_SINGLE(CollisionManager)
 #define ENEMY   	GET_SINGLE(EnemyManager)
+#define SOUND   	GET_SINGLE(SoundManager)
 #define OCTREE		GET_SINGLE(Octree)
 #define FRUSTUM		GET_SINGLE(Frustum)
 #define SHADOW      GET_SINGLE(Shadow)
 #define CUR_SCENE	SCENE->GetCurrentScene()
 #define UIMANAGER   GET_SINGLE(UIManager)
-
+#define SAVE        GET_SINGLE(SaveManager)
 
 #define MAX_RENDER_DISTANCE 150.f
 #define FRUSTUM_PADDING 5.0f

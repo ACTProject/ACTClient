@@ -4,7 +4,7 @@
 #include "Ui.h"
 #include "Material.h"
 
-void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
+void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
 {
     auto rangoon = make_shared<GameObject>();
     {
@@ -33,7 +33,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
         rangoon->AddComponent(ma2);
         {
             rangoon->GetModelAnimator()->SetModel(enemyModel);
-            rangoon->GetModelAnimator()->SetPass(2);
+            rangoon->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<MelleMonsterController> rangoonScript = make_shared<MelleMonsterController>();
 
@@ -49,8 +49,6 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
         hitbox->Craete(rangoon, Vec3(1.0f));
         CUR_SCENE->Add(hitboxGO);
         rangoonScript->SetHitBox(hitboxGO);
-
-        rangoon->AddComponent(rangoonScript);
 
         // Collider
         auto collider = make_shared<AABBBoxCollider>();
@@ -72,18 +70,23 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos)
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
         obj->AddComponent(make_shared<Slider>());
-        obj->GetUI()->Create(Vec3(), Vec2(65, 10), RESOURCES->Get<Material>(L"hpBar"));
-        obj->GetUI()->SetUIID("Enemy");
+        obj->GetUI()->Create(Vec3(), Vec2(50, 10), RESOURCES->Get<Material>(L"hpBar"));
+        obj->GetUI()->SetUIID("melle" + to_string(num));
         obj->GetUI()->SetOwner(rangoon);
-        obj->SetActive(true);
 
-        UIMANAGER->AddUI(obj->GetUI());
+        obj->SetActive(false);
+        rangoonScript->SetObjID("melle" + to_string(num));
+        rangoonScript->SetHpBar(obj);
+
+        rangoon->AddComponent(rangoonScript);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
         CUR_SCENE->Add(obj);
         CUR_SCENE->Add(rangoon);
     }
 }
 
-void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
+void EnemyManager::CreateShootingMonster(Vec3 SpawnPos, int num)
 {
     auto PistolShrimp = make_shared<GameObject>(); // Pistol_Shrimp
     {
@@ -109,25 +112,13 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
         PistolShrimp->AddComponent(ma2);
         {
             PistolShrimp->GetModelAnimator()->SetModel(enemyModel);
-            PistolShrimp->GetModelAnimator()->SetPass(2);
+            PistolShrimp->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<ShootingMonsterController> ShrimpScript = make_shared<ShootingMonsterController>();
 
         ShrimpScript->SetEnemy(enemyModel);
         ShrimpScript->SetModelAnimator(ma2);
-
         PistolShrimp->SetController(ShrimpScript);
-
-        //// HitBox
-        //shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
-        //shared_ptr<HitBox> hitbox = make_shared<HitBox>();
-        //hitboxGO->AddComponent(hitbox);
-        //hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
-        //hitbox->Craete(PistolShrimp, Vec3(1.0f));
-        //CUR_SCENE->Add(hitboxGO);
-        //ShrimpScript->SetHitBox(hitboxGO);
-
-        PistolShrimp->AddComponent(ShrimpScript);
 
         // Collider
         auto collider = make_shared<AABBBoxCollider>();
@@ -145,6 +136,23 @@ void EnemyManager::CreateShootingMonster(Vec3 SpawnPos)
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
 
+        // 슬라이더 컴포넌트 추가.
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->AddComponent(make_shared<Slider>());
+        obj->GetUI()->Create(Vec3(), Vec2(50, 10), RESOURCES->Get<Material>(L"hpBar"));
+        obj->GetUI()->SetUIID("pistol" + to_string(num));
+        obj->GetUI()->SetOwner(PistolShrimp);
+        obj->GetUI()->SetPositionUI({ 0, 8.0f, 0});
+
+        obj->SetActive(false);
+        ShrimpScript->SetObjID("pistol" + to_string(num));
+        ShrimpScript->SetHpBar(obj);
+
+        PistolShrimp->AddComponent(ShrimpScript);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
         CUR_SCENE->Add(PistolShrimp);
     }
 }
@@ -158,7 +166,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         FinalBoss->SetObjectType(ObjectType::Monster);
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
-        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0005f));
+        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0008f));
 
         shared_ptr<Model> enemyModel = make_shared<Model>();
         // Model
@@ -201,7 +209,7 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         FinalBoss->AddComponent(ma2);
         {
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
-            FinalBoss->GetModelAnimator()->SetPass(2);
+            FinalBoss->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<FinalBossMonsterFirstPhaseController> BossScript = make_shared<FinalBossMonsterFirstPhaseController>();
 
@@ -221,8 +229,6 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         CUR_SCENE->Add(hitboxGO);
         BossScript->SetHitBox(hitboxGO);
 
-        FinalBoss->AddComponent(BossScript);
-
         // Collider
         auto collider = make_shared<SphereCollider>();
         collider->SetRadius(2.5f);
@@ -239,6 +245,22 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
 
+        // 슬라이더 컴포넌트 추가.
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->AddComponent(make_shared<Slider>());
+        obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
+        obj->GetUI()->SetUIID("Boss");
+
+        obj->SetActive(false);
+        BossScript->SetObjID("Boss");
+        BossScript->SetHpBar(obj);
+
+        FinalBoss->AddComponent(BossScript);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
+
         CUR_SCENE->Add(FinalBoss);
     }
 }
@@ -252,7 +274,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
-        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0005f));
+        FinalBoss->GetOrAddTransform()->SetScale(Vec3(0.0008f));
 
         shared_ptr<Model> enemyModel = make_shared<Model>();
         // Model
@@ -295,7 +317,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         FinalBoss->AddComponent(ma2);
         {
             FinalBoss->GetModelAnimator()->SetModel(enemyModel);
-            FinalBoss->GetModelAnimator()->SetPass(2);
+            FinalBoss->GetModelAnimator()->SetPass(5);
         }
         shared_ptr<FinalBossMonsterSecondPhaseController> BossScript = make_shared<FinalBossMonsterSecondPhaseController>();
 
@@ -312,8 +334,6 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         CUR_SCENE->Add(hitboxGO);
         BossScript->SetHitBox(hitboxGO);
 
-        FinalBoss->AddComponent(BossScript);
-
         // Collider
         auto collider = make_shared<SphereCollider>();
         collider->SetRadius(2.5f);
@@ -329,6 +349,22 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 
         COLLISION->AddRigidbody(rigidBody);
         COLLISION->AddCollider(collider);
+
+        // 슬라이더 컴포넌트 추가.
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->AddComponent(make_shared<Slider>());
+        obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
+        obj->GetUI()->SetUIID("Boss");
+
+        obj->SetActive(false);
+        BossScript->SetObjID("Boss");
+        BossScript->SetHpBar(obj);
+
+        FinalBoss->AddComponent(BossScript);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
 
         CUR_SCENE->Add(FinalBoss);
     }

@@ -68,6 +68,7 @@ public:
     void PushWaveData(const WaveDesc& desc);
     void PushShadowData(const ShadowDesc& desc);
     void PushParticleData(const ParticleDesc& desc);
+    void PushTimeData(const GameTimeDesc& desc);
 
 private:
 	GlobalDesc _globalDesc;
@@ -117,6 +118,10 @@ private:
     ParticleDesc _particleDesc;
     shared_ptr<ConstantBuffer<ParticleDesc>> _particleBuffer;
     ComPtr<ID3DX11EffectConstantBuffer> _particleEffectBuffer;
+
+    GameTimeDesc _timeDesc;
+    shared_ptr<ConstantBuffer<GameTimeDesc>> _timeBuffer;
+    ComPtr<ID3DX11EffectConstantBuffer> _timeEffectBuffer;
 };
 
 class ShaderManager

@@ -37,6 +37,8 @@ public:
     vector<AnimTransform> GetAnimTransforms() { return _animTransforms; }
     vector<AnimTransform> _animTransforms;
 
+    shared_ptr<Model> GetModel() { return _model; }
+
 private:
 	void CreateTexture();
 	void CreateAnimationTransform(uint32 index);

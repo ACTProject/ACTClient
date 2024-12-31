@@ -19,6 +19,7 @@ class HitBox;
 class Bullet;
 class Raycast;
 class Particle;
+class DynamicObj;
 
 enum class ObjectType
 {
@@ -32,6 +33,7 @@ enum class ObjectType
     Portal,
     MapMesh,
     Map,
+    Spoils,
     // ...
 
     Unknown,
@@ -68,9 +70,12 @@ public:
 	shared_ptr<Bullet> GetBullet();
 	shared_ptr<Raycast> GetRaycast();
     shared_ptr<Particle> GetParticle();
+    shared_ptr<DynamicObj> GetDynamicObj();
 
 	shared_ptr<Transform> GetOrAddTransform();
 	void AddComponent(shared_ptr<Component> component);
+    void EraseComponent(shared_ptr<Component> component);
+
     void Destroy();
 
 	void SetLayerIndex(uint8 layer) { _layerIndex = layer; }
@@ -84,6 +89,7 @@ public:
 
     ObjectType GetObjectType() const { return _type; }
     void SetObjectType(ObjectType type) { _type = type; }
+
 
 
 protected:

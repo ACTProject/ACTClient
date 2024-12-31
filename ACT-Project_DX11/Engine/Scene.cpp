@@ -88,7 +88,7 @@ void Scene::Render()
 		camera->GetCamera()->SortGameObject();
  		camera->GetCamera()->Render_Forward();
 	}
-    if (DEBUG->IsDebugEnabled())
+    if (DEBUG->IsDebugEnabled() || (INPUT->GetButton(KEY_TYPE::CAPSLOCK)) || (INPUT->GetButton(KEY_TYPE::KEY_F2)))
     {
         Camera::S_MatView = mainCamera->GetViewMatrix();
         Camera::S_MatProjection = mainCamera->GetProjectionMatrix();
@@ -205,7 +205,10 @@ void Scene::UpdateUI()
         if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
         {
             if (gameObject->GetButton()->Picked(screenPt))
+            {
+                int id = gameObject->GetButton()->GetID();
                 gameObject->GetButton()->InvokeOnClicked();
+            }
         }
 
         gameObject->GetButton()->CheckKeyInput();

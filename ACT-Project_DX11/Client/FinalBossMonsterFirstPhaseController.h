@@ -38,6 +38,9 @@ public:
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void SetAnimationState(AnimationState state);
     void SetSecondPhase(shared_ptr<GameObject> secondPhase) { _secondPhase = secondPhase; }
+    void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
+    string GetObjID() { return objID; }
+    void SetObjID(string str) { objID = str; }
 
     void ResetToIdleState();
     void UpdateHitBox();
@@ -70,7 +73,7 @@ public:
     float distance;                     //플레이어 - 보스 거리
     Vec3 direction;                     //플레이어 - 보스 방향
     float hp;                  //보스 hp
-    float speed = 5.0f;
+    float speed = 10.0f;
 
     int patternCnt = 1;
     float shootTime = 0.0f;
@@ -101,6 +104,8 @@ public:
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;
+    shared_ptr<GameObject> _hpBar;
+    string objID;
 
     shared_ptr<GameObject> _secondPhase;
     AnimationState _currentAnimationState = AnimationState::Idle;
