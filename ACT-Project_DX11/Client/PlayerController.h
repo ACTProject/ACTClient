@@ -29,6 +29,7 @@ public:
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
     void SetDust(shared_ptr<Material> dust);
     void SetEffect(shared_ptr<GameObject> effect) { _effect = effect; }
+    void SetHitEffect(shared_ptr<GameObject> hitEffect) { _hitEffect = hitEffect; }
 
     // Handle
     void HandleInput();         // 입력 처리
@@ -51,6 +52,8 @@ public:
     void UpdateHitBox();
     void UpdateAirHitBox();
     void CheckAtk(shared_ptr<BaseCollider> hitboxCollider);
+    void SetAttackReaource();
+    void ActiveEffect(shared_ptr<GameObject> effect);
 
     // Air Attack
     void StartAirAttack();
@@ -98,6 +101,7 @@ private:
 	shared_ptr<GameObject> _airhitbox;
 	shared_ptr<Rigidbody> _rigidbody;
     shared_ptr<GameObject> _effect;
+    shared_ptr<GameObject> _hitEffect;
 
 private:
 	float _FPS;

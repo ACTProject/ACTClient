@@ -146,35 +146,15 @@ void PlayerController::HandleInput()
         if (!_isAttacking)
         {
             StartAttack();
-            Vec3 playerLook = _transform->GetLook();
-            Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
-            playerLook.Normalize();
-            cameraForward.Normalize();
-
-            float dot = playerLook.Dot(cameraForward);
-            if (dot > 0.0f)
-            {
-                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
-            }
-            else
-            {
-                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
-            }
-            Vec3 effectTransform = _transform->GetPosition();
-            effectTransform += _transform->GetLook() * 2.f;
-            effectTransform.y += 2.f;
-            _effect->GetOrAddTransform()->SetPosition(effectTransform);
-            _effect->GetParticle()->SetElapsedTime(0.0f);
+            SetAttackReaource();
+            ActiveEffect(_effect);
         }
             
         else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
         {
             ContinueAttack();
-            Vec3 effectTransform = _transform->GetPosition();
-            effectTransform += _transform->GetLook() * 2.f;
-            effectTransform.y += 2.f;
-            _effect->GetOrAddTransform()->SetPosition(effectTransform);
-            _effect->GetParticle()->SetElapsedTime(0.0f);
+            SetAttackReaource();
+            ActiveEffect(_effect);
         }
             
     }
@@ -611,7 +591,10 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
             {
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
+                {
                     melleMonster->OnDamage(GetGameObject(), _atk);
+                    ActiveEffect(_hitEffect);
+                }
 
                 melleMonster->PlayingHitMotion = true;
                 break;
@@ -620,7 +603,10 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
             {
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
+                {
                     shootingMonster->OnDamage(GetGameObject(), _atk);
+                    ActiveEffect(_hitEffect);
+                }
 
                 shootingMonster->PlayingHitMotion = true;
 
@@ -633,6 +619,7 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
                 {
                     FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
+                    ActiveEffect(_hitEffect);
                     //
                 }
                 break;
@@ -644,6 +631,7 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
                 {
                     FinalBossMonster->OnDamage(GetGameObject(), _atk);
                     FinalBossMonster->PlayingHitMotion = true;
+                    ActiveEffect(_hitEffect);
                     //
                 }
                 break;
@@ -654,6 +642,32 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
             _isHit = true;
         }
     }
+}
+void PlayerController::SetAttackReaource()
+{
+    float resourceCount = _attackStage % 2 - 0.5f;
+    Vec3 playerLook = _transform->GetLook();
+    Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
+    playerLook.Normalize();
+    cameraForward.Normalize();
+
+    float dot = playerLook.Dot(cameraForward) * resourceCount;
+    if (dot > 0.0f)
+    {
+        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+    }
+    else
+    {
+        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
+    }
+}
+void PlayerController::ActiveEffect(shared_ptr<GameObject> effect)
+{
+    Vec3 effectTransform = _transform->GetPosition();
+    effectTransform += _transform->GetLook() * 2.f;
+    effectTransform.y += 2.f;
+    effect->GetOrAddTransform()->SetPosition(effectTransform);
+    effect->GetParticle()->SetElapsedTime(0.0f);
 }
 void PlayerController::StartAirAttack()
 {
