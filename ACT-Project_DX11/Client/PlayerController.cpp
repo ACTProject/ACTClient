@@ -82,6 +82,9 @@ void PlayerController::Update()
     // 공격 처리
     HandleAttack();
 
+    // 차지 공격 처리
+    HandleChargeAttack();
+
     // 회피 처리
     HandleDodge();
 
@@ -102,7 +105,7 @@ void PlayerController::Update()
 
     SOUND->SetVolume(L"bgm", 0.3);
 
-    if (!_isAttacking && !_isAirAttacking)
+    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking)
         _isHit = false;
 }
 
@@ -116,6 +119,32 @@ void PlayerController::HandleInput()
     // 수직 축(y) 제거 (2D 평면에서 이동하도록)
     cameraForward.y = 0.0f;
     cameraRight.y = 0.0f;
+
+    // 차지 공격 처리
+    if (INPUT->GetButton(KEY_TYPE::Q))
+    {
+        if (!_isCharging && !_isChargeAttacking)
+        {
+            _isCharging = true; // 차지 시작
+            _chargeTimer = 0.0f; // 차지 시간 초기화
+        }
+        if (_isCharging)
+        {
+            // 차지 시간 누적
+            _chargeTimer += TIME->GetDeltaTime();
+
+            // 차지 시간이 임계값을 초과하면 차지 공격 발동
+            if (_chargeTimer >= _chargeThreshold)
+            {
+                _isCharging = false;
+                _chargeTimer = 0.0f;
+                StartChargeAttack();
+            }
+        }
+    }
+
+    if (_isChargeAttacking)
+        return;
 
     // 이동 입력 처리
     if (INPUT->GetButton(KEY_TYPE::W))
@@ -142,6 +171,7 @@ void PlayerController::HandleInput()
     // 공격 입력 처리
     if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
     {
+        // 기본 공격 Start
         if (_attackStage > 0)
             _currentDuration = _attackDurations[_attackStage - 1] / _FPS;
 
@@ -152,14 +182,14 @@ void PlayerController::HandleInput()
             SetAttackReaource();
             ActiveEffect(_effect);
         }
-            
+
         else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
         {
             ContinueAttack();
             SetAttackReaource();
             ActiveEffect(_effect);
         }
-            
+       
     }
 
     if (_isShellEquipped == true && INPUT->GetButton(KEY_TYPE::RBUTTON))
@@ -243,7 +273,12 @@ void PlayerController::HandleAnimations()
     if (_isBlocking)
         targetState = (_moveDir.LengthSquared() > 0.0f) ? AnimationState::BlockingCrawl : AnimationState::BlockingIdle;
 
-    if (!_isPlayeringAttackAnimation && !_isPlayeringDodgeAnimation && !_isPlayeringJumpAnimation && !_isPlayeringHitAnimation)
+    if (!_isPlayeringAttackAnimation    && 
+        !_isPlayeringDodgeAnimation     && 
+        !_isPlayeringJumpAnimation      && 
+        !_isPlayeringHitAnimation       &&
+        !_isPlayeringAirAttackAnimation &&
+        !_isPlayeringChargeAttackAnimation)
     {
         if (_currentAnimationState != targetState)
             SetAnimationState(targetState);
@@ -296,8 +331,14 @@ void PlayerController::HandleAirAttack()
 
 void PlayerController::HandleChargeAttack()
 {
-    //if (_isChargeAttacking)
-        //UpdateChargeAttack();
+    if (_isChargeAttacking)
+        UpdateChargeAttack();
+    else
+    {
+        if (_chargehitbox)
+            _chargehitbox->GetCollider()->SetActive(false);
+        return;
+    }
 }
 
 void PlayerController::HandleDodge()
@@ -553,7 +594,7 @@ void PlayerController::UpdateHitBox()
         _transform->GetPosition() + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.0f
     );
 
-    CheckAtk(hitboxCollider);
+    CheckAtk(hitboxCollider, _atk);
 }
 
 void PlayerController::UpdateAirHitBox()
@@ -569,10 +610,26 @@ void PlayerController::UpdateAirHitBox()
         _transform->GetPosition() + _airhitbox->GetHitBox()->GetOffSet()
     );
 
-    CheckAtk(hitboxCollider);
+    CheckAtk(hitboxCollider, _atk * 1.5f);
 }
 
-void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
+void PlayerController::UpdateChargeHitBox()
+{
+    if (!_chargehitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _chargehitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _chargehitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _chargehitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
+    );
+
+    CheckAtk(hitboxCollider, _atk * 2.f);
+}
+
+void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage)
 {
     vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
 
@@ -595,7 +652,7 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
                 {
-                    melleMonster->OnDamage(GetGameObject(), _atk);
+                    melleMonster->OnDamage(GetGameObject(), damage);
                     ActiveEffect(_hitEffect);
                 }
 
@@ -607,7 +664,7 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
                 {
-                    shootingMonster->OnDamage(GetGameObject(), _atk);
+                    shootingMonster->OnDamage(GetGameObject(), damage);
                     ActiveEffect(_hitEffect);
                 }
 
@@ -620,7 +677,7 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
                 auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterFirstPhaseController>(controller);
                 if (FinalBossMonster)
                 {
-                    FinalBossMonster->OnDamage(GetGameObject(), _atk);
+                    FinalBossMonster->OnDamage(GetGameObject(), damage);
                     FinalBossMonster->PlayingHitMotion = true;
                     ActiveEffect(_hitEffect);
                     //
@@ -632,7 +689,7 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
                 auto FinalBossMonster = dynamic_pointer_cast<FinalBossMonsterSecondPhaseController>(controller);
                 if (FinalBossMonster)
                 {
-                    FinalBossMonster->OnDamage(GetGameObject(), _atk);
+                    FinalBossMonster->OnDamage(GetGameObject(), damage);
                     FinalBossMonster->PlayingHitMotion = true;
                     ActiveEffect(_hitEffect);
                     //
@@ -708,6 +765,37 @@ void PlayerController::UpdateAirAttack()
             SetAnimationState(AnimationState::Idle);
         else
             SetAnimationState(AnimationState::Jump);
+    }
+}
+
+void PlayerController::StartChargeAttack()
+{
+    _isChargeAttacking = true;
+    _chargeAttackTimer = 0.0f;
+    _chargeAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AtkChargeThrust));
+    _chargeAttackDuration /= _FPS;
+
+    _isPlayeringChargeAttackAnimation = true;
+    SetAnimationState(AnimationState::AtkChargeThrust);
+}
+
+void PlayerController::UpdateChargeAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _chargeAttackTimer += dt;
+
+    UpdateChargeHitBox();
+
+    // 차지 공격 종료 처리
+    if (_chargeAttackTimer >= _chargeAttackDuration)
+    {
+        _isChargeAttacking = false;
+        _isPlayeringChargeAttackAnimation = false;
+        _isCharging = false;
+        _chargeTimer = 0.f;
+        _chargeAttackTimer = 0.f;
+        SetAnimationState(AnimationState::Idle);
     }
 }
 

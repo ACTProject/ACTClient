@@ -594,6 +594,14 @@ void Client::Init()
     airhitbox->AirHitCraete(player, Vec3(3.5f, 1.0f, 3.5f));
     CUR_SCENE->Add(airhitboxGO);
 
+    // ChargeHitBox
+    shared_ptr<GameObject> chargehitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> chargehitbox = make_shared<HitBox>();
+    chargehitboxGO->AddComponent(chargehitbox);
+    chargehitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    chargehitbox->Craete(player, Vec3(2.f, 1.f, 2.f));
+    CUR_SCENE->Add(chargehitboxGO);
+
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
     dustMaterial->SetShader(particleShader);
@@ -695,6 +703,7 @@ void Client::Init()
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
 	playerScript->SetAirHitBox(airhitboxGO);
+	playerScript->SetChargeHitBox(chargehitboxGO);
     playerScript->SetDust(dustMaterial);
     playerScript->SetBubble(bubbleMaterial);
     playerScript->SetEffect(effectObj);

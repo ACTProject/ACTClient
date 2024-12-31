@@ -19,7 +19,7 @@ void HitBox::Craete(shared_ptr<GameObject> target, Vec3 size)
 
 	// 타겟의 Look벡터를 기준으로 히트박스 위치 설정
 	auto targetTransform = target->GetTransform();
-	go->GetOrAddTransform()->SetPosition(targetTransform->GetPosition() +_offset + targetTransform->GetLook() * 1.8f);
+	go->GetOrAddTransform()->SetPosition(targetTransform->GetPosition() +_offset + targetTransform->GetLook() * 2.5f);
 
 	// Collider
 	auto collider = make_shared<AABBBoxCollider>();
