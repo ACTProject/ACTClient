@@ -33,11 +33,15 @@ public:
 
     void SetLifetime(float lifetime) { _lifetime = lifetime; }
     void SetfadeStart(float fadeStart) { _fadeStart = fadeStart; }
+    void SetElapsedTime(float elapsedTime) { _elapsedTime = elapsedTime; }
     void SetReuse(float isReusable) { _isReusable = isReusable; }
 
     void SetMaterial(shared_ptr<Material> material) { _material = material; }
     void SetPass(uint8 pass) { _pass = pass; }
     shared_ptr<Material> GetMaterial() { return _material; }
+
+    float GetElapsedTime() { return _elapsedTime; }
+    float GetLifetime() { return _lifetime; }
 
 private:
     vector<VertexParticle> _vertices;
