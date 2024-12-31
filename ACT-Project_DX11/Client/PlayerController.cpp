@@ -801,7 +801,7 @@ void PlayerController::UpdateChargeAttack()
 
 void PlayerController::StartHit()
 {
-    if (_hit && _isAttacking)
+    if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking)
         return;
 
     int randNum = rand() % 4 + 1;

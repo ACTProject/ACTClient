@@ -53,9 +53,9 @@ public:
 	void PlayAttackAnimation(int stage);
     void UpdateHitBox();
     void UpdateAirHitBox();
+    void UpdateChargeHitBox();
     void SetAttackReaource();
     void ActiveEffect(shared_ptr<GameObject> effect);
-    void UpdateChargeHitBox();
     void CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage);
 
     // Air Attack
