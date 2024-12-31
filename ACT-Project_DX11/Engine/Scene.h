@@ -35,6 +35,9 @@ public:
 	void CheckPhysicCollision();
 
     vector<shared_ptr<GameObject>> FrustumCulling(const vector<shared_ptr<GameObject>>& allObject);
+
+    bool GetMissionClear() { return _missionClear; };
+    void SetMissionClear(bool mission) { _missionClear = mission; };
 private:
 	unordered_set<shared_ptr<GameObject>> _objects;
 	// Cache Camera
@@ -46,5 +49,6 @@ private:
     shared_ptr<GameObject> _enemy;
 	shared_ptr<GameObject> _terrain;	// currentTerrain
 
+    bool _missionClear = false;
 };
 

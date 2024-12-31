@@ -511,34 +511,7 @@ void Client::Init()
         shell->AddComponent(collider);
         CUR_SCENE->Add(shell);
     }
-    // Portal
-    {
-        auto portal = make_shared<GameObject>();
-        portal->SetObjectType(ObjectType::Portal);
-        portal->GetOrAddTransform()->SetPosition(Vec3(424.f, 1.f, 335.f));
-        portal->GetOrAddTransform()->SetScale(Vec3(0.01f));
-
-        shared_ptr<Model> portalModel = make_shared<Model>();
-        {
-            portalModel->ReadModel(L"Shell/Shell_SodaCan");
-            portalModel->ReadMaterial(L"Shell/Shell_SodaCan");
-        }
-
-        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
-        portal->AddComponent(mr);
-        {
-            portal->GetModelRenderer()->SetModel(portalModel);
-            portal->GetModelRenderer()->SetPass(1);
-        }
-
-        // Collider
-        auto collider = make_shared<AABBBoxCollider>();
-        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(10.f, 10.f, 3.f)));
-        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
-        OCTREE->InsertCollider(collider);
-        portal->AddComponent(collider);
-        CUR_SCENE->Add(portal);
-    }
+    
     // player
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
@@ -876,7 +849,203 @@ void Client::Init()
         CUR_SCENE->SetTerrain(obj);
         CUR_SCENE->Add(obj);
     }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"0", L"..\\Resources\\Textures\\UI\\0.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"0", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"1", L"..\\Resources\\Textures\\UI\\1.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"1", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"2", L"..\\Resources\\Textures\\UI\\2.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"2", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"3", L"..\\Resources\\Textures\\UI\\3.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"3", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"4", L"..\\Resources\\Textures\\UI\\4.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"4", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"5", L"..\\Resources\\Textures\\UI\\5.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"5", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"6", L"..\\Resources\\Textures\\UI\\6.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"6", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"7", L"..\\Resources\\Textures\\UI\\7.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"7", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"8", L"..\\Resources\\Textures\\UI\\8.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"8", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"9", L"..\\Resources\\Textures\\UI\\9.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"9", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"10", L"..\\Resources\\Textures\\UI\\10.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"10", material);
+    }
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"slash", L"..\\Resources\\Textures\\UI\\slash.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"slash", material);
+    }
 
+
+    {
+        // 점수판 ui
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->AddComponent(make_shared<Ui>(UiType::NONE));
+        obj->GetUI()->SetUIID("MissionUI");
+        obj->SetLayerIndex(Layer_UI);
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-310, -190, 0));
+        obj->GetOrAddTransform()->SetScale(Vec3(14, 14, 1));
+        obj->AddComponent(make_shared<MeshRenderer>());
+        obj->SetLayerIndex(Layer_UI);
+        {
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"0"));
+        }
+        {
+            auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+            obj->GetMeshRenderer()->SetMesh(mesh);
+            obj->GetMeshRenderer()->SetAlphaBlend(true);
+            obj->GetMeshRenderer()->SetPass(0);
+        }
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
+    }
+    {
+        // 점수판 ui
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->SetLayerIndex(Layer_UI);
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-290, -190, 0));
+        obj->GetOrAddTransform()->SetScale(Vec3(12, 12, 1));
+        obj->AddComponent(make_shared<MeshRenderer>());
+        obj->SetLayerIndex(Layer_UI);
+        {
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"slash"));
+        }
+        {
+            auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+            obj->GetMeshRenderer()->SetMesh(mesh);
+            obj->GetMeshRenderer()->SetAlphaBlend(true);
+            obj->GetMeshRenderer()->SetPass(0);
+        }
+        CUR_SCENE->Add(obj);
+    }
+    {
+        // 점수판 ui
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->SetLayerIndex(Layer_UI);
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-270, -190, 0));
+        obj->GetOrAddTransform()->SetScale(Vec3(16, 14, 1));
+        obj->AddComponent(make_shared<MeshRenderer>());
+        obj->SetLayerIndex(Layer_UI);
+        {
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"10"));
+        }
+        {
+            auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+            obj->GetMeshRenderer()->SetMesh(mesh);
+            obj->GetMeshRenderer()->SetAlphaBlend(true);
+            obj->GetMeshRenderer()->SetPass(0);
+        }
+        CUR_SCENE->Add(obj);
+    }
 
 }
 

@@ -57,8 +57,8 @@ float4 PS(MeshOutput input) : SV_TARGET
     }
     
     
-    if (FinalColor.a < 0.3f)
-        discard;
+    //if (FinalColor.a < 0.3f)
+    //    discard;
     
     return FinalColor;    	
 }

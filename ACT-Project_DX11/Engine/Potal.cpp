@@ -17,5 +17,9 @@ void Potal::Start()
 
 void Potal::Update()
 {
-
+    bool isClear = CUR_SCENE->GetMissionClear();
+    if (isClear == true)
+    {
+        GetGameObject()->SetActive(false);
+    }
 }

@@ -366,6 +366,18 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetObjectType() == ObjectType::Spoils)
             {
                 _spoil++;
+
+                if (_spoil <= 10)
+                {
+                    auto ui = UIMANAGER->GetUi("MissionUI");
+                    wstring wstr = to_wstring(_spoil);
+                    ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
+                    if (_spoil == 1)
+                    {
+                        CUR_SCENE->SetMissionClear(true);
+                    }
+                }
+
                 SOUND->PlayEffect(L"player_pickupItem");
                 OCTREE->RemoveCollider(collider);
                 CUR_SCENE->Remove(collider->GetGameObject());
@@ -427,7 +439,8 @@ void PlayerController::HandlePortal()
         if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
             return;
 
-        if (collider->Intersects(playerCollider))
+        bool isClear = CUR_SCENE->GetMissionClear();
+        if (collider->Intersects(playerCollider) && isClear)
         {
             SOUND->PlayEffect(L"player_enterPortal");
             TaskQueue::GetInstance().Stop();
