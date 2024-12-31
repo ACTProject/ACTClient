@@ -41,7 +41,7 @@ void SoundManager::Play(wstring key, bool loop)
         std::cout << "Failed to play sound: " << &key << std::endl;
         return;
     }
-
+    m_ActiveChannels.push_back(channel);
     channel->setPaused(false); // 일시정지 해제
     m_ChannelMap[key] = channel;
 }
@@ -79,6 +79,7 @@ void SoundManager::PlayFromTime(wstring key, float startTime, bool loop)
         return;
     }
 
+    m_ActiveChannels.push_back(channel);
     channel->setPaused(false);
     m_ChannelMap[key] = channel;
 
@@ -135,6 +136,22 @@ void   SoundManager::Paused(wstring key, bool pause) // 토클기능 on or off
     }
 }
 
+void SoundManager::PauseAll(bool pause)
+{
+    for (FMOD::Channel* channel : m_ActiveChannels)
+    {
+        if (channel)
+        {
+            bool isPlaying = false;
+            channel->isPlaying(&isPlaying);
+            if (isPlaying)
+            {
+                channel->setPaused(pause);
+            }
+        }
+    }
+}
+
 void   SoundManager::Stop(wstring key)
 {
     auto it = m_ChannelMap.find(key);
@@ -175,6 +192,22 @@ void   SoundManager::Release()
 
 void   SoundManager::Update()
 {
+    for (auto it = m_ActiveChannels.begin(); it != m_ActiveChannels.end();)
+    {
+        FMOD::Channel* channel = *it;
+        if (channel)
+        {
+            bool isPlaying = false;
+            channel->isPlaying(&isPlaying);
+            if (!isPlaying)
+            {
+                it = m_ActiveChannels.erase(it); // 재생 종료된 채널 제거
+                continue;
+            }
+        }
+        ++it;
+    }
+
     if (m_pSystem) {
         m_pSystem->update();
     }

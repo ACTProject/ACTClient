@@ -114,7 +114,7 @@ void MelleMonsterController::Start()
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
 
-    std::cout << "MelleMonsterController Start()" << std::endl;
+    std::cout << "MelleMonsterController [" << objID << "] Start()" << std::endl;
 }
 
 void MelleMonsterController::Update()
@@ -155,7 +155,7 @@ void MelleMonsterController::Update()
         });
         
         Super::OnDeath();
-        std::cout << "Melle Monster Died!" << std::endl;
+        std::cout << "Melle Monster [" << objID << "] Died!" << std::endl;
 
         return;
     }

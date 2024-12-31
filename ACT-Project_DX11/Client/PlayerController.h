@@ -169,8 +169,8 @@ private:
 
     // Sound
     float _footstepTimer = 0.0f;
-    float _runningInterval = 0.3f;
-    float _walkingInterval = 0.2f;
+    float _runningInterval = 0.2f;
+    float _walkingInterval = 0.3f;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }

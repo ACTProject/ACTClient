@@ -243,14 +243,13 @@ void PlayerController::HandleMovement()
             _dustTimer = 0.0f; // 타이머 초기화
         }
 
-        float _footstepInterval = (speed == _speed) ? _runningInterval : _walkingInterval;
+        float _footstepInterval = (speed == _speed) ? _walkingInterval : _runningInterval;
         _footstepTimer += DT;
         if (_footstepTimer >= _footstepInterval)
         {
             SOUND->PlayEffect(L"player_footstep_sand");
             _footstepTimer = 0.0f;
         }
-
     }
 }
 
@@ -411,6 +410,13 @@ void PlayerController::HandleInteraction()
                 _playerActive = !_playerActive;
                 break;
             }
+            // 점프대
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
+            {
+                SOUND->PlayEffect(L"player_springSound");
+                SOUND->PlayEffect(L"player_scream");
+                break;
+            }
         }
         
     }
@@ -428,6 +434,7 @@ void PlayerController::HandlePortal()
 
         if (collider->Intersects(playerCollider))
         {
+            SOUND->PlayEffect(L"player_enterPortal");
             TaskQueue::GetInstance().Stop();
             GAME->ChangeScene(2);
             break;
@@ -446,6 +453,7 @@ void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];
     _player->AddDummyBoneAndAttach(shellModel, L"Shell", L"ShellDummy");
 
+    SOUND->PlayEffect(L"player_shellConfirm");
     // Shell 오브젝트 비활성화
     gameObject->SetActive(false);
 
@@ -685,7 +693,10 @@ void PlayerController::StartHit()
 {
     if (_hit && _isAttacking)
         return;
-    
+
+    int randNum = rand() % 4 + 1;
+    wstring s = L"player_hit" + std::to_wstring(rand() % 4 + 1);
+    SOUND->PlayEffect(s);
     _hit = true;
     _hitTimer = 0.0f;
     _hitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Hit1)); // 히트 동작 시간
