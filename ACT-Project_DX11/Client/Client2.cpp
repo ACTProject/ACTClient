@@ -47,6 +47,7 @@ void Client2::Init()
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
     shared_ptr<Shader> effectShader = make_shared<Shader>(L"EffectTest.fx");
+    shared_ptr<Shader> bubbleShader = make_shared<Shader>(L"Bubble.fx");
 
     // SOUND
     {
@@ -561,8 +562,8 @@ void Client2::Init()
 
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
+    dustMaterial->SetShader(particleShader);
     {
-        dustMaterial->SetShader(particleShader);
         auto texture = RESOURCES->Load<Texture>(L"Dust", L"..\\Resources\\Textures\\Effect\\dust+.png");
         dustMaterial->SetDiffuseMap(texture);
         MaterialDesc& desc = dustMaterial->GetMaterialDesc();
@@ -570,6 +571,19 @@ void Client2::Init()
         desc.diffuse = Vec4(1.f);
         desc.specular = Vec4(1.f);
         RESOURCES->Add(L"Dust", dustMaterial);
+    }
+
+    // Bubble Material 생성
+    shared_ptr<Material> bubbleMaterial = make_shared<Material>();
+    bubbleMaterial->SetShader(bubbleShader);
+    {
+        auto texture = RESOURCES->Load<Texture>(L"Bubble", L"..\\Resources\\Textures\\Effect\\bubble.png");
+        bubbleMaterial->SetDiffuseMap(texture);
+        MaterialDesc& desc = bubbleMaterial->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Bubble", bubbleMaterial);
     }
 
     // Effect obj  
@@ -728,6 +742,7 @@ void Client2::Init()
         playerScript->SetHitBox(hitboxGO);
         playerScript->SetAirHitBox(airhitboxGO);
         playerScript->SetDust(dustMaterial);
+        playerScript->SetBubble(bubbleMaterial);
         playerScript->SetEffect(effectObj);
         playerScript->SetHitEffect(hitObj);
 
