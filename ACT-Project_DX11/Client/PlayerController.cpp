@@ -69,26 +69,28 @@ void PlayerController::Update()
     {
         // 입력 처리
         HandleInput();
-
-        // 이동 처리
-        HandleMovement();
-
-        // 애니메이션 처리
-        HandleAnimations();
-
-        // 공격 처리
-        HandleAttack();
-
-        // 회피 처리
-        HandleDodge();
-
-        // 점프 처리
-        HandleJump();
-
-        // 히트 상태 처리
-        HandleHit();
     }
+    // 이동 처리
+    HandleMovement();
+
+    // 애니메이션 처리
+    HandleAnimations();
+
+    // 공격 처리
+    HandleAttack();
+
+    // 회피 처리
+    HandleDodge();
+
+    // 점프 처리
+    HandleJump();
+
+    // 히트 상태 처리
+    HandleHit();
   
+    // 공중 공격 처리
+    HandleAirAttack();
+
     // 상호작용 처리
     HandleInteraction();
 
@@ -122,6 +124,10 @@ void PlayerController::HandleInput()
     // 점프 입력 처리
     if (INPUT->GetButton(KEY_TYPE::SPACE))
         Jump();
+
+    // 플레이어가 땅에 붙어있지 않으면 return 처리
+    if (!GetGameObject()->GetRigidbody()->GetIsGrounded())  
+        return;
 
     // 회피 입력 처리
     if (INPUT->GetButtonDown(KEY_TYPE::CTRL))
@@ -262,6 +268,26 @@ void PlayerController::HandleAttack()
         ResetToIdleState();
     }
 }
+void PlayerController::HandleAirAttack()
+{       
+    if (_isAirAttacking)
+        UpdateAirAttack();
+    else
+    {
+        _isHit = false;
+
+        if (_airhitbox)
+            _airhitbox->GetCollider()->SetActive(false);
+        return;
+    }
+
+}
+
+void PlayerController::HandleChargeAttack()
+{
+    //if (_isChargeAttacking)
+        //UpdateChargeAttack();
+}
 
 void PlayerController::HandleDodge()
 {
@@ -275,6 +301,14 @@ void PlayerController::HandleJump()
     {
         _isJumping = false;
         _isPlayeringJumpAnimation = false;
+    }
+
+    if (!_rigidbody->GetIsGrounded())
+    {
+        if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
+        {
+            StartAirAttack();
+        }
     }
 }
 
@@ -493,6 +527,27 @@ void PlayerController::UpdateHitBox()
         _transform->GetPosition() + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.0f
     );
 
+    CheckAtk(hitboxCollider);
+}
+
+void PlayerController::UpdateAirHitBox()
+{
+    if (!_airhitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _airhitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _airhitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _airhitbox->GetHitBox()->GetOffSet()
+    );
+
+    CheckAtk(hitboxCollider);
+}
+
+void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
+{
     vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
 
     for (const auto& collider : nearbyColliders)
@@ -514,7 +569,7 @@ void PlayerController::UpdateHitBox()
                 auto melleMonster = dynamic_pointer_cast<MelleMonsterController>(controller);
                 if (melleMonster)
                     melleMonster->OnDamage(GetGameObject(), _atk);
-                    melleMonster->PlayingHitMotion = true;
+                melleMonster->PlayingHitMotion = true;
                 break;
             }
             case MonoBehaviourType::ShootingMonster:
@@ -522,7 +577,7 @@ void PlayerController::UpdateHitBox()
                 auto shootingMonster = dynamic_pointer_cast<ShootingMonsterController>(controller);
                 if (shootingMonster)
                     shootingMonster->OnDamage(GetGameObject(), _atk);
-                    shootingMonster->PlayingHitMotion = true;
+                shootingMonster->PlayingHitMotion = true;
                 break;
             }
             case MonoBehaviourType::FinalBossMonster_1:
@@ -550,6 +605,39 @@ void PlayerController::UpdateHitBox()
             }
             _isHit = true;
         }
+    }
+}
+void PlayerController::StartAirAttack()
+{
+    if (_isAirAttacking)
+        return;
+
+    _isAirAttacking = true;
+    _airAttackTimer = 0.0f;
+    _airAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AirAttack));
+    _airAttackDuration /= _FPS;
+
+    _isPlayeringAirAttackAnimation = true;
+    SetAnimationState(AnimationState::AirAttack);
+}
+
+void PlayerController::UpdateAirAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _airAttackTimer += dt;
+
+    UpdateAirHitBox();
+
+    // 공중 공격 종료 처리
+    if (_airAttackTimer >= _airAttackDuration)
+    {
+        _isAirAttacking = false;
+        _isPlayeringAirAttackAnimation = false;
+        if (GetGameObject()->GetRigidbody()->GetIsGrounded())
+            SetAnimationState(AnimationState::Idle);
+        else
+            SetAnimationState(AnimationState::Jump);
     }
 }
 
@@ -622,6 +710,7 @@ void PlayerController::UpdateDodge()
         _isDodging = false;
         _isInvincible = false; // 무적 상태 해제
         _isPlayeringDodgeAnimation = false;
+        SetAnimationState(AnimationState::Idle);
     }
 }
 

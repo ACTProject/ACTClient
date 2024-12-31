@@ -129,8 +129,5 @@ void CreatureController::OnDeath()
     COLLISION->Remove(GetGameObject());
     CUR_SCENE->Remove(GetGameObject());
 
-    TaskQueue::GetInstance().AddTask([this]() {
-        std::cout << "Destroying object in TaskQueue..." << std::endl;
-        GetGameObject()->Destroy();
-        });
+    GetGameObject()->Destroy();
 }

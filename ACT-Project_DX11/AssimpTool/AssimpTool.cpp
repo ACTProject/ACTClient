@@ -98,6 +98,16 @@ void AssimpTool::Init()
             converter->ReadAssetFile(L"Player/Crab_Hit.fbx");
             converter->ExportAnimationData(L"Player/Crab_Hit");
         }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Player/Crab_AirAttack.fbx");
+            converter->ExportAnimationData(L"Player/Crab_AirAttack");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Player/Crab_AtkChargeThrust.fbx");
+            converter->ExportAnimationData(L"Player/Crab_AtkChargeThrust");
+        }
 	}
     
 	// Enemy

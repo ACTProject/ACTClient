@@ -589,6 +589,8 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_BlockingCrawl", AnimationState::BlockingCrawl);
         playerModel->ReadAnimation(L"Player/Crab_Death", AnimationState::Die);
         playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
+        playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
+        playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -633,6 +635,14 @@ void Client::Init()
 	hitbox->Craete(player, Vec3(2.0f));
 	CUR_SCENE->Add(hitboxGO);
 
+    // AirHitBox
+    shared_ptr<GameObject> airhitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> airhitbox = make_shared<HitBox>();
+    airhitboxGO->AddComponent(airhitbox);
+    airhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    airhitbox->AirHitCraete(player, Vec3(3.5f, 1.0f, 3.5f));
+    CUR_SCENE->Add(airhitboxGO);
+
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
     dustMaterial->SetShader(particleShader);
@@ -651,6 +661,7 @@ void Client::Init()
 	playerScript->SetPlayer(playerModel);
 	playerScript->SetModelAnimator(ma1);
 	playerScript->SetHitBox(hitboxGO);
+	playerScript->SetAirHitBox(airhitboxGO);
     playerScript->SetDust(dustMaterial);
 
     player->SetController(playerScript);
@@ -665,24 +676,24 @@ void Client::Init()
         int cnt = 0;
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
-        ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
+        //ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
+        //ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
 
-        cnt = 0;
-        ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
+        //cnt = 0;
+        //ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 290.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
+        //ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
 
     }
     
