@@ -50,6 +50,7 @@ public:
 	void PlayAttackAnimation(int stage);
     void UpdateHitBox();
     void UpdateAirHitBox();
+    void UpdateChargeHitBox();
     void CheckAtk(shared_ptr<BaseCollider> hitboxCollider);
 
     // Air Attack
@@ -57,8 +58,8 @@ public:
     void UpdateAirAttack();
 
     // Charge Attack
-    //void StartChargeAttack();
-    //void UpdateChargeAttack();
+    void StartChargeAttack();
+    void UpdateChargeAttack();
 
     // Shell
     bool GetIsBlocking() { return _isBlocking; }
@@ -96,6 +97,7 @@ private:
     shared_ptr<GameObject> _camera;
 	shared_ptr<GameObject> _hitbox;
 	shared_ptr<GameObject> _airhitbox;
+	shared_ptr<GameObject> _chargehitbox;
 	shared_ptr<Rigidbody> _rigidbody;
     shared_ptr<GameObject> _effect;
 
@@ -125,10 +127,12 @@ private:
     float _airAttackTimer = 0.0f;     
 
     // ChargeAttack
+    bool _isCharging = false;              // 차지 중인지 여부
     bool _isChargeAttacking = false;       // 차지 공격 중인지 여부
     float _chargeAttackDuration = 0.0f;    // 차지 공격 동작 시간
-    float _chargeAttackTimer = 0.0f;
-
+    float _chargeThreshold = 0.5f;         // 차지 공격 발동 시간 (초)
+    float _chargeTimer = 0.0f;             // 차지 발동 시간 (초)
+    float _chargeAttackTimer = 0.0f;       // 차지 공격 발동 시간
     // AttackMove
     float _attackMoveDistance = 1.0f;  // 공격 시 이동할 거리
     float _attackMoveSpeed = 2.0f;     // 이동 속도

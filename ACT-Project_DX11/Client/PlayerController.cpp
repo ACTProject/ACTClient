@@ -81,6 +81,9 @@ void PlayerController::Update()
     // 공격 처리
     HandleAttack();
 
+    // 차지 공격 처리
+    HandleChargeAttack();
+
     // 회피 처리
     HandleDodge();
 
@@ -99,7 +102,7 @@ void PlayerController::Update()
     // 포탈 충돌 처리
     HandlePortal();
 
-    if (!_isAttacking && !_isAirAttacking)
+    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking)
         _isHit = false;
 }
 
@@ -136,49 +139,77 @@ void PlayerController::HandleInput()
     if (INPUT->GetButtonDown(KEY_TYPE::CTRL))
         StartDodge();
 
-    // 공격 입력 처리
-    if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
+    // 차지 공격 처리
+    if (INPUT->GetButton(KEY_TYPE::LBUTTON))
     {
-        if (_attackStage > 0)
-            _currentDuration = _attackDurations[_attackStage - 1] / _FPS;
-
-        _isPlayeringAttackAnimation = true;
-        if (!_isAttacking)
+        if (!_isCharging)
         {
-            StartAttack();
-            Vec3 playerLook = _transform->GetLook();
-            Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
-            playerLook.Normalize();
-            cameraForward.Normalize();
+            _isCharging = true; // 차지 시작
+            _chargeTimer = 0.0f; // 차지 시간 초기화
+            StartChargeAttack();
+        }       
+        // 차지 시간 누적
+        _chargeTimer += TIME->GetDeltaTime();        
 
-            float dot = playerLook.Dot(cameraForward);
-            if (dot > 0.0f)
-            {
-                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
-            }
-            else
-            {
-                _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
-            }
-            Vec3 effectTransform = _transform->GetPosition();
-            effectTransform += _transform->GetLook() * 2.f;
-            effectTransform.y += 2.f;
-            _effect->GetOrAddTransform()->SetPosition(effectTransform);
-            _effect->GetParticle()->SetElapsedTime(0.0f);
-        }
-            
-        else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
+        // 차지 시간이 임계값을 초과하면 차지 공격 발동
+        if (_chargeTimer >= _chargeThreshold)
         {
-            ContinueAttack();
-            Vec3 effectTransform = _transform->GetPosition();
-            effectTransform += _transform->GetLook() * 2.f;
-            effectTransform.y += 2.f;
-            _effect->GetOrAddTransform()->SetPosition(effectTransform);
-            _effect->GetParticle()->SetElapsedTime(0.0f);
+            _isChargeAttacking = true;
+            _isCharging = false;
+            _chargeTimer = 0.0f;
         }
-            
     }
+    // 공격 입력 처리
+    else if (INPUT->GetButtonUp(KEY_TYPE::LBUTTON) && !_isChargeAttacking)
+    {
+        // 차지가 미완성 상태에서 버튼을 떼면 기본 공격 발동
+        if (_isCharging && _chargeTimer > 0.0f && _chargeTimer < _chargeThreshold)
+        {
+            // 버튼을 떼면 차지 초기화
+            _isCharging = false;
+            _chargeTimer = 0.0f;
 
+            // 기본 공격 Start
+            if (_attackStage > 0)
+                _currentDuration = _attackDurations[_attackStage - 1] / _FPS;
+
+            _isPlayeringAttackAnimation = true;
+            if (!_isAttacking)
+            {
+                StartAttack();
+                Vec3 playerLook = _transform->GetLook();
+                Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
+                playerLook.Normalize();
+                cameraForward.Normalize();
+
+                float dot = playerLook.Dot(cameraForward);
+                if (dot > 0.0f)
+                {
+                    _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+                }
+                else
+                {
+                    _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
+                }
+                Vec3 effectTransform = _transform->GetPosition();
+                effectTransform += _transform->GetLook() * 2.f;
+                effectTransform.y += 2.f;
+                _effect->GetOrAddTransform()->SetPosition(effectTransform);
+                _effect->GetParticle()->SetElapsedTime(0.0f);
+            }
+
+            else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
+            {
+                ContinueAttack();
+                Vec3 effectTransform = _transform->GetPosition();
+                effectTransform += _transform->GetLook() * 2.f;
+                effectTransform.y += 2.f;
+                _effect->GetOrAddTransform()->SetPosition(effectTransform);
+                _effect->GetParticle()->SetElapsedTime(0.0f);
+            }
+        }
+    }
+    
     if (_isShellEquipped == true && INPUT->GetButton(KEY_TYPE::RBUTTON))
         _isBlocking = true;
     else
@@ -260,7 +291,12 @@ void PlayerController::HandleAnimations()
     if (_isBlocking)
         targetState = (_moveDir.LengthSquared() > 0.0f) ? AnimationState::BlockingCrawl : AnimationState::BlockingIdle;
 
-    if (!_isPlayeringAttackAnimation && !_isPlayeringDodgeAnimation && !_isPlayeringJumpAnimation && !_isPlayeringHitAnimation)
+    if (!_isPlayeringAttackAnimation    && 
+        !_isPlayeringDodgeAnimation     && 
+        !_isPlayeringJumpAnimation      && 
+        !_isPlayeringHitAnimation       &&
+        !_isPlayeringAirAttackAnimation &&
+        !_isPlayeringChargeAttackAnimation)
     {
         if (_currentAnimationState != targetState)
             SetAnimationState(targetState);
@@ -313,8 +349,14 @@ void PlayerController::HandleAirAttack()
 
 void PlayerController::HandleChargeAttack()
 {
-    //if (_isChargeAttacking)
-        //UpdateChargeAttack();
+    if (_isCharging || _isChargeAttacking)
+        UpdateChargeAttack();
+    else
+    {
+        if (_chargehitbox)
+            _chargehitbox->GetCollider()->SetActive(false);
+        return;
+    }
 }
 
 void PlayerController::HandleDodge()
@@ -584,6 +626,22 @@ void PlayerController::UpdateAirHitBox()
     CheckAtk(hitboxCollider);
 }
 
+void PlayerController::UpdateChargeHitBox()
+{
+    if (!_chargehitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _chargehitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _chargehitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _chargehitbox->GetHitBox()->GetOffSet()
+    );
+
+    CheckAtk(hitboxCollider);
+}
+
 void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider)
 {
     vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
@@ -681,6 +739,37 @@ void PlayerController::UpdateAirAttack()
             SetAnimationState(AnimationState::Idle);
         else
             SetAnimationState(AnimationState::Jump);
+    }
+}
+
+void PlayerController::StartChargeAttack()
+{
+    if (_isChargeAttacking)
+        return;
+
+    _chargeAttackTimer = 0.0f;
+    _chargeAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AtkChargeThrust));
+    _chargeAttackDuration /= _FPS;
+
+    _chargeThreshold = _chargeAttackDuration / 1.5f;
+    _isPlayeringChargeAttackAnimation = true;
+    SetAnimationState(AnimationState::AtkChargeThrust);
+}
+
+void PlayerController::UpdateChargeAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _chargeAttackTimer += dt;
+
+    UpdateChargeHitBox();
+
+    // 차지 공격 종료 처리
+    if (_chargeAttackTimer >= _chargeAttackDuration)
+    {
+        _isChargeAttacking = false;
+        _isPlayeringChargeAttackAnimation = false;
+        SetAnimationState(AnimationState::Idle);
     }
 }
 
