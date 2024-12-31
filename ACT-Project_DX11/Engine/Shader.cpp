@@ -477,3 +477,17 @@ void Shader::PushParticleData(const ParticleDesc& desc)
     _particleBuffer->CopyData(_particleDesc);
     _particleEffectBuffer->SetConstantBuffer(_particleBuffer->GetComPtr().Get());
 }
+
+void Shader::PushTimeData(const GameTimeDesc& desc)
+{
+    if (_timeEffectBuffer == nullptr)
+    {
+        _timeBuffer = make_shared<ConstantBuffer<GameTimeDesc>>();
+        _timeBuffer->Create();
+        _timeEffectBuffer = GetConstantBuffer("GameTimeBuffer");
+    }
+
+    _timeDesc = desc;
+    _timeBuffer->CopyData(_timeDesc);
+    _timeEffectBuffer->SetConstantBuffer(_timeBuffer->GetComPtr().Get());
+}

@@ -205,7 +205,10 @@ void Scene::UpdateUI()
         if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
         {
             if (gameObject->GetButton()->Picked(screenPt))
+            {
+                int id = gameObject->GetButton()->GetID();
                 gameObject->GetButton()->InvokeOnClicked();
+            }
         }
 
         gameObject->GetButton()->CheckKeyInput();

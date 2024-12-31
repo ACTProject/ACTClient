@@ -97,6 +97,8 @@ void Shadow::RenderShadow()
             continue;
         if (obj->GetSkybox() != nullptr)
             continue;
+        if (obj->GetDynamicObj() != nullptr && obj->GetDynamicObj()->GetDynamicType() == DynamicType::Heal)
+            continue;
         
 
         // 게임오브젝트를 그림자맵에 렌더링
