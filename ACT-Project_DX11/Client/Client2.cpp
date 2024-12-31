@@ -643,7 +643,7 @@ void Client2::Init()
         auto player = make_shared<GameObject>();
 
         player->SetObjectType(ObjectType::Player);
-        player->GetOrAddTransform()->SetPosition(Vec3(30, 0, 30));
+        player->GetOrAddTransform()->SetPosition(Vec3(3, 0, 3));
         player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
         player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
