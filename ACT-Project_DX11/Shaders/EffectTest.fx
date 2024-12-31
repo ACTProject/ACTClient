@@ -6,6 +6,7 @@ cbuffer ParticleBuffer
     float time;
     float lifetime;
     float fadeStart;
+    float delaytime;
 };
 struct VertexInput
 {
@@ -24,28 +25,52 @@ V_OUT VS(VertexInput input)
 {
     V_OUT output;
 
-    // 월드 변환
     float4 position = mul(input.position, W);
 
-    // 카메라 방향 계산
     float3 up = float3(0, 1, 0);
-    float3 forward = normalize(position.xyz - CameraPosition()); // 카메라를 향한 빌보드 방향
+    float3 forward = position.xyz - CameraPosition();
     float3 right = normalize(cross(up, forward));
 
-    // 옆에서 보이는 문제 보정 (lerp 사용)
-    float3 adjustedForward = lerp(forward, float3(0, 0, 1), 0.5f); // 0.5f는 보정 강도 (0~1)
-    float3 adjustedRight = normalize(cross(up, adjustedForward));
+    // 시간에 따른 스케일 증가 계산
+    float lifetimeRatio = saturate(time / lifetime)/2; // 0.0 ~ 1.0
+    float scaleFactor = 1.0f + lifetimeRatio; // 1.0에서 시작해 2.0까지 커짐
 
-    // 빌보드 평면 조정
-    position.xyz += (input.uv.x - 0.5f) * adjustedRight * input.scale.x;
-    position.xyz += (1.0f - input.uv.y - 0.5f) * up * input.scale.y;
+    float2 currentScale = input.scale * scaleFactor;
+
+    // 위치 변환에 스케일 적용
+    position.xyz += (input.uv.x - 0.5f) * right * currentScale.x;
+    position.xyz += (1.0f - input.uv.y - 0.5f) * up * currentScale.y;
     position.w = 1.0f;
 
-    // 카메라 변환
     output.position = mul(mul(position, V), P);
+
     output.uv = input.uv;
 
     return output;
+    //V_OUT output;
+
+    //// 월드 변환
+    //float4 position = mul(input.position, W);
+
+    //// 카메라 방향 계산
+    //float3 up = float3(0, 1, 0);
+    //float3 forward = normalize(position.xyz - CameraPosition()); // 카메라를 향한 빌보드 방향
+    //float3 right = normalize(cross(up, forward));
+
+    //// 옆에서 보이는 문제 보정 (lerp 사용)
+    //float3 adjustedForward = lerp(forward, float3(0, 0, 1), 0.5f); // 0.5f는 보정 강도 (0~1)
+    //float3 adjustedRight = normalize(cross(up, adjustedForward));
+
+    //// 빌보드 평면 조정
+    //position.xyz += (input.uv.x - 0.5f) * adjustedRight * input.scale.x;
+    //position.xyz += (1.0f - input.uv.y - 0.5f) * up * input.scale.y;
+    //position.w = 1.0f;
+
+    //// 카메라 변환
+    //output.position = mul(mul(position, V), P);
+    //output.uv = input.uv;
+
+    //return output;
 }
 
 float4 PS(V_OUT input) : SV_Target
@@ -53,6 +78,11 @@ float4 PS(V_OUT input) : SV_Target
     float4 color = DiffuseMap.Sample(LinearSampler, input.uv);
    
     float alpha = 1.0f;
+    
+    if(time < delaytime)
+    {
+        discard;
+    }
     if (time > fadeStart)
     {
         alpha = 1.0f - (time - fadeStart) / (lifetime - fadeStart);

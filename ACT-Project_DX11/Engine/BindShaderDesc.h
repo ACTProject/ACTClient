@@ -120,7 +120,7 @@ struct ParticleDesc
     float time;
     float lifetime;
     float fadeStart;
-    float padding;
+    float delaytime;
 };
 
 struct GameTimeDesc

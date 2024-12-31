@@ -6,6 +6,7 @@ cbuffer ParticleBuffer
     float time;
     float lifetime;
     float fadeStart;
+    float delaytime;
 };
 struct VertexInput
 {

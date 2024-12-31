@@ -585,12 +585,38 @@ void Client2::Init()
         effectObj->GetParticle()->SetMaterial(material);
     }
 
-    effectObj->GetParticle()->SetLifetime(1.f);
+    effectObj->GetParticle()->SetDelayTime(0.4f);
+    effectObj->GetParticle()->SetLifetime(0.7f);
     effectObj->GetParticle()->SetfadeStart(0.6f);
     effectObj->GetParticle()->SetReuse(true);
     effectObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(5.0f, 5.0f));
     CUR_SCENE->Add(effectObj);
 
+
+    // HitEffect
+    auto hitObj = make_shared<GameObject>();
+    hitObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+    hitObj->AddComponent(make_shared<Particle>());
+    {
+        //material
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(effectShader);
+        auto texture = RESOURCES->Load<Texture>(L"HitEffect", L"..\\Resources\\Textures\\Effect\\HitEffect.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"HitEffect", material);
+
+        hitObj->GetParticle()->SetMaterial(material);
+    }
+
+    hitObj->GetParticle()->SetLifetime(0.3f);
+    hitObj->GetParticle()->SetfadeStart(0.15f);
+    hitObj->GetParticle()->SetReuse(true);
+    hitObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(5.0f, 5.0f));
+    CUR_SCENE->Add(hitObj);
 
 	// Player
     {
@@ -672,6 +698,7 @@ void Client2::Init()
         playerScript->SetHitBox(hitboxGO);
         playerScript->SetDust(dustMaterial);
         playerScript->SetEffect(effectObj);
+        playerScript->SetHitEffect(hitObj);
 
         player->SetController(playerScript);
         player->AddComponent(playerScript);

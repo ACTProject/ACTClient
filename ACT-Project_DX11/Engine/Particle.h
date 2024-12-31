@@ -34,6 +34,8 @@ public:
     void SetLifetime(float lifetime) { _lifetime = lifetime; }
     void SetfadeStart(float fadeStart) { _fadeStart = fadeStart; }
     void SetElapsedTime(float elapsedTime) { _elapsedTime = elapsedTime; }
+    void SetDelayTime(float delaytime) { _delaytime = delaytime; }
+
     void SetReuse(float isReusable) { _isReusable = isReusable; }
 
     void SetMaterial(shared_ptr<Material> material) { _material = material; }
@@ -59,6 +61,7 @@ private:
 
     float _lifetime = 3.0f;
     float _fadeStart = 1.0f;
+    float _delaytime = 0.f;
 
     bool _isReusable = false;
 };
