@@ -98,6 +98,12 @@ public:
     bool _isDead = false;
     bool _hit = false;
 
+    // Sound
+    float _footstepTimer = 0.0f;
+    int _footstepType = 1;
+    float _runningInterval = 0.15f;
+    float _walkingInterval = 0.3f;
+
     shared_ptr<Model> _enemy;
     shared_ptr<GameObject> _hitbox;
     shared_ptr<ModelRenderer> _modelRenderer;

@@ -16,13 +16,15 @@ public:
     void SetVolume(wstring key, float volume);
     void Update();
     void Paused(wstring key, bool pause);
+    void PauseAll(bool pause);
     void PlayEffect(wstring key);
 
 private:
     SoundManager(const SoundManager&) = delete;
     SoundManager& operator=(const SoundManager&) = delete;
 
-    FMOD::System* m_pSystem = nullptr;
+    FMOD::System* m_pSystem = nullptr; 
+    std::vector<FMOD::Channel*> m_ActiveChannels;
     std::map<wstring, FMOD::Sound*> m_SoundMap;
     std::map<wstring, FMOD::Channel*> m_ChannelMap;
 };

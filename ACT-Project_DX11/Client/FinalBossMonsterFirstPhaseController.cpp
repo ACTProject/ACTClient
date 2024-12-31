@@ -189,6 +189,21 @@ void FinalBossMonsterFirstPhaseController::Appear()
 
 void FinalBossMonsterFirstPhaseController::Move(Vec3 objPos, Vec3 targetPos, float speed)
 {
+    _footstepTimer += DT;
+    if (_footstepTimer >= _walkingInterval)
+    {
+        wstring w = L"boss_footstep" + std::to_wstring(_footstepType);
+        SOUND->PlayEffect(w);
+        if (_footstepType < 4)
+        {
+            _footstepType++;
+        }
+        else
+        {
+            _footstepType = 1;
+        }
+        _footstepTimer = 0.0f;
+    }
     SetAnimationState(AnimationState::Walk);
 
     Vec3 direction = targetPos - objPos;
@@ -241,6 +256,22 @@ void FinalBossMonsterFirstPhaseController::Rota(Vec3 objPos, Vec3 targetPos)
 
 void FinalBossMonsterFirstPhaseController::Run(float speed)
 {
+    _footstepTimer += DT;
+    if (_footstepTimer >= _runningInterval)
+    {
+        wstring w = L"boss_footstep" + std::to_wstring(_footstepType);
+        SOUND->PlayEffect(w);
+        if (_footstepType < 4)
+        {
+            _footstepType++;
+        }
+        else
+        {
+            _footstepType = 1;
+        }
+        _footstepTimer = 0.0f;
+    }
+
     SetAnimationState(AnimationState::Run);
 
     Vec3 direction = playerPos - bossPos;
@@ -260,6 +291,10 @@ void FinalBossMonsterFirstPhaseController::Punch()
     if (animPlayingTime >= duration / 2.0f)
     {
         UpdateHitBox();
+        {
+            wstring s = L"boss_punch" + std::to_wstring(randPunchType + 1);
+            SOUND->PlayEffect(s);
+        }
     }
     if (_hit && !hasDealing)
     {

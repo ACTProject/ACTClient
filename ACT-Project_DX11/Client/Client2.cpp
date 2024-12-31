@@ -47,6 +47,33 @@ void Client2::Init()
 	shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
 
+    // SOUND
+    {
+        SOUND->Stop(L"bgm");
+        SOUND->Load(L"bgm", L"bgm/boss_bgm");
+
+        //Boss
+        {
+            SOUND->Load(L"boss_footstep1", L"monster/boss/sbc_footstep1");
+            SOUND->Load(L"boss_footstep2", L"monster/boss/sbc_footstep2");
+            SOUND->Load(L"boss_footstep3", L"monster/boss/sbc_footstep3");
+            SOUND->Load(L"boss_footstep4", L"monster/boss/sbc_footstep4");
+            SOUND->Load(L"boss_punch1", L"monster/boss/punch1");
+            SOUND->Load(L"boss_punch2", L"monster/boss/punch2");
+            SOUND->Load(L"boss_punch3", L"monster/boss/punch3");
+            SOUND->Load(L"boss_punch4", L"monster/boss/punch4");
+            SOUND->Load(L"boss_bubbleMove", L"monster/boss/bubbleBulletMovement");
+            SOUND->Load(L"boss_bubbleSpawn", L"monster/boss/bubbleBulletSpawn");
+            SOUND->Load(L"boss_moenySpawn", L"monster/boss/moenyFire");
+            SOUND->Load(L"boss_moenyMove", L"monster/boss/moneyMovement");
+            SOUND->Load(L"boss_slam", L"monster/boss/slam");
+        }
+
+
+        SOUND->SetVolume(L"bgm", 0.1f);
+        SOUND->Play(L"bgm", true);
+    }
+
 	// Camera
 	{
 		auto camera = make_shared<GameObject>();
@@ -567,6 +594,7 @@ void Client2::Init()
             playerModel->ReadAnimation(L"Player/Crab_BlockingIdle", AnimationState::BlockingIdle);
             playerModel->ReadAnimation(L"Player/Crab_BlockingCrawl", AnimationState::BlockingCrawl);
             playerModel->ReadAnimation(L"Player/Crab_Death", AnimationState::Die);
+            playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
 
             // Weapon
             shared_ptr<Model> weaponModel = make_shared<Model>();

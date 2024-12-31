@@ -145,7 +145,7 @@ void ShootingMonsterController::Start()
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
 
-    std::cout << "ShootingMonsterController Start()" << std::endl;
+    std::cout << "ShootingMonsterController [" << objID << "] Start()" << std::endl;
 }
 
 void ShootingMonsterController::Update()
@@ -171,7 +171,7 @@ void ShootingMonsterController::Update()
             _hpBar->Destroy();
         });
         Super::OnDeath();
-        std::cout << "Shooting Monster Died!" << std::endl;
+        std::cout << "Shooting Monster [" << objID << "] Died!" << std::endl;
 
         return;
     }

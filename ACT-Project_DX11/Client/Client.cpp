@@ -53,12 +53,7 @@ void Client::Init()
 
     // Sound
     {
-        SOUND->Release();
-        if (!SOUND->Initialize())
-        {
-            std::cout << "Failed to init SoundManager" << std::endl;
-        }
-
+        SOUND->Stop(L"bgm");
         SOUND->Load(L"bgm", L"bgm/Scene1_bgm");
 
         //Player
@@ -86,6 +81,14 @@ void Client::Init()
             SOUND->Load(L"player_jump", L"player/jump");
             SOUND->Load(L"player_excite", L"player/Player_Excite_1");
             SOUND->Load(L"player_pickupItem", L"player/Pickup_Item_World");
+            SOUND->Load(L"player_shellConfirm", L"player/ShellConfirm");
+            SOUND->Load(L"player_springSound", L"player/ImpactShell_SpringL11");
+            SOUND->Load(L"player_impachShell", L"player/ImpactShell_MetalL11");
+            SOUND->Load(L"player_scream", L"player/Kril_Fall_Die_1");
+            SOUND->Load(L"player_enterPortal", L"player/MSS Enter New");
+            SOUND->Load(L"player_landing", L"player/Player Land Sand Sweetner 1");
+            SOUND->Load(L"player_heal", L"player/Heal");
+            SOUND->Load(L"player_warning", L"player/Health Low Warning");
         }
 
         //Melle
@@ -107,7 +110,8 @@ void Client::Init()
             SOUND->Load(L"shooting_hit", L"monster/shooting/hit");
         }
 
-        SOUND->Play(L"bgm", true);
+        SOUND->Play(L"bgm", true); 
+        SOUND->SetVolume(L"bgm", 0.5);
     }
 
 	// Camera
@@ -566,7 +570,8 @@ void Client::Init()
     }
     // player
     player->SetObjectType(ObjectType::Player);
-	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
+	//player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
+    player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 0.5f));
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
 	player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
