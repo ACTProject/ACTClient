@@ -25,6 +25,7 @@ public:
 	void SetAnimationState(AnimationState state);
 	void InteractWithShell(shared_ptr<GameObject> gameObject);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
+	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airhitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
     void SetDust(shared_ptr<Material> dust);
 
@@ -32,6 +33,8 @@ public:
     void HandleInput();         // 입력 처리
     void HandleAnimations();    // 애니메이션 관리
     void HandleAttack();        // 공격 처리
+    void HandleAirAttack();     // 공중 공격 상태 처리
+    void HandleChargeAttack();     // 차지 공격 상태 처리
     void HandleDodge();         // 회피 처리
     void HandleJump();          // 점프 처리
     void HandleMovement();      // 이동 처리
@@ -45,6 +48,16 @@ public:
 	void ContinueAttack();
 	void PlayAttackAnimation(int stage);
     void UpdateHitBox();
+    void UpdateAirHitBox();
+    void CheckAtk(shared_ptr<BaseCollider> hitboxCollider);
+
+    // Air Attack
+    void StartAirAttack();
+    void UpdateAirAttack();
+
+    // Charge Attack
+    //void StartChargeAttack();
+    //void UpdateChargeAttack();
 
     // Shell
     bool GetIsBlocking() { return _isBlocking; }
@@ -81,6 +94,7 @@ private:
 	shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _camera;
 	shared_ptr<GameObject> _hitbox;
+	shared_ptr<GameObject> _airhitbox;
 	shared_ptr<Rigidbody> _rigidbody;
 
 private:
@@ -102,6 +116,16 @@ private:
 	float _attackDurations[4];      // 각 공격 애니메이션 지속 시간 (초)
 	float _currentDuration = 0.f;
     bool _isHit = false;            // 공격을 Hit 시켰는지 여부
+
+    // AirAttack
+    bool _isAirAttacking = false;       // 공중 공격 중인지 여부
+    float _airAttackDuration = 0.0f;    // 공중 공격 동작 시간
+    float _airAttackTimer = 0.0f;     
+
+    // ChargeAttack
+    bool _isChargeAttacking = false;       // 차지 공격 중인지 여부
+    float _chargeAttackDuration = 0.0f;    // 차지 공격 동작 시간
+    float _chargeAttackTimer = 0.0f;
 
     // AttackMove
     float _attackMoveDistance = 1.0f;  // 공격 시 이동할 거리
@@ -129,6 +153,8 @@ private:
     // 애니메이션 진행 중인지 여부
 	bool _isPlayeringJumpAnimation = false; // 점프 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringAttackAnimation = false; // 공격 애니메이션 재생 중인지 여부 확인
+	bool _isPlayeringAirAttackAnimation = false; // 공중 공격 애니메이션 재생 중인지 여부 확인
+	bool _isPlayeringChargeAttackAnimation = false; // 차지 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringDodgeAnimation = false; // 회피 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringHitAnimation = false; // 히트 애니메이션 재생 중인지 여부 확인
 
