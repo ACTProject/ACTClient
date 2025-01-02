@@ -73,13 +73,6 @@ WPARAM Game::Run(uint32 num)
         ///////////////////
     }
 
-    RECT rect;
-    POINT lt, rb;
-    GetClientRect(g_hWnd, &rect);
-    lt.x = rect.left; lt.y = rect.top; rb.x = rect.right; rb.y = rect.bottom;
-    ClientToScreen(g_hWnd, &lt); ClientToScreen(g_hWnd, &rb);
-    rect.left = lt.x; rect.top = lt.y; rect.right = rb.x; rect.bottom = rb.y;
-    ClipCursor(&rect);
 
     _init = true;
 
