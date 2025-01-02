@@ -452,6 +452,15 @@ void PlayerController::HandlePortal()
 
     for (const auto& collider : nearbyColliders)
     {
+        if (collider->GetGameObject()->GetDynamicObj() == nullptr)
+            return;
+
+        // 트랩 충돌
+        if(collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::PitFall)
+        {
+            OnDamageTrap();
+        }
+
         if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
             return;
 
@@ -970,6 +979,19 @@ void PlayerController::HealPlayer()
         float hpRatio = _hp / _maxHp;
         hpSlider->SetRatio(hpRatio);
         SOUND->PlayEffect(L"player_heal");
+    }
+}
+
+void PlayerController::OnDamageTrap()
+{
+    if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+    {
+        _hp -= 50;
+        _hp = std::clamp(_hp, 0.0f, _maxHp);
+
+        auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+        float hpRatio = _hp / _maxHp;
+        hpSlider->SetRatio(hpRatio);
     }
 }
 
