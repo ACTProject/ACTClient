@@ -39,7 +39,7 @@ void Scene::Update()
         if (!object->IsActive())
             continue;
 
-        object->Update();
+         object->Update();
     }
 
     UpdateUI();

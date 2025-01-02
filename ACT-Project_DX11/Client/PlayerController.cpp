@@ -330,6 +330,7 @@ void PlayerController::HandleAirAttack()
 {
     if (_isAirAttacking)
         UpdateAirAttack();
+
     else
     {
         if (_airhitbox)
@@ -746,21 +747,91 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float d
 }
 void PlayerController::SetAttackReaource()
 {
-    float resourceCount = _attackStage % 2 - 0.5f;
     Vec3 playerLook = _transform->GetLook();
     Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
     playerLook.Normalize();
     cameraForward.Normalize();
+    float dot = playerLook.Dot(cameraForward);
+    switch (_attackStage)
+    {
+    case 1:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+        
+    case 2:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect3"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect4"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+    case 3:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect5"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect6"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+    case 4:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect8"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect7"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+    default:
+        break;
+    }
 
-    float dot = playerLook.Dot(cameraForward) * resourceCount;
-    if (dot > 0.0f)
+    if (_isAirAttacking)
     {
-        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect9"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect10"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        _effect->GetParticle()->SetDelayTime(0.f);
     }
-    else
-    {
-        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
-    }
+
+    _effect->GetParticle()->SetDelayTime(0.4f);
+    
 }
 void PlayerController::ActiveEffect(shared_ptr<GameObject> effect)
 {
@@ -779,8 +850,11 @@ void PlayerController::StartAirAttack()
         SOUND->PlayEffect(L"player_aerialAtk");
         SOUND->PlayEffect(L"player_aerialAtk_md");
     }
-
+    
     _isAirAttacking = true;
+    SetAttackReaource();
+    ActiveEffect(_effect);
+    CreateBubbleEffect(40, Vec3(4, 0.5, 3), 1, 1);
     _airAttackTimer = 0.0f;
     _airAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AirAttack));
     _airAttackDuration /= _FPS;
@@ -1035,16 +1109,14 @@ void PlayerController::CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, flo
         bubblePosition += _transform->GetLook() * positionLook;
         bubblePosition.y += positionY;
 
-        // 플레이어 기준 X, Z 방향 랜덤 위치
-        Vec3 lookDirection = _transform->GetLook();     // 플레이어가 바라보는 방향
-        Vec3 rightDirection = _transform->GetRight();   // 플레이어의 오른쪽 방향
+        float angle = MathUtils::Random(0.0f, 2.0f * 3.141592f);
+        float radius = MathUtils::Random(0.0f, bubbleSpread.x);
 
-        // XZ 평면에서 플레이어 방향을 기준으로 랜덤 이동
-        bubblePosition += lookDirection * MathUtils::Random(-bubbleSpread.z, bubbleSpread.z); // Z축 이동
-        bubblePosition += rightDirection * MathUtils::Random(-bubbleSpread.x, bubbleSpread.x); // X축 이동
+        bubblePosition.x += cos(angle) * radius;
+        bubblePosition.z += sin(angle) * radius;
 
-        // Y축 랜덤 이동
         bubblePosition.y += MathUtils::Random(-bubbleSpread.y / 2, bubbleSpread.y / 2);
+
 
         float randomSize = MathUtils::Random(0.2f, 0.4f);
 

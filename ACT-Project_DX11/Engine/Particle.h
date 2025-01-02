@@ -35,6 +35,7 @@ public:
     void SetfadeStart(float fadeStart) { _fadeStart = fadeStart; }
     void SetElapsedTime(float elapsedTime) { _elapsedTime = elapsedTime; }
     void SetDelayTime(float delaytime) { _delaytime = delaytime; }
+    void SetLeft(bool isLeft) { _isLeft = isLeft; }
 
     void SetReuse(float isReusable) { _isReusable = isReusable; }
 
@@ -62,6 +63,7 @@ private:
     float _lifetime = 3.0f;
     float _fadeStart = 1.0f;
     float _delaytime = 0.f;
+    bool _isLeft = true;
 
     bool _isReusable = false;
 };

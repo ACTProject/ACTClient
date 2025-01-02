@@ -590,40 +590,37 @@ void Client2::Init()
     auto effectObj = make_shared<GameObject>();
     effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
     effectObj->AddComponent(make_shared<Particle>());
-    {
-        //material
-        shared_ptr<Material> material = make_shared<Material>();
-        material->SetShader(effectShader);
-        auto texture = RESOURCES->Load<Texture>(L"AttackEffect2", L"..\\Resources\\Textures\\Effect\\TestEffect2.png");
-        material->SetDiffuseMap(texture);
-        MaterialDesc& desc = material->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"AttackEffect2", material);
+    auto createMaterial = [&](const wstring& materialName, const wstring& texturePath)
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(effectShader);
+            auto texture = RESOURCES->Load<Texture>(materialName, texturePath);
+            material->SetDiffuseMap(texture);
 
-        effectObj->GetParticle()->SetMaterial(material);
-    }
-    {
-        //material
-        shared_ptr<Material> material = make_shared<Material>();
-        material->SetShader(effectShader);
-        auto texture = RESOURCES->Load<Texture>(L"AttackEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
-        material->SetDiffuseMap(texture);
-        MaterialDesc& desc = material->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"AttackEffect", material);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
 
-        effectObj->GetParticle()->SetMaterial(material);
-    }
+            RESOURCES->Add(materialName, material);
+            effectObj->GetParticle()->SetMaterial(material);
+        };
+    createMaterial(L"AttackEffect2", L"..\\Resources\\Textures\\Effect\\TestEffect2.png");
+    createMaterial(L"AttackEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
+    createMaterial(L"AttackEffect3", L"..\\Resources\\Textures\\Effect\\TestEffect3.png");
+    createMaterial(L"AttackEffect4", L"..\\Resources\\Textures\\Effect\\TestEffect4.png");
+    createMaterial(L"AttackEffect5", L"..\\Resources\\Textures\\Effect\\TestEffect5.png");
+    createMaterial(L"AttackEffect6", L"..\\Resources\\Textures\\Effect\\TestEffect6.png");
+    createMaterial(L"AttackEffect7", L"..\\Resources\\Textures\\Effect\\TestEffect7.png");
+    createMaterial(L"AttackEffect8", L"..\\Resources\\Textures\\Effect\\TestEffect8.png");
+    createMaterial(L"AttackEffect9", L"..\\Resources\\Textures\\Effect\\TestEffect9.png");
+    createMaterial(L"AttackEffect10", L"..\\Resources\\Textures\\Effect\\TestEffect10.png");
 
     effectObj->GetParticle()->SetDelayTime(0.4f);
-    effectObj->GetParticle()->SetLifetime(0.7f);
-    effectObj->GetParticle()->SetfadeStart(0.6f);
+    effectObj->GetParticle()->SetLifetime(0.5f);
+    effectObj->GetParticle()->SetfadeStart(0.45f);
     effectObj->GetParticle()->SetReuse(true);
-    effectObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(5.0f, 5.0f));
+    effectObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(effectObj);
 
 
