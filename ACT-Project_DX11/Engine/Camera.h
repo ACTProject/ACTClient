@@ -73,6 +73,8 @@ public:
 
     vector<shared_ptr<GameObject>>& GetVecForward() { return _vecForward; }
 
+    void SetMouseLock();
+    void SetIsTitle(bool isTitle);
 private:
     // 메인 카메라인지 여부
     bool _isMainCamera = false;
@@ -113,4 +115,7 @@ private:
 	Vec3 _cameraPosition = Vec3(0.f);
 	// 초점 위치
 	Vec3 _focusPosition = Vec3(0.f);
+
+    bool _lockMouse = true; //마우스 고정 여부
+    bool _isTitle = false;
 };

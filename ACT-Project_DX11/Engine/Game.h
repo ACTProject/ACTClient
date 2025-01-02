@@ -35,6 +35,8 @@ public:
     void AddScene(GameDesc desc) { _scenes.push_back(desc); }
     void ChangeScene(uint32 num);
 
+    HWND GetHWND();
+
 private:
     ATOM MyRegisterClass();
     BOOL InitInstance(int cmdShow);
