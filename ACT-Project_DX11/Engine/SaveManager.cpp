@@ -56,6 +56,7 @@ void SaveManager::CreateSaveUI()
         obj->AddComponent(make_shared<Button>());
 
         obj->GetButton()->Create(Vec3(100.f, 100.f, 0.1f), Vec2(180, 80), RESOURCES->Get<Material>(L"Save"));
+
         obj->SetObjectType(ObjectType::UI);
         obj->GetMeshRenderer()->SetAlphaBlend(true);
         obj->GetButton()->AddOnClickedEvent([]() { SAVE->SaveGame(CUR_SCENE->GetPlayer()); });

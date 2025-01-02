@@ -15,6 +15,8 @@ enum class KEY_TYPE
 
     DELETEKEY = VK_DELETE,
 
+    TILDE = VK_OEM_3,
+
     W = 'W',
     A = 'A',
     S = 'S',

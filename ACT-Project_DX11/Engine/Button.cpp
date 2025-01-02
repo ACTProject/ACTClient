@@ -6,7 +6,6 @@
 
 Button::Button() : Super(ComponentType::Button)
 {
-
 }
 
 Button::~Button()
@@ -25,6 +24,11 @@ void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> materi
 {
 	auto go = _gameObject.lock();
 
+    auto ui = make_shared<Ui>(UiType::BUTTON);
+    go->AddComponent(ui);
+    ui->SetScreenPos(screenPos);
+    UIMANAGER->AddObjUi(ui);
+
 	float height = GRAPHICS->GetViewport().GetHeight();
 	float width = GRAPHICS->GetViewport().GetWidth();
 
@@ -34,6 +38,7 @@ void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> materi
 
 	go->GetOrAddTransform()->SetPosition(position);
 	go->GetOrAddTransform()->SetScale(Vec3(size.x, size.y, 1));
+    _size = size;
 
 	go->SetLayerIndex(Layer_UI);
 

@@ -72,7 +72,6 @@ void Transform::UpdateTransform()
 
 	Matrix matCenter = Matrix::CreateTranslation(_localCenter);
 
-
 	_matLocal = matCenter * matScale * matRotation * matTranslation;
 
 	if (HasParent())

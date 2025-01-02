@@ -27,6 +27,11 @@ public:
     int GetID() { return _BtnId; };
     void SetID(int id) { _BtnId = id; };
 
+    RECT& GetRect() { return _rect; };
+    void SetRect(RECT rect) { _rect = rect; };
+
+    Vec2& GetSize() { return _size; };
+    void SetSize(Vec2 size) { _size = size; };
 private:
 	std::function<void(void)> _onClicked;
     std::function<void(void)> _onHover;
@@ -34,6 +39,7 @@ private:
     std::unordered_map<KEY_TYPE, std::function<void(void)>> _onKeyPress;
     bool _isHoverd = false;
 	RECT _rect;
+    Vec2 _size;
 
     int _BtnId = 0;
 };

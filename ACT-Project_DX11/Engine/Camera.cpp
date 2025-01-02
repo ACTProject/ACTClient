@@ -250,7 +250,6 @@ void Camera::UpdateMatrix()
         S_UIMatView = _matView;
         S_UIMatProjection = _matProjection;
     }
-
 }
 
 void Camera::SetCameraZoomForTerrain(const shared_ptr<Terrain>& terrain)

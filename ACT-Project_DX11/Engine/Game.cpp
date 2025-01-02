@@ -89,7 +89,6 @@ WPARAM Game::Run(uint32 num)
             {
                 //MAP->ExportMapObj();
                 CUR_SCENE->Clear();
-
                 _changeScene = false;
                 return Run(_num);
             }

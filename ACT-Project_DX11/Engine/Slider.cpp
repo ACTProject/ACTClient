@@ -22,13 +22,32 @@ void Slider::Update()
 void Slider::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> material)
 {
 	auto go = _gameObject.lock();
+    //_screenPos = screenPos;
+    _size = size;
+    float height = GRAPHICS->GetViewport().GetHeight();
+    float width = GRAPHICS->GetViewport().GetWidth();
+
+    // 부모
+    float px = _screenPos.x - width / 2;
+    float py = height / 2 - _screenPos.y;
+    // 자기자신
+    float _x = screenPos.x - width / 2;
+    float _y = height / 2 - screenPos.y;
+    _thisPos = screenPos;
+    _sub = Vec3(px - _x, py - _y, screenPos.z);
 
 
-	go->GetOrAddTransform()->SetLocalPosition(Vec3(screenPos.x,screenPos.y, screenPos.z));
+
+    float x = screenPos.x - width / 2;
+    float y = height / 2 - screenPos.y;
+    Vec3 position = Vec3(x, y, 0);
+
+    UIMANAGER->AddObjUi(go->GetUI());
+
+
+	go->GetOrAddTransform()->SetLocalPosition(Vec3(position.x, position.y, screenPos.z));
 	go->GetOrAddTransform()->SetScale(Vec3(size.x, size.y, 1.0f));
 
-	float height = GRAPHICS->GetViewport().GetHeight();
-	float width = GRAPHICS->GetViewport().GetWidth();
 
 	go->GetTransform()->SetLocalCenter(Vec3{ 0.5f,0.0f,0.0f });
 

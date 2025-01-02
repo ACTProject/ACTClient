@@ -235,22 +235,26 @@ void Client::Init()
             desc.specular = Vec4(1.f);
             RESOURCES->Add(L"BlueBar", material);
         }
-
-        Vec3 healPosition;
-        Vec3 armorPosition;;
-        healPosition.x = -270.f;
-        healPosition.y = -260.f;
-        armorPosition.x = healPosition.x + 2.f;
-        armorPosition.y = healPosition.y + 40.f;
       
+        float height = GRAPHICS->GetViewport().GetHeight();
+        float width = GRAPHICS->GetViewport().GetWidth();
         // MeshHealBar_Shadow
         {
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.2f));
+
+
+            Vec3 screenPos = { 110,560,0 };
+            float x = screenPos.x - width / 2;
+            float y = height / 2 - screenPos.y;
+            obj->AddComponent(make_shared<Ui>(UiType::NONE));
+            obj->GetUI()->SetScreenPos(Vec3(screenPos.x, screenPos.y, 0.2f));
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(x,y, 0.2f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
+
+            UIMANAGER->AddObjUi(obj->GetUI());
 
             obj->SetLayerIndex(Layer_UI);
             {
@@ -264,7 +268,6 @@ void Client::Init()
                 obj->GetMeshRenderer()->SetPass(0);
 
             }
-
             CUR_SCENE->Add(obj);
         }
 
@@ -273,7 +276,15 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.f));
+
+            Vec3 screenPos = { 110,560,0 };
+            float x = screenPos.x - width / 2;
+            float y = height / 2 - screenPos.y;
+            obj->AddComponent(make_shared<Ui>(UiType::NONE));
+            obj->GetUI()->SetScreenPos(Vec3(screenPos.x, screenPos.y, 0.2f));
+            UIMANAGER->AddObjUi(obj->GetUI());
+
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(x, y, 0.f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
@@ -299,7 +310,10 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
+            //{ 110,560,0 };
+
+            obj->GetUI()->SetScreenPos(Vec3(110,560,0));
+            obj->GetUI()->Create(Vec3( 34,560,0.1f ), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
             obj->GetUI()->SetUIID("PlayerHP");
 
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
@@ -312,9 +326,17 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
+            Vec3 screenPos = { 130,530,0 };
+
+            float x = screenPos.x - width / 2;
+            float y = height / 2 - screenPos.y;
+            obj->AddComponent(make_shared<Ui>(UiType::NONE));
+            obj->GetUI()->SetScreenPos(Vec3(screenPos.x, screenPos.y, 0.2f));
+            UIMANAGER->AddObjUi(obj->GetUI());
+            obj->GetOrAddTransform()->SetPosition(Vec3(x, y, 0.2f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
+
 
             obj->SetLayerIndex(Layer_UI);
             {
@@ -336,9 +358,16 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.f));
+            Vec3 screenPos = { 130,530,0 };
+            float x = screenPos.x - width / 2;
+            float y = height / 2 - screenPos.y;
+            obj->AddComponent(make_shared<Ui>(UiType::NONE));
+            obj->GetUI()->SetScreenPos(Vec3(screenPos.x, screenPos.y, 0.2f));
+            UIMANAGER->AddObjUi(obj->GetUI());
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(x, y, 0.f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
+
 
             obj->SetLayerIndex(Layer_UI);
             {
@@ -362,8 +391,10 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
+            obj->GetUI()->SetScreenPos(Vec3(130, 530, 0));
+            obj->GetUI()->Create(Vec3(54, 540,0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("PlayerArmor");
+            
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
@@ -1014,16 +1045,23 @@ void Client::Init()
         RESOURCES->Add(L"slash", material);
     }
 
-
+    float height = GRAPHICS->GetViewport().GetHeight();
+    float width = GRAPHICS->GetViewport().GetWidth();
     {
+
         // 점수판 ui
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
         obj->AddComponent(make_shared<Ui>(UiType::NONE));
         obj->GetUI()->SetUIID("MissionUI");
-        obj->SetLayerIndex(Layer_UI);
-        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-310, -190, 0));
+       
+        Vec3 screenPos = { 110,510,0 };
+        float x = screenPos.x - width / 2;
+        float y = height / 2 - screenPos.y;
+        obj->GetUI()->SetScreenPos(Vec3(screenPos.x, screenPos.y, 0.2f));
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(x, y, 0));
         obj->GetOrAddTransform()->SetScale(Vec3(14, 14, 1));
+        UIMANAGER->AddObjUi(obj->GetUI());
         obj->AddComponent(make_shared<MeshRenderer>());
         obj->SetLayerIndex(Layer_UI);
         {
@@ -1043,7 +1081,13 @@ void Client::Init()
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
         obj->SetLayerIndex(Layer_UI);
-        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-290, -190, 0));
+        Vec3 screenPos = { 120,510,0 };
+        float x = screenPos.x - width / 2;
+        float y = height / 2 - screenPos.y;
+        obj->AddComponent(make_shared<Ui>(UiType::NONE));
+        obj->GetUI()->SetScreenPos(Vec3(screenPos.x, screenPos.y, 0.2f));
+        UIMANAGER->AddObjUi(obj->GetUI());
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(x, y, 0));
         obj->GetOrAddTransform()->SetScale(Vec3(12, 12, 1));
         obj->AddComponent(make_shared<MeshRenderer>());
         obj->SetLayerIndex(Layer_UI);
@@ -1063,9 +1107,15 @@ void Client::Init()
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
         obj->SetLayerIndex(Layer_UI);
-        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-270, -190, 0));
+        Vec3 screenPos = { 130,510,0 };
+        float x = screenPos.x - width / 2;
+        float y = height / 2 - screenPos.y;
+        obj->AddComponent(make_shared<Ui>(UiType::NONE));
+        obj->GetUI()->SetScreenPos(Vec3(screenPos.x, screenPos.y, 0.2f));
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(x, y, 0));
         obj->GetOrAddTransform()->SetScale(Vec3(16, 14, 1));
         obj->AddComponent(make_shared<MeshRenderer>());
+        UIMANAGER->AddObjUi(obj->GetUI());
         obj->SetLayerIndex(Layer_UI);
         {
             obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"10"));

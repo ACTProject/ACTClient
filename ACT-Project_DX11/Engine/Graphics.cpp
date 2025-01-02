@@ -186,6 +186,8 @@ void Graphics::SetViewport(float width, float height, float x /*= 0*/, float y /
 
 void Graphics::OnResize(float width, float height)
 {
+    UIMANAGER->UpdatePosition(width, height);
+
     // 렌더 타겟과 깊이 스텐실 뷰 해제
     if (_renderTargetView) _renderTargetView.Reset();
     if (_depthStencilView) _depthStencilView.Reset();
@@ -216,16 +218,21 @@ void Graphics::OnResize(float width, float height)
     // 깊이 스텐실 뷰 다시 생성
     CreateDepthStencilView();
 
-    // 섀도우 렌타뷰 깊이스탠실 다시 생성
-    //CreateShadowDepthStencilView();
-
     // 뷰포트 업데이트
     SetViewport(width, height);
     _oldVp.Set(_vp.GetWidth(), _vp.GetHeight());
 
+
     if (CUR_SCENE->GetMainCamera())
     {
         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+        camera->SetWidth(static_cast<float>(width));
+        camera->SetHeight(static_cast<float>(height));
+        camera->UpdateMatrix(); // 투영 행렬 및 뷰 행렬 갱신
+    }
+    if (CUR_SCENE->GetUICamera())
+    {
+        auto camera = CUR_SCENE->GetUICamera()->GetCamera();
         camera->SetWidth(static_cast<float>(width));
         camera->SetHeight(static_cast<float>(height));
         camera->UpdateMatrix(); // 투영 행렬 및 뷰 행렬 갱신
