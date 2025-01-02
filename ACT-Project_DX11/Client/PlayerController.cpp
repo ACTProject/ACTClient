@@ -94,6 +94,9 @@ void PlayerController::Update()
     // 히트 상태 처리
     HandleHit();
   
+    // Shell 히트 상태 처리
+    HandleShellHit();
+
     // 공중 공격 처리
     HandleAirAttack();
 
@@ -209,6 +212,10 @@ void PlayerController::HandleMovement()
 
         float dt = TIME->GetDeltaTime();
         float speed = INPUT->GetButton(KEY_TYPE::SHIFT) ? _speed * 2 : _speed;
+
+        if (_isJumping)
+            speed = _speed;
+
         if (_isBlocking)
             speed = _crawlSpeed;
 
@@ -232,6 +239,9 @@ void PlayerController::HandleMovement()
                 return; // 충돌 시 이동 취소
         }
         _transform->SetPosition(newPosition);
+
+        if (_isBackStep)
+            return;
 
         // 방향에 따라 회전
         Vec3 targetForward = _moveDir;
@@ -472,10 +482,18 @@ void PlayerController::HandleHit()
     if (_hit)
         UpdateHit();
 }
+
+void PlayerController::HandleShellHit()
+{
+    if (_shellHit)
+        UpdateShellHit();
+}
+
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];
     _player->AddDummyBoneAndAttach(shellModel, L"Shell", L"ShellDummy");
+    _shellModel = make_shared<ModelMesh>(shellModel);
 
     SOUND->PlayEffect(L"player_shellConfirm");
     // Shell 오브젝트 비활성화
@@ -483,6 +501,29 @@ void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 
     // 플레이어의 상태를 Shell 장착 상태로 변경
     _isShellEquipped = true;
+}
+
+void PlayerController::BreakShell()
+{
+    if (!_isShellEquipped)
+    {
+        std::cerr << "Error: Shell is not equipped. Cannot break it." << std::endl;
+        return;
+    }
+
+    // 더미 본 및 연결된 쉘 메쉬 제거
+    _player->RemoveDummyBoneAndDetach(_shellModel, L"ShellDummy");
+
+    // 플레이어 상태 업데이트
+    _isShellEquipped = false;
+
+    // 깨지는 소리 효과 재생
+    // TODO
+
+    // 애니메이션 상태 업데이트 (쉘 깨지는 애니메이션이 있을 경우)
+    // TODO
+
+    std::cout << "Shell has been broken and detached from the player." << std::endl;
 }
 
 void PlayerController::StartAttack()
@@ -830,6 +871,39 @@ void PlayerController::UpdateHit()
     }
 }
 
+void PlayerController::StartShellHit()
+{
+    if (_shellHit || _isAttacking || _isAirAttacking || _isChargeAttacking)
+        return;
+
+    // 사운드
+    //int randNum = rand() % 4 + 1;
+    //wstring s = L"player_hit" + std::to_wstring(rand() % 4 + 1);
+    //SOUND->PlayEffect(s);
+
+    _shellHit = true;
+    _shellHitTimer = 0.0f;
+    _shellHitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::BlockHit)); // 히트 동작 시간
+    _shellHitDuration /= _FPS;
+
+    _isPlayeringShellHitAnimation = true;
+    SetAnimationState(AnimationState::BlockHit);
+}
+void PlayerController::UpdateShellHit()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _shellHitTimer += dt;
+
+    // 히트 상태 종료 처리
+    if (_shellHitTimer >= _shellHitDuration)
+    {
+        _shellHit = false;
+        _isPlayeringShellHitAnimation = false;
+        SetAnimationState(AnimationState::BlockingIdle);
+    }
+}
+
 void PlayerController::StartDodge()
 {
     if (_isDodging)
@@ -838,18 +912,40 @@ void PlayerController::StartDodge()
     SOUND->PlayEffect(L"player_dash");
     _isDodging = true;
     _dodgeTimer = 0.0f;
-    _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Dodge)); // 회피 동작 시간
-    _dodgeDuration /= _FPS;
     _dodgeDistance = 3.0f; // 회피 이동 거리
     
     // 회피 방향 설정
     _dodgeDirection = _moveDir;
     if (_dodgeDirection.LengthSquared() == 0.0f)
-        _dodgeDirection = _transform->GetLook(); // 입력이 없으면 바라보는 방향으로 이동
+    {
+        _isBackStep = true;
+
+        _dodgeDistance = 5.0f; // 회피 이동 거리
+        _dodgeDirection = _transform->GetLook(); // 입력이 없으면 바라보는 방향 뒤로 Stepback
+        _dodgeDirection = Vec3(-_dodgeDirection.x, -_dodgeDirection.y, -_dodgeDirection.z);
+
+        _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::DodgeStepback)); // 회피 동작 시간
+        _dodgeDuration /= _FPS;
+        SetAnimationState(AnimationState::DodgeStepback);
+    }
+    else 
+    {
+        if (_isShellEquipped) // 등껍질 착용 상태
+        {
+            _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::DodgeMedium)); // 회피 동작 시간
+            _dodgeDuration /= (_FPS / 2);   // 30FPS 애니메이션임
+            SetAnimationState(AnimationState::DodgeMedium);
+        }
+        else
+        {
+            _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Dodge)); // 회피 동작 시간
+            _dodgeDuration /= _FPS;
+            SetAnimationState(AnimationState::Dodge);
+        }
+    }
     _dodgeDirection.Normalize();
 
     _isPlayeringDodgeAnimation = true;
-    SetAnimationState(AnimationState::Dodge);
 
     _isInvincible = true;
 }
@@ -869,6 +965,7 @@ void PlayerController::UpdateDodge()
     if (_dodgeTimer >= _dodgeDuration)
     {
         _isDodging = false;
+        _isBackStep = false;
         _isInvincible = false; // 무적 상태 해제
         _isPlayeringDodgeAnimation = false;
         SetAnimationState(AnimationState::Idle);

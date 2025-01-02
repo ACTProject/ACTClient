@@ -364,6 +364,9 @@ string Model::AnimationStateToString(AnimationState state)
 	case AnimationState::Die:   return "Die";
 	case AnimationState::AirAttack:   return "AirAttack";
 	case AnimationState::AtkChargeThrust:   return "AtkChargeThrust";
+	case AnimationState::DodgeStepback:   return "DodgeStepback";
+	case AnimationState::DodgeMedium:   return "DodgeMedium";
+	case AnimationState::BlockHit:   return "BlockHit";
 	case AnimationState::Roar:   return "Roar";
 	case AnimationState::Aggro:   return "Aggro";
 	case AnimationState::GetUP1:   return "GetUP1";
@@ -453,3 +456,37 @@ void Model::AddDummyBoneAndAttach(ModelMesh& mesh, const wstring& targetBoneName
 		_materials.push_back(meshPtr->material);
 	}
 }
+
+void Model::RemoveDummyBoneAndDetach(shared_ptr<ModelMesh> mesh, const wstring& dummyBoneName)
+{
+    // 매개변수 유효성 검사
+    if (!mesh)
+        return;
+
+    // 1. 더미 본 검색
+    auto dummyBone = GetBoneByName(dummyBoneName);
+    if (!dummyBone || !dummyBone->isDummy)
+    {
+        std::wcout << L"Dummy bone not found or not a dummy bone: " << dummyBoneName << std::endl;
+        return;
+    }
+
+    // 2. 더미 본과 연결된 메쉬 분리
+    auto itMesh = std::find_if(_meshes.begin(), _meshes.end(),
+        [&mesh](const shared_ptr<ModelMesh>& m) { return m->name == mesh->name; });
+    if (itMesh != _meshes.end())
+    {
+        _meshes.erase(itMesh);
+    }
+
+    // 3. 더미 본 제거
+    auto itBone = std::find_if(_bones.begin(), _bones.end(),
+        [&dummyBone](const shared_ptr<ModelBone>& bone) { return bone == dummyBone; });
+    if (itBone != _bones.end())
+    {
+        _bones.erase(itBone);
+    }
+
+    std::wcout << L"Removed dummy bone and detached mesh successfully: " << dummyBoneName << std::endl;
+}
+

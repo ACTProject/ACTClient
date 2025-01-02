@@ -542,6 +542,9 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
         playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
         playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
+        playerModel->ReadAnimation(L"Player/Crab_DodgeStepback", AnimationState::DodgeStepback);
+        playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
+        playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();

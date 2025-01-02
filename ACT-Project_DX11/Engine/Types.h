@@ -51,6 +51,9 @@ enum class AnimationState
 	Die, //죽음
     AirAttack,
     AtkChargeThrust,
+    DodgeStepback,
+    DodgeMedium,
+    BlockHit,
 	Roar, //울음,포효
 	Aggro,
     GetUP1, //뒤로 일어남

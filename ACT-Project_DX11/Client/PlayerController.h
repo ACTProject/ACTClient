@@ -23,7 +23,6 @@ public:
 	shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
-	void InteractWithShell(shared_ptr<GameObject> gameObject);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airhitbox = hitbox; }
 	void SetChargeHitBox(shared_ptr<GameObject> hitbox) { _chargehitbox = hitbox; }
@@ -45,6 +44,7 @@ public:
     void HandleInteraction();   // 상호작용 처리
     void HandlePortal();        // 포탈 상호작용 처리
     void HandleHit();           // 히트 상태 처리
+    void HandleShellHit();      // Shell 히트 상태 처리
 
 
     // Attack
@@ -68,10 +68,16 @@ public:
 
     // Shell
     bool GetIsBlocking() { return _isBlocking; }
-    
+    void InteractWithShell(shared_ptr<GameObject> gameObject);
+    void BreakShell();
+
     // Hit
     void StartHit();
     void UpdateHit();
+
+    // ShellHit
+    void StartShellHit();
+    void UpdateShellHit();
 
     // Dodge
     bool GetIsInvincible() { return _isInvincible; }
@@ -109,6 +115,7 @@ private:
 	shared_ptr<Rigidbody> _rigidbody;
     shared_ptr<GameObject> _effect;
     shared_ptr<GameObject> _hitEffect;
+    shared_ptr<ModelMesh> _shellModel;
 
 private:
 	float _FPS;
@@ -150,6 +157,7 @@ private:
     // Dodge
     float _dodgeTimer = 0.0f;
     bool _isDodging = false;            // 회피 중인지 여부
+    bool _isBackStep = false;           // 백스텝 중인지 여부
     bool _isInvincible = false;         // 무적 상태 여부
     float _dodgeDuration = 0.0f;        // 회피 동작 시간
     float _dodgeDistance = 0.0f;        // 회피 이동 거리
@@ -165,6 +173,11 @@ private:
     float _hitDuration = 0.0f;        // 히트 동작 시간
     float _hitTimer = 0.0f;         
 
+    // Shell Hit
+    bool _shellHit = false;                // Shell 히트 상태인지 여부
+    float _shellHitDuration = 0.0f;        // Shell 히트 동작 시간
+    float _shellHitTimer = 0.0f;
+
     // 애니메이션 진행 중인지 여부
 	bool _isPlayeringJumpAnimation = false; // 점프 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringAttackAnimation = false; // 공격 애니메이션 재생 중인지 여부 확인
@@ -172,7 +185,7 @@ private:
 	bool _isPlayeringChargeAttackAnimation = false; // 차지 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringDodgeAnimation = false; // 회피 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringHitAnimation = false; // 히트 애니메이션 재생 중인지 여부 확인
-
+    bool _isPlayeringShellHitAnimation = false; // Shell 히트 애니메이션 재생 중인지 여부 확인
 	AnimationState _currentAnimationState = AnimationState::Idle;
 
     // Dust

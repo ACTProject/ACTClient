@@ -44,7 +44,8 @@ public:
 private:
 	void BindCacheInfo();
 public:
-	void AddDummyBoneAndAttach(ModelMesh& mesh, const wstring& targetBoneName, const wstring& dummyBoneName);
+	void AddDummyBoneAndAttach(ModelMesh& mesh, const wstring& targetBoneName, const wstring& dummyBoneName); 
+    void RemoveDummyBoneAndDetach(shared_ptr<ModelMesh> mesh, const wstring& dummyBoneName);
 
 private:
 	wstring _modelPath = L"../Resources/Models/";
