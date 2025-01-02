@@ -191,8 +191,7 @@ void Camera::UpdateCameraWithMouseInput()
     // yaw와 pitch 각도를 마우스 이동에 따라 조절
     _yaw += dx * _sensitivity;
     _pitch += dy * _sensitivity;
-
-
+    
 	// pitch 값의 범위를 제한하여 카메라가 뒤집히지 않도록 조정 (-90도 ~ 90도 사이)
     _pitch = std::clamp(_pitch, -XM_PIDIV2 + 0.1f, XM_PIDIV2 - 0.1f);
     _pitch = max(_pitch, -1.0f); // pitch를 수평 이상으로 제한

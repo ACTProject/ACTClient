@@ -85,6 +85,7 @@ void Particle::Update()
     desc.fadeStart = _fadeStart;
     desc.lifetime = _lifetime;
     desc.delaytime = _delaytime;
+    desc.isLeft = _isLeft;
 
     shader->PushParticleData(desc);
 
