@@ -216,3 +216,8 @@ LRESULT CALLBACK Game::WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM 
 		return ::DefWindowProc(handle, message, wParam, lParam);
 	}
 }
+
+HWND Game::GetHWND()
+{
+    return g_hWnd;
+}
