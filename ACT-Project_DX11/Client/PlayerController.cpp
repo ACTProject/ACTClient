@@ -63,6 +63,12 @@ void PlayerController::Update()
     if (DEBUG->IsDebugEnabled())
         return;
 
+    // 포탈 충돌 처리
+    HandlePortal();
+
+    Vec3 temp = { (float)_isRope,(float)_isRope ,(float)_isRope };
+    DEBUG->LogVec3ToConsole(temp, "rope");
+
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
@@ -100,13 +106,17 @@ void PlayerController::Update()
     // 상호작용 처리
     HandleInteraction();
 
-    // 포탈 충돌 처리
-    HandlePortal();
+
+
+    HandleTrap();
 
     SOUND->SetVolume(L"bgm", 0.3);
 
     if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking)
         _isHit = false;
+
+    if (_isRope)
+        _isRope = false;
 }
 
 void PlayerController::HandleInput()
@@ -455,24 +465,32 @@ void PlayerController::HandlePortal()
         if (collider->GetGameObject()->GetDynamicObj() == nullptr)
             return;
 
-        // 트랩 충돌
-        if(collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::PitFall)
+        if (collider->Intersects(playerCollider))
         {
-            OnDamageTrap();
+            // 트랩 충돌
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::PitFall)
+            {
+                StartTrap();
+            }
+
+            // 로프 충돌
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Rope)
+            {
+                OnRope();
+            }
+
+            if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
+                return;
+
+            bool isClear = CUR_SCENE->GetMissionClear();
+            if (isClear)
+            {
+                SOUND->PlayEffect(L"player_enterPortal");
+                TaskQueue::GetInstance().Stop();
+                GAME->ChangeScene(2);
+                break;
+            }
         }
-
-        if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
-            return;
-
-        bool isClear = CUR_SCENE->GetMissionClear();
-        if (collider->Intersects(playerCollider) && isClear)
-        {
-            SOUND->PlayEffect(L"player_enterPortal");
-            TaskQueue::GetInstance().Stop();
-            GAME->ChangeScene(2);
-            break;
-        }
-
     }
 }
 
@@ -480,6 +498,11 @@ void PlayerController::HandleHit()
 {
     if (_hit)
         UpdateHit();
+}
+void PlayerController::HandleTrap()
+{
+    if (_trap)
+        UpdateTrap();
 }
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
@@ -982,11 +1005,18 @@ void PlayerController::HealPlayer()
     }
 }
 
-void PlayerController::OnDamageTrap()
+void PlayerController::StartTrap()
 {
+    if (_trap)
+        return;
+
+    _trap = true;
+    _trapTimer = 0.0f;
+    _trapDuration = 0.5f;
+
     if (auto ui = UIMANAGER->GetUi("PlayerHP"))
     {
-        _hp -= 50;
+        _hp -= 30;
         _hp = std::clamp(_hp, 0.0f, _maxHp);
 
         auto hpSlider = dynamic_pointer_cast<Slider>(ui);
@@ -995,9 +1025,32 @@ void PlayerController::OnDamageTrap()
     }
 }
 
+void PlayerController::UpdateTrap()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _trapTimer += dt;
+
+    // 히트 상태 종료 처리
+    if (_trapTimer >= _trapDuration)
+    {
+        _trap = false;
+    }
+}
+
 void PlayerController::LoadPlayer(SaveData data)
 {
     _transform->SetLocalPosition(data.playerPos);
+}
+
+void PlayerController::OnRope()
+{
+    if (_isRope)
+        return;
+    // wasd 이동방향 바꾸기.
+    // 애니메이션 다 멈추고 공격 없애고 회피키 없애고
+    _isRope = true;
+
 }
 
 void PlayerController::OnDeath()

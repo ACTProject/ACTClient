@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Materials>
     <Material>
-        <Name>Netting_Nylon_Atlas_01</Name>
+        <Name>Netting_Nylon_Atlas_01.001</Name>
         <DiffuseFile>blue.png</DiffuseFile>
         <SpecularFile></SpecularFile>
         <NormalFile></NormalFile>

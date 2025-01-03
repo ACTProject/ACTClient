@@ -45,6 +45,7 @@ public:
     void HandleInteraction();   // 상호작용 처리
     void HandlePortal();        // 포탈 상호작용 처리
     void HandleHit();           // 히트 상태 처리
+    void HandleTrap();          // 함정충돌 상태 처리
 
 
     // Attack
@@ -91,10 +92,14 @@ public:
     
     void HealPlayer();
 
-    void OnDamageTrap();
+    void StartTrap();
+    void UpdateTrap();
 
     // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
     void LoadPlayer(SaveData data);
+
+    // rope에 매달린 상태
+    void OnRope();
 
 public:
     void OnDeath() override;
@@ -182,6 +187,11 @@ private:
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
 
+    // Trap
+    bool _trap = false;
+    float _trapDuration = 0.1f;
+    float _trapTimer = 0.0f;
+
     // Bubble
     shared_ptr<Material> _bubbleMaterial;
 
@@ -189,6 +199,8 @@ private:
     float _footstepTimer = 0.0f;
     float _runningInterval = 0.2f;
     float _walkingInterval = 0.3f;
+
+    bool _isRope = false;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }
