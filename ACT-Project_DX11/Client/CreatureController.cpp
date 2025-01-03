@@ -52,7 +52,7 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
                 }
                 else
                 {
-                    //player->StartShellHit();
+                    player->StartShellHit(attacker);
                 }
             }
         }

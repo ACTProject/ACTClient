@@ -76,7 +76,7 @@ public:
     void UpdateHit();
 
     // ShellHit
-    void StartShellHit();
+    void StartShellHit(shared_ptr<GameObject> attacker);
     void UpdateShellHit();
 
     // Dodge

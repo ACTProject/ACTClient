@@ -945,7 +945,7 @@ void PlayerController::UpdateHit()
     }
 }
 
-void PlayerController::StartShellHit()
+void PlayerController::StartShellHit(shared_ptr<GameObject> attacker)
 {
     if (_shellHit || _isAttacking || _isAirAttacking || _isChargeAttacking)
         return;
@@ -958,10 +958,23 @@ void PlayerController::StartShellHit()
     _shellHit = true;
     _shellHitTimer = 0.0f;
     _shellHitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::BlockHit)); // 히트 동작 시간
-    _shellHitDuration /= _FPS;
+    _shellHitDuration /= (_FPS / 2); // 30프레임 애니메이션
 
     _isPlayeringShellHitAnimation = true;
     SetAnimationState(AnimationState::BlockHit);
+
+    // 공격자로부터 밀리는 로직
+    if (attacker)
+    {
+        Vec3 attackerPosition = attacker->GetTransform()->GetPosition(); // 공격자의 위치
+        Vec3 playerPosition = _transform->GetPosition();                // 플레이어의 위치
+
+        Vec3 knockbackDirection = playerPosition - attackerPosition; // 공격자 -> 플레이어 방향
+        knockbackDirection.Normalize();                              // 방향 벡터 정규화
+
+        float knockbackForce = 100.0f; // 밀리는 힘
+        _rigidbody->Addforce(knockbackDirection * knockbackForce); // 힘 적용
+    }
 }
 void PlayerController::UpdateShellHit()
 {
