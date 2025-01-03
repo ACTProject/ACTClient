@@ -367,6 +367,7 @@ string Model::AnimationStateToString(AnimationState state)
 	case AnimationState::DodgeStepback:   return "DodgeStepback";
 	case AnimationState::DodgeMedium:   return "DodgeMedium";
 	case AnimationState::BlockHit:   return "BlockHit";
+	case AnimationState::DashAtk:   return "DashAtk";
 	case AnimationState::Roar:   return "Roar";
 	case AnimationState::Aggro:   return "Aggro";
 	case AnimationState::GetUP1:   return "GetUP1";

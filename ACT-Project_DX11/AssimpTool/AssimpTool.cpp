@@ -123,6 +123,11 @@ void AssimpTool::Init()
             converter->ReadAssetFile(L"Player/Crab_BlockHit.fbx");
             converter->ExportAnimationData(L"Player/Crab_BlockHit");
         }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Player/Crab_DashAtk.fbx");
+            converter->ExportAnimationData(L"Player/Crab_DashAtk");
+        }
 	}
     
 	// Enemy

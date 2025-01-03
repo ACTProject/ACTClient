@@ -24,8 +24,9 @@ public:
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
-	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airhitbox = hitbox; }
-	void SetChargeHitBox(shared_ptr<GameObject> hitbox) { _chargehitbox = hitbox; }
+	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airHitbox = hitbox; }
+	void SetChargeHitBox(shared_ptr<GameObject> hitbox) { _chargeHitbox = hitbox; }
+	void SetDashHitBox(shared_ptr<GameObject> hitbox) { _dashHitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
     void SetDust(shared_ptr<Material> dust);
     void SetBubble(shared_ptr<Material> bubble);
@@ -38,6 +39,7 @@ public:
     void HandleAttack();        // 공격 처리
     void HandleAirAttack();     // 공중 공격 상태 처리
     void HandleChargeAttack();  // 차지 공격 상태 처리
+    void HandleDashAttack();    // 대쉬 공격 상태 처리
     void HandleDodge();         // 회피 처리
     void HandleJump();          // 점프 처리
     void HandleMovement();      // 이동 처리
@@ -54,6 +56,7 @@ public:
     void UpdateHitBox();
     void UpdateAirHitBox();
     void UpdateChargeHitBox();
+    void UpdateDashHitBox();
     void SetAttackReaource();
     void ActiveEffect(shared_ptr<GameObject> effect);
     void CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage);
@@ -65,6 +68,10 @@ public:
     // Charge Attack
     void StartChargeAttack();
     void UpdateChargeAttack();
+
+    // Dash Attack
+    void StartDashAttack();
+    void UpdateDashAttack();
 
     // Shell
     bool GetIsBlocking() { return _isBlocking; }
@@ -110,8 +117,9 @@ private:
 	shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _camera;
 	shared_ptr<GameObject> _hitbox;
-	shared_ptr<GameObject> _airhitbox;
-	shared_ptr<GameObject> _chargehitbox;
+	shared_ptr<GameObject> _airHitbox;
+	shared_ptr<GameObject> _chargeHitbox;
+	shared_ptr<GameObject> _dashHitbox;
 	shared_ptr<Rigidbody> _rigidbody;
     shared_ptr<GameObject> _effect;
     shared_ptr<GameObject> _hitEffect;
@@ -149,6 +157,17 @@ private:
     float _chargeThreshold = 0.2f;         // 차지 공격 발동 시간 (초)
     float _chargeTimer = 0.0f;             // 차지 발동 시간 (초)
     float _chargeAttackTimer = 0.0f;       // 차지 공격 발동 시간
+
+    // DashAttack
+    bool _isRunning = false;             // 뛰고 있는지
+    bool _isDashAttacking = false;       // 대쉬 공격 중인지 여부
+    float _dashAttackDuration = 0.0f;    // 대쉬 공격 동작 시간
+    Vec3 _dashDirection = Vec3(0.f);     // 대쉬 방향
+    float _dashSpeed = 0.0f;             // 대쉬 속도
+    float _dashDistance = 0.0f;          // 대쉬 거리
+    float _remainingDashDistance = 0.0f; // 남은 대쉬 거리
+    float _dashAttackTimer = 0.0f;
+
     // AttackMove
     float _attackMoveDistance = 1.0f;  // 공격 시 이동할 거리
     float _attackMoveSpeed = 2.0f;     // 이동 속도
@@ -183,6 +202,7 @@ private:
 	bool _isPlayeringAttackAnimation = false; // 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringAirAttackAnimation = false; // 공중 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringChargeAttackAnimation = false; // 차지 공격 애니메이션 재생 중인지 여부 확인
+	bool _isPlayeringDashAttackAnimation = false; // 대쉬 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringDodgeAnimation = false; // 회피 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringHitAnimation = false; // 히트 애니메이션 재생 중인지 여부 확인
     bool _isPlayeringShellHitAnimation = false; // Shell 히트 애니메이션 재생 중인지 여부 확인

@@ -545,6 +545,7 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_DodgeStepback", AnimationState::DodgeStepback);
         playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
         playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
+        playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -604,6 +605,14 @@ void Client::Init()
     chargehitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
     chargehitbox->Craete(player, Vec3(2.f, 1.f, 2.f));
     CUR_SCENE->Add(chargehitboxGO);
+
+    // DashHitBox
+    shared_ptr<GameObject> dashhitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> dashhitbox = make_shared<HitBox>();
+    dashhitboxGO->AddComponent(dashhitbox);
+    dashhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    dashhitbox->Craete(player, Vec3(3.f, 1.f, 3.f));
+    CUR_SCENE->Add(dashhitboxGO);
 
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
@@ -704,6 +713,7 @@ void Client::Init()
 	playerScript->SetHitBox(hitboxGO);
 	playerScript->SetAirHitBox(airhitboxGO);
 	playerScript->SetChargeHitBox(chargehitboxGO);
+	playerScript->SetDashHitBox(dashhitboxGO);
     playerScript->SetDust(dustMaterial);
     playerScript->SetBubble(bubbleMaterial);
     playerScript->SetEffect(effectObj);

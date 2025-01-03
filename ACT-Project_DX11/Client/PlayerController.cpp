@@ -85,6 +85,9 @@ void PlayerController::Update()
     // 차지 공격 처리
     HandleChargeAttack();
 
+    // 대쉬 공격 처리
+    HandleDashAttack();
+
     // 회피 처리
     HandleDodge();
 
@@ -108,7 +111,8 @@ void PlayerController::Update()
 
     SOUND->SetVolume(L"bgm", 0.3);
 
-    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking)
+    // 중복 데미지 처리 방지
+    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking && !_isDashAttacking)
         _isHit = false;
 }
 
@@ -174,6 +178,11 @@ void PlayerController::HandleInput()
     // 공격 입력 처리
     if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
     {
+        if (_isRunning)
+        {
+            StartDashAttack();
+            return;
+        }
         // 기본 공격 Start
         if (_attackStage > 0)
             _currentDuration = _attackDurations[_attackStage - 1] / _FPS;
@@ -203,7 +212,7 @@ void PlayerController::HandleInput()
 
 void PlayerController::HandleMovement()
 {
-    if (_isAttacking)
+    if (_isAttacking || _isDashAttacking)
         return;
 
     if (_moveDir.LengthSquared() > 0.0f)
@@ -211,7 +220,15 @@ void PlayerController::HandleMovement()
         _moveDir.Normalize();
 
         float dt = TIME->GetDeltaTime();
-        float speed = INPUT->GetButton(KEY_TYPE::SHIFT) ? _speed * 2 : _speed;
+        float speed = _speed;
+
+        if (INPUT->GetButton(KEY_TYPE::SHIFT))
+        {
+            speed *= 2;
+            _isRunning = true;
+        }
+        else
+            _isRunning = false;
 
         if (_isJumping)
             speed = _speed;
@@ -288,6 +305,7 @@ void PlayerController::HandleAnimations()
         !_isPlayeringJumpAnimation      && 
         !_isPlayeringHitAnimation       &&
         !_isPlayeringAirAttackAnimation &&
+        !_isPlayeringDashAttackAnimation &&
         !_isPlayeringChargeAttackAnimation)
     {
         if (_currentAnimationState != targetState)
@@ -333,8 +351,8 @@ void PlayerController::HandleAirAttack()
 
     else
     {
-        if (_airhitbox)
-            _airhitbox->GetCollider()->SetActive(false);
+        if (_airHitbox)
+            _airHitbox->GetCollider()->SetActive(false);
         return;
     }
 
@@ -346,8 +364,20 @@ void PlayerController::HandleChargeAttack()
         UpdateChargeAttack();
     else
     {
-        if (_chargehitbox)
-            _chargehitbox->GetCollider()->SetActive(false);
+        if (_chargeHitbox)
+            _chargeHitbox->GetCollider()->SetActive(false);
+        return;
+    }
+}
+
+void PlayerController::HandleDashAttack()
+{
+    if (_isDashAttacking)
+        UpdateDashAttack();
+    else
+    {
+        if (_dashHitbox)
+            _dashHitbox->GetCollider()->SetActive(false);
         return;
     }
 }
@@ -641,15 +671,15 @@ void PlayerController::UpdateHitBox()
 
 void PlayerController::UpdateAirHitBox()
 {
-    if (!_airhitbox || _isHit)
+    if (!_airHitbox || _isHit)
         return;
 
-    auto hitboxCollider = _airhitbox->GetCollider();
+    auto hitboxCollider = _airHitbox->GetCollider();
     hitboxCollider->SetActive(true);
 
     // 히트박스 위치 갱신
-    _airhitbox->GetTransform()->SetPosition(
-        _transform->GetPosition() + _airhitbox->GetHitBox()->GetOffSet()
+    _airHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _airHitbox->GetHitBox()->GetOffSet()
     );
 
     CheckAtk(hitboxCollider, _atk * 1.5f);
@@ -657,18 +687,34 @@ void PlayerController::UpdateAirHitBox()
 
 void PlayerController::UpdateChargeHitBox()
 {
-    if (!_chargehitbox || _isHit)
+    if (!_chargeHitbox || _isHit)
         return;
 
-    auto hitboxCollider = _chargehitbox->GetCollider();
+    auto hitboxCollider = _chargeHitbox->GetCollider();
     hitboxCollider->SetActive(true);
 
     // 히트박스 위치 갱신
-    _chargehitbox->GetTransform()->SetPosition(
-        _transform->GetPosition() + _chargehitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
+    _chargeHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _chargeHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
     );
 
     CheckAtk(hitboxCollider, _atk * 2.f);
+}
+
+void PlayerController::UpdateDashHitBox()
+{
+    if (!_dashHitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _dashHitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _dashHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _dashHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
+    );
+
+    CheckAtk(hitboxCollider, _atk * 1.5f);
 }
 
 void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage)
@@ -910,6 +956,56 @@ void PlayerController::UpdateChargeAttack()
         _isCharging = false;
         _chargeTimer = 0.f;
         _chargeAttackTimer = 0.f;
+        SetAnimationState(AnimationState::Idle);
+    }
+}
+
+void PlayerController::StartDashAttack()
+{
+    if (_isDashAttacking)
+        return;
+
+    _isDashAttacking = true;
+    _dashAttackTimer = 0.0f;
+    _dashAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::DashAtk));
+    _dashAttackDuration /= _FPS;
+
+    _isPlayeringDashAttackAnimation = true;
+    SetAnimationState(AnimationState::DashAtk);
+
+    // 대쉬 방향과 속도 설정
+    Vec3 forward = _transform->GetLook(); // 플레이어가 바라보는 방향
+    forward.Normalize();
+    _dashDirection = forward;
+
+    _dashSpeed = 10.0f; // 대쉬 속도
+    _dashDistance = 5.0f; // 대쉬 거리
+    _remainingDashDistance = _dashDistance; // 남은 대쉬 거리 초기화
+}
+
+void PlayerController::UpdateDashAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _dashAttackTimer += dt;
+
+    UpdateDashHitBox();
+
+    // 대쉬 이동 처리
+    if (_remainingDashDistance > 0.0f)
+    {
+        float moveStep = min(_dashSpeed * dt, _remainingDashDistance); // 이동 거리 계산
+        Vec3 newPosition = _transform->GetPosition() + _dashDirection * moveStep; // 새 위치 계산
+        _transform->SetPosition(newPosition); // 위치 업데이트
+        _remainingDashDistance -= moveStep; // 남은 거리 감소
+    }
+
+    // 대쉬 공격 종료 처리
+    if (_dashAttackTimer >= _dashAttackDuration)
+    {
+        _isDashAttacking = false;
+        _isPlayeringDashAttackAnimation = false;
+        _remainingDashDistance = 0.f;
         SetAnimationState(AnimationState::Idle);
     }
 }
