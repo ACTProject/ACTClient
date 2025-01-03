@@ -38,6 +38,7 @@ public:
     void SetLeft(bool isLeft) { _isLeft = isLeft; }
 
     void SetReuse(float isReusable) { _isReusable = isReusable; }
+    void SetBubble(bool booltype) { _bubbleMap = booltype; }
 
     void SetMaterial(shared_ptr<Material> material) { _material = material; }
     void SetPass(uint8 pass) { _pass = pass; }
@@ -66,5 +67,6 @@ private:
     bool _isLeft = true;
 
     bool _isReusable = false;
+    bool _bubbleMap = false;
 };
 

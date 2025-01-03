@@ -47,10 +47,10 @@ void Particle::Update()
         }
         return;
     }
-    /*if (_isReusable && _elapsedTime >= _lifetime)
+    if (_bubbleMap && _elapsedTime >= _lifetime)
     {
-        _elapsedTime = 0.0f;
-    }*/
+        _elapsedTime = 0;
+    }
 
     if (_drawCount != _prevCount)
     {

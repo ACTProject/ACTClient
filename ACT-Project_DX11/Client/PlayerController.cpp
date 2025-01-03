@@ -194,19 +194,10 @@ void PlayerController::HandleInput()
 
         _isPlayeringAttackAnimation = true;
         if (!_isAttacking)
-        {
             StartAttack();
-            SetAttackReaource();
-            ActiveEffect(_effect);
-        }
 
         else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
-        {
             ContinueAttack();
-            SetAttackReaource();
-            ActiveEffect(_effect);
-        }
-       
     }
 
     if (_isShellEquipped == true && INPUT->GetButton(KEY_TYPE::RBUTTON))
@@ -577,7 +568,9 @@ void PlayerController::StartAttack()
         //SOUND->SetVolume(L"player_atk1_md", 0.25f);
         SOUND->PlayEffect(L"player_atk1_sw");
     }
-
+    SetAttackReaource();
+    ActiveEffect(_effect);
+    CreateBubbleEffect(15, Vec3(3.f, 1.f, 1.f), 1.f, 3.f);
 	// 1타 공격 애니메이션 재생
 	PlayAttackAnimation(_attackStage);
 	MyCoroutine attackCoroutine = PlayAttackCoroutine(this, duration);
@@ -628,7 +621,9 @@ void PlayerController::ContinueAttack()
                     break;
             }
         }
-
+        SetAttackReaource();
+        ActiveEffect(_effect);
+        CreateBubbleEffect(15, Vec3(3.f, 1.f, 1.f), 1.f, 3.f);
 		// 다음 공격 애니메이션 재생
 		PlayAttackAnimation(_attackStage);
 		MyCoroutine attackCoroutine = PlayAttackCoroutine(this, duration);
