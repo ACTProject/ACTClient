@@ -39,6 +39,7 @@
 #include "Shadow.h"
 #include "Particle.h"
 #include "SoundManager.h"
+#include "MathUtils.h"
 
 void Client::Init()
 {
@@ -48,6 +49,7 @@ void Client::Init()
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
     shared_ptr<Shader> effectShader = make_shared<Shader>(L"EffectTest.fx");
     shared_ptr<Shader> bubbleShader = make_shared<Shader>(L"Bubble.fx");
+    shared_ptr<Shader> bubbleMapShader = make_shared<Shader>(L"BubbleMap.fx");
 
     // Player
     auto player = make_shared<GameObject>();
@@ -542,6 +544,10 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
         playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
         playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
+        playerModel->ReadAnimation(L"Player/Crab_DodgeStepback", AnimationState::DodgeStepback);
+        playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
+        playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
+        playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -602,6 +608,14 @@ void Client::Init()
     chargehitbox->Craete(player, Vec3(2.f, 1.f, 2.f));
     CUR_SCENE->Add(chargehitboxGO);
 
+    // DashHitBox
+    shared_ptr<GameObject> dashhitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> dashhitbox = make_shared<HitBox>();
+    dashhitboxGO->AddComponent(dashhitbox);
+    dashhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    dashhitbox->Craete(player, Vec3(3.f, 1.f, 3.f));
+    CUR_SCENE->Add(dashhitboxGO);
+
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
     dustMaterial->SetShader(particleShader);
@@ -632,40 +646,37 @@ void Client::Init()
     auto effectObj = make_shared<GameObject>();
     effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
     effectObj->AddComponent(make_shared<Particle>());
-    {
-        //material
-        shared_ptr<Material> material = make_shared<Material>();
-        material->SetShader(effectShader);
-        auto texture = RESOURCES->Load<Texture>(L"AttackEffect2", L"..\\Resources\\Textures\\Effect\\TestEffect2.png");
-        material->SetDiffuseMap(texture);
-        MaterialDesc& desc = material->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"AttackEffect2", material);
+    auto createMaterial = [&](const wstring& materialName, const wstring& texturePath)
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(effectShader);
+            auto texture = RESOURCES->Load<Texture>(materialName, texturePath);
+            material->SetDiffuseMap(texture);
 
-        effectObj->GetParticle()->SetMaterial(material);
-    }
-    {
-        //material
-        shared_ptr<Material> material = make_shared<Material>();
-        material->SetShader(effectShader);
-        auto texture = RESOURCES->Load<Texture>(L"AttackEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
-        material->SetDiffuseMap(texture);
-        MaterialDesc& desc = material->GetMaterialDesc();
-        desc.ambient = Vec4(1.f);
-        desc.diffuse = Vec4(1.f);
-        desc.specular = Vec4(1.f);
-        RESOURCES->Add(L"AttackEffect", material);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
 
-        effectObj->GetParticle()->SetMaterial(material);
-    }
+            RESOURCES->Add(materialName, material);
+            effectObj->GetParticle()->SetMaterial(material);
+        };
+    createMaterial(L"AttackEffect2", L"..\\Resources\\Textures\\Effect\\TestEffect2.png");
+    createMaterial(L"AttackEffect", L"..\\Resources\\Textures\\Effect\\TestEffect.png");
+    createMaterial(L"AttackEffect3", L"..\\Resources\\Textures\\Effect\\TestEffect3.png");
+    createMaterial(L"AttackEffect4", L"..\\Resources\\Textures\\Effect\\TestEffect4.png");
+    createMaterial(L"AttackEffect5", L"..\\Resources\\Textures\\Effect\\TestEffect5.png");
+    createMaterial(L"AttackEffect6", L"..\\Resources\\Textures\\Effect\\TestEffect6.png");
+    createMaterial(L"AttackEffect7", L"..\\Resources\\Textures\\Effect\\TestEffect7.png");
+    createMaterial(L"AttackEffect8", L"..\\Resources\\Textures\\Effect\\TestEffect8.png");
+    createMaterial(L"AttackEffect9", L"..\\Resources\\Textures\\Effect\\TestEffect9.png");
+    createMaterial(L"AttackEffect10", L"..\\Resources\\Textures\\Effect\\TestEffect10.png");
 
     effectObj->GetParticle()->SetDelayTime(0.4f);
-    effectObj->GetParticle()->SetLifetime(0.7f);
-    effectObj->GetParticle()->SetfadeStart(0.6f);
+    effectObj->GetParticle()->SetLifetime(0.5f);
+    effectObj->GetParticle()->SetfadeStart(0.45f);
     effectObj->GetParticle()->SetReuse(true);
-    effectObj->GetParticle()->Add(Vec3(0,0,0), Vec2(5.0f, 5.0f));
+    effectObj->GetParticle()->Add(Vec3(0,0,0), Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(effectObj);
         
     // HitEffect
@@ -690,7 +701,7 @@ void Client::Init()
     hitObj->GetParticle()->SetLifetime(0.3f);
     hitObj->GetParticle()->SetfadeStart(0.15f);
     hitObj->GetParticle()->SetReuse(true);
-    hitObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(5.0f, 5.0f));
+    hitObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(2.0f, 2.0f));
     CUR_SCENE->Add(hitObj);
 
 
@@ -704,6 +715,7 @@ void Client::Init()
 	playerScript->SetHitBox(hitboxGO);
 	playerScript->SetAirHitBox(airhitboxGO);
 	playerScript->SetChargeHitBox(chargehitboxGO);
+	playerScript->SetDashHitBox(dashhitboxGO);
     playerScript->SetDust(dustMaterial);
     playerScript->SetBubble(bubbleMaterial);
     playerScript->SetEffect(effectObj);
@@ -794,6 +806,43 @@ void Client::Init()
 			createFace(6, L"Cubemap_Right");  // Right
 		}
 	}
+    //Bubble in Map
+    {
+        int bubbleCount = 150;
+        float mapSize = 512.f;
+        
+        //material
+        shared_ptr<Material> bubbleMaterial = make_shared<Material>();
+        bubbleMaterial->SetShader(bubbleMapShader);
+        auto texture = RESOURCES->Load<Texture>(L"BubbleMap", L"..\\Resources\\Textures\\Effect\\bubble.png");
+        bubbleMaterial->SetDiffuseMap(texture);
+        MaterialDesc& desc = bubbleMaterial->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"BubbleMap", bubbleMaterial);
+        
+        for (int i = 0; i < bubbleCount; i++)
+        {
+            auto bubbleObj = make_shared<GameObject>();
+            bubbleObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+            bubbleObj->AddComponent(make_shared<Particle>());
+
+            bubbleObj->GetParticle()->SetMaterial(bubbleMaterial);
+            
+            bubbleObj->GetParticle()->SetReuse(true);
+            bubbleObj->GetParticle()->SetBubble(true);
+            float y = MathUtils::Random(-100.f, -8.f);
+
+            float lifetime = 4 - y / 20;
+             
+            bubbleObj->GetParticle()->SetLifetime(lifetime);
+            bubbleObj->GetParticle()->SetfadeStart(lifetime);
+            bubbleObj->GetParticle()->Add(Vec3(MathUtils::Random(0.f,mapSize), y, MathUtils::Random(0.f, mapSize)), Vec2(2.0f, 2.0f));
+
+            CUR_SCENE->Add(bubbleObj);
+        }
+    }
 	// Terrain
 	{
 		// Material

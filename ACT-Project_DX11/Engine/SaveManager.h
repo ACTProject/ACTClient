@@ -30,6 +30,8 @@ public:
 
     // 플레이어가 키 눌렀을 때, 호출되는 함수, SaveData를 파일로 저장한다. => 나중엔 버튼이벤트로 변경할 예정.
     bool SaveGame(shared_ptr<GameObject> obj);
+
+    bool GetIsActive() { return _isActive; }
 private:
     void CreateButton();
 

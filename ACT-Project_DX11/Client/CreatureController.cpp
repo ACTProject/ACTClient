@@ -45,6 +45,15 @@ void CreatureController::OnDamage(shared_ptr<GameObject> attacker, float damage)
                 auto shellSlider = dynamic_pointer_cast<Slider>(ui);
                 float shellRatio = shellHp / shellMaxHp;
                 shellSlider->SetRatio(shellRatio);
+
+                if (shellRatio <= 0.f)
+                {
+                    player->BreakShell();
+                }
+                else
+                {
+                    player->StartShellHit(attacker);
+                }
             }
         }
         else 

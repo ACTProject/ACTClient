@@ -35,8 +35,10 @@ public:
     void SetfadeStart(float fadeStart) { _fadeStart = fadeStart; }
     void SetElapsedTime(float elapsedTime) { _elapsedTime = elapsedTime; }
     void SetDelayTime(float delaytime) { _delaytime = delaytime; }
+    void SetLeft(bool isLeft) { _isLeft = isLeft; }
 
     void SetReuse(float isReusable) { _isReusable = isReusable; }
+    void SetBubble(bool booltype) { _bubbleMap = booltype; }
 
     void SetMaterial(shared_ptr<Material> material) { _material = material; }
     void SetPass(uint8 pass) { _pass = pass; }
@@ -62,7 +64,9 @@ private:
     float _lifetime = 3.0f;
     float _fadeStart = 1.0f;
     float _delaytime = 0.f;
+    bool _isLeft = true;
 
     bool _isReusable = false;
+    bool _bubbleMap = false;
 };
 

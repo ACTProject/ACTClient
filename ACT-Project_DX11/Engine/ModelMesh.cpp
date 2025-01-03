@@ -21,6 +21,7 @@ void ModelMesh::AttachToDummyBone(shared_ptr<ModelBone> dummyBone)
 {
 	bone = dummyBone; // 본을 더미 본에 연결
 	boneIndex = dummyBone->index;
+    name = dummyBone->name;
 
 	int parentBoneIndex = bone->parent ? bone->parentIndex : bone->index;
 

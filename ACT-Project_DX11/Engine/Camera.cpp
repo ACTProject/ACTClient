@@ -79,6 +79,7 @@ void Camera::Render_Forward()
     }
 }
 
+
 Camera::Camera() : Super(ComponentType::Camera)
 {
     _width = static_cast<float>(GAME->GetGameDesc().width);
@@ -115,6 +116,7 @@ void Camera::Update()
 		{
 			_debugInitialized = false;
 		}
+        SetMouseLock();
 		UpdateCameraWithMouseInput();
 
         auto terrain = CUR_SCENE->GetCurrentTerrain()->GetTerrain();  // 현재 Terrain 가져오기
@@ -184,18 +186,30 @@ void Camera::FreeCameraMovement()	// WASD 키로 이동, 마우스로 회전
 void Camera::UpdateCameraWithMouseInput()
 {
     _player = CUR_SCENE->GetPlayer();
+    
+    if (_lockMouse)
+    {
+        POINT centerPos;
+        RECT rect;
+        GetClientRect(GAME->GetHWND(), &rect);
+        centerPos.x = (rect.left + rect.right) / 2;
+        centerPos.y = (rect.top + rect.bottom) / 2;
 
-    float dx = INPUT->GetMouseDeltaX(); // x축 마우스 이동량
-    float dy = INPUT->GetMouseDeltaY(); // y축 마우스 이동량
+        POINT currentMousePos;
+        GetCursorPos(&currentMousePos);
+        float deltaX = (float)(currentMousePos.x - centerPos.x);
+        float deltaY = (float)(currentMousePos.y - centerPos.y);
 
-    // yaw와 pitch 각도를 마우스 이동에 따라 조절
-    _yaw += dx * _sensitivity;
-    _pitch += dy * _sensitivity;
+        SetCursorPos(centerPos.x, centerPos.y);
 
+        // yaw와 pitch 각도를 마우스 이동에 따라 조절
+        _yaw += deltaX * _sensitivity;
+        _pitch += deltaY * _sensitivity;
 
-	// pitch 값의 범위를 제한하여 카메라가 뒤집히지 않도록 조정 (-90도 ~ 90도 사이)
-    _pitch = std::clamp(_pitch, -XM_PIDIV2 + 0.1f, XM_PIDIV2 - 0.1f);
-    _pitch = max(_pitch, -1.0f); // pitch를 수평 이상으로 제한
+        // pitch 값의 범위를 제한하여 카메라가 뒤집히지 않도록 조정 (-90도 ~ 90도 사이)
+        _pitch = std::clamp(_pitch, -XM_PIDIV2 + 0.1f, XM_PIDIV2 - 0.1f);
+        _pitch = max(_pitch, -1.0f); // pitch를 수평 이상으로 제한
+    } 
 
     // 카메라 위치 계산
     float x = _cameraDistance * cosf(_pitch) * sinf(_yaw);
@@ -293,4 +307,62 @@ void Camera::RestrictCameraAboveTerrain(const shared_ptr<Terrain>& terrain)
         // 카메라를 뒤로 이동시켜 Terrain과의 충돌을 완벽히 방지
         _cameraPosition -= directionToFocus * 0.1f; // 0.1f는 조정 가능
     }
+}
+
+void Camera::SetMouseLock()
+{
+    static bool _cursorVisible = true;
+
+    if (_isTitle)
+    {
+        _lockMouse = false;
+        if (!_cursorVisible)
+        {
+            ShowCursor(true);
+            _cursorVisible = true;
+        }
+        ClipCursor(nullptr);
+        return;
+    }
+    
+    static POINT lastMousePos = {};   // 이전 마우스 위치 저장
+    bool previousLockMouse = _lockMouse;
+    _lockMouse = !SAVE->GetIsActive();
+
+    if (_lockMouse)
+    {
+        if (_cursorVisible)
+        {
+            ShowCursor(false);
+            _cursorVisible = false;
+        }
+
+        // 마우스 고정 상태로 전환 시 이동량 초기화
+        if (!previousLockMouse)
+        {
+            RECT windowRect;
+            GetClientRect(GAME->GetHWND(), &windowRect);
+            POINT centerPos;
+            centerPos.x = (windowRect.left + windowRect.right) / 2;
+            centerPos.y = (windowRect.top + windowRect.bottom) / 2;
+
+            SetCursorPos(centerPos.x, centerPos.y);
+
+            lastMousePos = centerPos;
+        }
+    }
+    else
+    {
+        if (!_cursorVisible)
+        {
+            ShowCursor(true);
+            _cursorVisible = true;
+        }
+        ClipCursor(nullptr);
+    }
+}
+
+void Camera::SetIsTitle(bool isTitle)
+{
+    _isTitle = isTitle;
 }

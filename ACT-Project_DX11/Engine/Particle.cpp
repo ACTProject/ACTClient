@@ -47,10 +47,10 @@ void Particle::Update()
         }
         return;
     }
-    /*if (_isReusable && _elapsedTime >= _lifetime)
+    if (_bubbleMap && _elapsedTime >= _lifetime)
     {
-        _elapsedTime = 0.0f;
-    }*/
+        _elapsedTime = 0;
+    }
 
     if (_drawCount != _prevCount)
     {
@@ -85,6 +85,7 @@ void Particle::Update()
     desc.fadeStart = _fadeStart;
     desc.lifetime = _lifetime;
     desc.delaytime = _delaytime;
+    desc.isLeft = _isLeft;
 
     shader->PushParticleData(desc);
 

@@ -73,6 +73,11 @@ void PlayerController::Update()
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
 
+    if (_isDead)
+    {
+        return;
+    }
+
     if (_playerActive == true)
     {
         // 입력 처리
@@ -91,6 +96,9 @@ void PlayerController::Update()
     // 차지 공격 처리
     HandleChargeAttack();
 
+    // 대쉬 공격 처리
+    HandleDashAttack();
+
     // 회피 처리
     HandleDodge();
 
@@ -100,6 +108,9 @@ void PlayerController::Update()
     // 히트 상태 처리
     HandleHit();
   
+    // Shell 히트 상태 처리
+    HandleShellHit();
+
     // 공중 공격 처리
     HandleAirAttack();
 
@@ -112,7 +123,8 @@ void PlayerController::Update()
 
     SOUND->SetVolume(L"bgm", 0.3);
 
-    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking)
+    // 중복 데미지 처리 방지
+    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking && !_isDashAttacking)
         _isHit = false;
 
     if (_isRope)
@@ -181,25 +193,21 @@ void PlayerController::HandleInput()
     // 공격 입력 처리
     if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
     {
+        if (_isRunning)
+        {
+            StartDashAttack();
+            return;
+        }
         // 기본 공격 Start
         if (_attackStage > 0)
             _currentDuration = _attackDurations[_attackStage - 1] / _FPS;
 
         _isPlayeringAttackAnimation = true;
         if (!_isAttacking)
-        {
             StartAttack();
-            SetAttackReaource();
-            ActiveEffect(_effect);
-        }
 
         else if (_attackTimer >= (_currentDuration / 2.5f) && _attackTimer <= _currentDuration)
-        {
             ContinueAttack();
-            SetAttackReaource();
-            ActiveEffect(_effect);
-        }
-       
     }
 
     if (_isShellEquipped == true && INPUT->GetButton(KEY_TYPE::RBUTTON))
@@ -210,7 +218,7 @@ void PlayerController::HandleInput()
 
 void PlayerController::HandleMovement()
 {
-    if (_isAttacking)
+    if (_isAttacking || _isDashAttacking)
         return;
 
     if (_moveDir.LengthSquared() > 0.0f)
@@ -218,7 +226,19 @@ void PlayerController::HandleMovement()
         _moveDir.Normalize();
 
         float dt = TIME->GetDeltaTime();
-        float speed = INPUT->GetButton(KEY_TYPE::SHIFT) ? _speed * 2 : _speed;
+        float speed = _speed;
+
+        if (INPUT->GetButton(KEY_TYPE::SHIFT))
+        {
+            speed *= 2;
+            _isRunning = true;
+        }
+        else
+            _isRunning = false;
+
+        if (_isJumping)
+            speed = _speed;
+
         if (_isBlocking)
             speed = _crawlSpeed;
 
@@ -242,6 +262,9 @@ void PlayerController::HandleMovement()
                 return; // 충돌 시 이동 취소
         }
         _transform->SetPosition(newPosition);
+
+        if (_isBackStep)
+            return;
 
         // 방향에 따라 회전
         Vec3 targetForward = _moveDir;
@@ -288,6 +311,7 @@ void PlayerController::HandleAnimations()
         !_isPlayeringJumpAnimation      && 
         !_isPlayeringHitAnimation       &&
         !_isPlayeringAirAttackAnimation &&
+        !_isPlayeringDashAttackAnimation &&
         !_isPlayeringChargeAttackAnimation)
     {
         if (_currentAnimationState != targetState)
@@ -330,10 +354,11 @@ void PlayerController::HandleAirAttack()
 {
     if (_isAirAttacking)
         UpdateAirAttack();
+
     else
     {
-        if (_airhitbox)
-            _airhitbox->GetCollider()->SetActive(false);
+        if (_airHitbox)
+            _airHitbox->GetCollider()->SetActive(false);
         return;
     }
 
@@ -345,8 +370,20 @@ void PlayerController::HandleChargeAttack()
         UpdateChargeAttack();
     else
     {
-        if (_chargehitbox)
-            _chargehitbox->GetCollider()->SetActive(false);
+        if (_chargeHitbox)
+            _chargeHitbox->GetCollider()->SetActive(false);
+        return;
+    }
+}
+
+void PlayerController::HandleDashAttack()
+{
+    if (_isDashAttacking)
+        UpdateDashAttack();
+    else
+    {
+        if (_dashHitbox)
+            _dashHitbox->GetCollider()->SetActive(false);
         return;
     }
 }
@@ -504,10 +541,18 @@ void PlayerController::HandleTrap()
     if (_trap)
         UpdateTrap();
 }
+
+void PlayerController::HandleShellHit()
+{
+    if (_shellHit)
+        UpdateShellHit();
+}
+
 void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 {
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];
     _player->AddDummyBoneAndAttach(shellModel, L"Shell", L"ShellDummy");
+    _shellModel = make_shared<ModelMesh>(shellModel);
 
     SOUND->PlayEffect(L"player_shellConfirm");
     // Shell 오브젝트 비활성화
@@ -515,6 +560,29 @@ void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 
     // 플레이어의 상태를 Shell 장착 상태로 변경
     _isShellEquipped = true;
+}
+
+void PlayerController::BreakShell()
+{
+    if (!_isShellEquipped)
+    {
+        std::cerr << "Error: Shell is not equipped. Cannot break it." << std::endl;
+        return;
+    }
+
+    // 더미 본 및 연결된 쉘 메쉬 제거
+    _player->RemoveDummyBoneAndDetach(_shellModel, L"ShellDummy");
+
+    // 플레이어 상태 업데이트
+    _isShellEquipped = false;
+
+    // 깨지는 소리 효과 재생
+    // TODO
+
+    // 애니메이션 상태 업데이트 (쉘 깨지는 애니메이션이 있을 경우)
+    // TODO
+
+    std::cout << "Shell has been broken and detached from the player." << std::endl;
 }
 
 void PlayerController::StartAttack()
@@ -532,7 +600,9 @@ void PlayerController::StartAttack()
         //SOUND->SetVolume(L"player_atk1_md", 0.25f);
         SOUND->PlayEffect(L"player_atk1_sw");
     }
-
+    SetAttackReaource();
+    ActiveEffect(_effect);
+    CreateBubbleEffect(15, Vec3(3.f, 1.f, 1.f), 1.f, 3.f);
 	// 1타 공격 애니메이션 재생
 	PlayAttackAnimation(_attackStage);
 	MyCoroutine attackCoroutine = PlayAttackCoroutine(this, duration);
@@ -583,7 +653,9 @@ void PlayerController::ContinueAttack()
                     break;
             }
         }
-
+        SetAttackReaource();
+        ActiveEffect(_effect);
+        CreateBubbleEffect(15, Vec3(3.f, 1.f, 1.f), 1.f, 3.f);
 		// 다음 공격 애니메이션 재생
 		PlayAttackAnimation(_attackStage);
 		MyCoroutine attackCoroutine = PlayAttackCoroutine(this, duration);
@@ -631,15 +703,15 @@ void PlayerController::UpdateHitBox()
 
 void PlayerController::UpdateAirHitBox()
 {
-    if (!_airhitbox || _isHit)
+    if (!_airHitbox || _isHit)
         return;
 
-    auto hitboxCollider = _airhitbox->GetCollider();
+    auto hitboxCollider = _airHitbox->GetCollider();
     hitboxCollider->SetActive(true);
 
     // 히트박스 위치 갱신
-    _airhitbox->GetTransform()->SetPosition(
-        _transform->GetPosition() + _airhitbox->GetHitBox()->GetOffSet()
+    _airHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _airHitbox->GetHitBox()->GetOffSet()
     );
 
     CheckAtk(hitboxCollider, _atk * 1.5f);
@@ -647,18 +719,34 @@ void PlayerController::UpdateAirHitBox()
 
 void PlayerController::UpdateChargeHitBox()
 {
-    if (!_chargehitbox || _isHit)
+    if (!_chargeHitbox || _isHit)
         return;
 
-    auto hitboxCollider = _chargehitbox->GetCollider();
+    auto hitboxCollider = _chargeHitbox->GetCollider();
     hitboxCollider->SetActive(true);
 
     // 히트박스 위치 갱신
-    _chargehitbox->GetTransform()->SetPosition(
-        _transform->GetPosition() + _chargehitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
+    _chargeHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _chargeHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
     );
 
-    CheckAtk(hitboxCollider, _atk * 2.f);
+    CheckAtk(hitboxCollider, _atk * 2.5f);
+}
+
+void PlayerController::UpdateDashHitBox()
+{
+    if (!_dashHitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _dashHitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _dashHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _dashHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
+    );
+
+    CheckAtk(hitboxCollider, _atk * 1.5f);
 }
 
 void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage)
@@ -737,21 +825,91 @@ void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float d
 }
 void PlayerController::SetAttackReaource()
 {
-    float resourceCount = _attackStage % 2 - 0.5f;
     Vec3 playerLook = _transform->GetLook();
     Vec3 cameraForward = CUR_SCENE->GetMainCamera()->GetCamera()->GetForward();
     playerLook.Normalize();
     cameraForward.Normalize();
+    float dot = playerLook.Dot(cameraForward);
+    switch (_attackStage)
+    {
+    case 1:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+        
+    case 2:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect3"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect4"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+    case 3:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect5"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect6"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+    case 4:
+    {
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect8"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect7"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        break;
+    }
+    default:
+        break;
+    }
 
-    float dot = playerLook.Dot(cameraForward) * resourceCount;
-    if (dot > 0.0f)
+    if (_isAirAttacking)
     {
-        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect"));
+        if (dot > 0.0f)
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect9"));
+            _effect->GetParticle()->SetLeft(true);
+        }
+        else
+        {
+            _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect10"));
+            _effect->GetParticle()->SetLeft(false);
+        }
+        _effect->GetParticle()->SetDelayTime(0.f);
     }
-    else
-    {
-        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
-    }
+
+    _effect->GetParticle()->SetDelayTime(0.4f);
+    
 }
 void PlayerController::ActiveEffect(shared_ptr<GameObject> effect)
 {
@@ -770,8 +928,11 @@ void PlayerController::StartAirAttack()
         SOUND->PlayEffect(L"player_aerialAtk");
         SOUND->PlayEffect(L"player_aerialAtk_md");
     }
-
+    
     _isAirAttacking = true;
+    SetAttackReaource();
+    ActiveEffect(_effect);
+    CreateBubbleEffect(40, Vec3(4, 0.5, 3), 1, 1);
     _airAttackTimer = 0.0f;
     _airAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::AirAttack));
     _airAttackDuration /= _FPS;
@@ -831,9 +992,59 @@ void PlayerController::UpdateChargeAttack()
     }
 }
 
+void PlayerController::StartDashAttack()
+{
+    if (_isDashAttacking)
+        return;
+
+    _isDashAttacking = true;
+    _dashAttackTimer = 0.0f;
+    _dashAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::DashAtk));
+    _dashAttackDuration /= _FPS;
+
+    _isPlayeringDashAttackAnimation = true;
+    SetAnimationState(AnimationState::DashAtk);
+
+    // 대쉬 방향과 속도 설정
+    Vec3 forward = _transform->GetLook(); // 플레이어가 바라보는 방향
+    forward.Normalize();
+    _dashDirection = forward;
+
+    _dashSpeed = 10.0f; // 대쉬 속도
+    _dashDistance = 5.0f; // 대쉬 거리
+    _remainingDashDistance = _dashDistance; // 남은 대쉬 거리 초기화
+}
+
+void PlayerController::UpdateDashAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _dashAttackTimer += dt;
+
+    UpdateDashHitBox();
+
+    // 대쉬 이동 처리
+    if (_remainingDashDistance > 0.0f)
+    {
+        float moveStep = min(_dashSpeed * dt, _remainingDashDistance); // 이동 거리 계산
+        Vec3 newPosition = _transform->GetPosition() + _dashDirection * moveStep; // 새 위치 계산
+        _transform->SetPosition(newPosition); // 위치 업데이트
+        _remainingDashDistance -= moveStep; // 남은 거리 감소
+    }
+
+    // 대쉬 공격 종료 처리
+    if (_dashAttackTimer >= _dashAttackDuration)
+    {
+        _isDashAttacking = false;
+        _isPlayeringDashAttackAnimation = false;
+        _remainingDashDistance = 0.f;
+        SetAnimationState(AnimationState::Idle);
+    }
+}
+
 void PlayerController::StartHit()
 {
-    if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking)
+    if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking || _isDashAttacking)
         return;
 
     int randNum = rand() % 4 + 1;
@@ -862,6 +1073,52 @@ void PlayerController::UpdateHit()
     }
 }
 
+void PlayerController::StartShellHit(shared_ptr<GameObject> attacker)
+{
+    if (_shellHit || _isAttacking || _isAirAttacking || _isChargeAttacking)
+        return;
+
+    // 사운드
+    //int randNum = rand() % 4 + 1;
+    //wstring s = L"player_hit" + std::to_wstring(rand() % 4 + 1);
+    //SOUND->PlayEffect(s);
+
+    _shellHit = true;
+    _shellHitTimer = 0.0f;
+    _shellHitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::BlockHit)); // 히트 동작 시간
+    _shellHitDuration /= (_FPS / 2); // 30프레임 애니메이션
+
+    _isPlayeringShellHitAnimation = true;
+    SetAnimationState(AnimationState::BlockHit);
+
+    // 공격자로부터 밀리는 로직
+    if (attacker)
+    {
+        Vec3 attackerPosition = attacker->GetTransform()->GetPosition(); // 공격자의 위치
+        Vec3 playerPosition = _transform->GetPosition();                // 플레이어의 위치
+
+        Vec3 knockbackDirection = playerPosition - attackerPosition; // 공격자 -> 플레이어 방향
+        knockbackDirection.Normalize();                              // 방향 벡터 정규화
+
+        float knockbackForce = 100.0f; // 밀리는 힘
+        _rigidbody->Addforce(knockbackDirection * knockbackForce); // 힘 적용
+    }
+}
+void PlayerController::UpdateShellHit()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _shellHitTimer += dt;
+
+    // 히트 상태 종료 처리
+    if (_shellHitTimer >= _shellHitDuration)
+    {
+        _shellHit = false;
+        _isPlayeringShellHitAnimation = false;
+        SetAnimationState(AnimationState::BlockingIdle);
+    }
+}
+
 void PlayerController::StartDodge()
 {
     if (_isDodging)
@@ -870,18 +1127,40 @@ void PlayerController::StartDodge()
     SOUND->PlayEffect(L"player_dash");
     _isDodging = true;
     _dodgeTimer = 0.0f;
-    _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Dodge)); // 회피 동작 시간
-    _dodgeDuration /= _FPS;
     _dodgeDistance = 3.0f; // 회피 이동 거리
     
     // 회피 방향 설정
     _dodgeDirection = _moveDir;
     if (_dodgeDirection.LengthSquared() == 0.0f)
-        _dodgeDirection = _transform->GetLook(); // 입력이 없으면 바라보는 방향으로 이동
+    {
+        _isBackStep = true;
+
+        _dodgeDistance = 5.0f; // 회피 이동 거리
+        _dodgeDirection = _transform->GetLook(); // 입력이 없으면 바라보는 방향 뒤로 Stepback
+        _dodgeDirection = Vec3(-_dodgeDirection.x, -_dodgeDirection.y, -_dodgeDirection.z);
+
+        _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::DodgeStepback)); // 회피 동작 시간
+        _dodgeDuration /= _FPS;
+        SetAnimationState(AnimationState::DodgeStepback);
+    }
+    else 
+    {
+        if (_isShellEquipped) // 등껍질 착용 상태
+        {
+            _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::DodgeMedium)); // 회피 동작 시간
+            _dodgeDuration /= (_FPS / 2);   // 30FPS 애니메이션임
+            SetAnimationState(AnimationState::DodgeMedium);
+        }
+        else
+        {
+            _dodgeDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Dodge)); // 회피 동작 시간
+            _dodgeDuration /= _FPS;
+            SetAnimationState(AnimationState::Dodge);
+        }
+    }
     _dodgeDirection.Normalize();
 
     _isPlayeringDodgeAnimation = true;
-    SetAnimationState(AnimationState::Dodge);
 
     _isInvincible = true;
 }
@@ -901,6 +1180,7 @@ void PlayerController::UpdateDodge()
     if (_dodgeTimer >= _dodgeDuration)
     {
         _isDodging = false;
+        _isBackStep = false;
         _isInvincible = false; // 무적 상태 해제
         _isPlayeringDodgeAnimation = false;
         SetAnimationState(AnimationState::Idle);
@@ -929,6 +1209,7 @@ void PlayerController::Jump()
         CreateBubbleEffect(10, Vec3(2.f,1.f,1.f),1.f, -1.f);
     }
 }
+
 void PlayerController::ResetToIdleState() {
 	_isPlayeringAttackAnimation = false;
 	EndAttackCoroutine();
@@ -970,16 +1251,14 @@ void PlayerController::CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, flo
         bubblePosition += _transform->GetLook() * positionLook;
         bubblePosition.y += positionY;
 
-        // 플레이어 기준 X, Z 방향 랜덤 위치
-        Vec3 lookDirection = _transform->GetLook();     // 플레이어가 바라보는 방향
-        Vec3 rightDirection = _transform->GetRight();   // 플레이어의 오른쪽 방향
+        float angle = MathUtils::Random(0.0f, 2.0f * 3.141592f);
+        float radius = MathUtils::Random(0.0f, bubbleSpread.x);
 
-        // XZ 평면에서 플레이어 방향을 기준으로 랜덤 이동
-        bubblePosition += lookDirection * MathUtils::Random(-bubbleSpread.z, bubbleSpread.z); // Z축 이동
-        bubblePosition += rightDirection * MathUtils::Random(-bubbleSpread.x, bubbleSpread.x); // X축 이동
+        bubblePosition.x += cos(angle) * radius;
+        bubblePosition.z += sin(angle) * radius;
 
-        // Y축 랜덤 이동
         bubblePosition.y += MathUtils::Random(-bubbleSpread.y / 2, bubbleSpread.y / 2);
+
 
         float randomSize = MathUtils::Random(0.2f, 0.4f);
 
@@ -1055,5 +1334,31 @@ void PlayerController::OnRope()
 
 void PlayerController::OnDeath()
 {
+    // 게임 오버 메시지 출력
     std::cout << "Player has died! Game Over!" << std::endl;
+
+    // 죽었을 때 UI 표시
+    // TODO
+\
+    // 플레이어 Death 애니메이션
+    _isDead = true;
+    _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
+    _deadDuration /= _FPS;
+    SetAnimationState(AnimationState::Die);
+
+    // 죽음 처리 이후 리스폰 또는 종료 처리
+    // TODO
+    //TaskQueue::GetInstance().AddTask([this]() {
+    //    std::this_thread::sleep_for(std::chrono::seconds(3)); // 3초 대기
+
+    //    // 선택적으로 리스폰 또는 메인 메뉴로 이동
+    //    if (_allowRespawn)
+    //    {
+    //        RespawnPlayer(); // 리스폰 함수 호출
+    //    }
+    //    else
+    //    {
+    //        Game::GetInstance().ChangeScene(SceneTag::TITLE); // 타이틀 화면으로 이동
+    //    }
+    //    });
 }

@@ -55,6 +55,7 @@ void Title::Init()
 
         camera->GetCamera()->SetCullingMaskAll();
         camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, false);
+        camera->GetCamera()->SetIsTitle(true);
         CUR_SCENE->Add(camera);
     }
 
