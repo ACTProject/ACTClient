@@ -195,6 +195,8 @@ void Camera::UpdateCameraWithMouseInput()
         centerPos.x = (rect.left + rect.right) / 2;
         centerPos.y = (rect.top + rect.bottom) / 2;
 
+        ClientToScreen(GAME->GetHWND(), &centerPos);
+
         POINT currentMousePos;
         GetCursorPos(&currentMousePos);
         float deltaX = (float)(currentMousePos.x - centerPos.x);
@@ -340,12 +342,16 @@ void Camera::SetMouseLock()
         // 마우스 고정 상태로 전환 시 이동량 초기화
         if (!previousLockMouse)
         {
-            RECT windowRect;
-            GetClientRect(GAME->GetHWND(), &windowRect);
-            POINT centerPos;
-            centerPos.x = (windowRect.left + windowRect.right) / 2;
-            centerPos.y = (windowRect.top + windowRect.bottom) / 2;
+            RECT clientRect;
+            GetClientRect(GAME->GetHWND(), &clientRect); // 클라이언트 영역 가져오기
 
+            // 클라이언트 좌표를 화면 좌표로 변환
+            POINT centerPos;
+            centerPos.x = (clientRect.right + clientRect.left) / 2;
+            centerPos.y = (clientRect.bottom + clientRect.top) / 2;
+            ClientToScreen(GAME->GetHWND(), &centerPos); // 화면 좌표로 변환
+
+            // 마우스를 화면 중앙에 위치
             SetCursorPos(centerPos.x, centerPos.y);
 
             lastMousePos = centerPos;

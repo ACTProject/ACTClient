@@ -32,6 +32,8 @@ public:
     void SetBubble(shared_ptr<Material> bubble);
     void SetEffect(shared_ptr<GameObject> effect) { _effect = effect; }
     void SetHitEffect(shared_ptr<GameObject> hitEffect) { _hitEffect = hitEffect; }
+    void SetArmorGroup(vector<shared_ptr<GameObject>> armorGroup) { _armorGroup = armorGroup; }
+    void SetShellObject(shared_ptr<GameObject> shellObj) { _shellObject = shellObj; }
 
     // Handle
     void HandleInput();         // 입력 처리
@@ -130,6 +132,7 @@ private:
     shared_ptr<GameObject> _effect;
     shared_ptr<GameObject> _hitEffect;
     shared_ptr<ModelMesh> _shellModel;
+    vector<shared_ptr<GameObject>> _armorGroup;
 
 private:
 	float _FPS;
@@ -198,6 +201,7 @@ private:
     bool _isShellEquipped = false;      // 등껍질 장착 상태 여부
     bool _isBlocking = false;           // 막고 있는 상태인지 여부
     float _crawlSpeed = 2.f;            // 기어가는 속도  
+    shared_ptr<GameObject> _shellObject;
 
     // Hit
     bool _hit = false;                // 히트 상태인지 여부

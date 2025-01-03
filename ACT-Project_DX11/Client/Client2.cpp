@@ -127,7 +127,7 @@ void Client2::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, false);
 		CUR_SCENE->Add(camera);
 	}
-
+    vector<shared_ptr<GameObject>> armorGroup;
     //UI_HPBar
     {
         // Material
@@ -263,6 +263,7 @@ void Client2::Init()
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
+                armorGroup.push_back(obj);
             }
 
             CUR_SCENE->Add(obj);
@@ -309,6 +310,7 @@ void Client2::Init()
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
+                armorGroup.push_back(obj);
             }
 
             CUR_SCENE->Add(obj);
@@ -332,6 +334,7 @@ void Client2::Init()
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("Armor");
+            armorGroup.push_back(obj);
             CUR_SCENE->Add(obj);
         }
     }
@@ -651,6 +654,36 @@ void Client2::Init()
     hitObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(2.0f, 2.0f));
     CUR_SCENE->Add(hitObj);
 
+    // Shell
+    auto shell = make_shared<GameObject>();
+    shell->SetObjectType(ObjectType::Shell);
+    shell->GetOrAddTransform()->SetPosition(Vec3(35, -5.f, 35));
+    shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+    shared_ptr<Model> shellModel = make_shared<Model>();
+    {
+        // CustomData -> Memory
+        shellModel->ReadModel(L"Shell/Shell_SodaCan");
+        shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+    }
+
+    // Shell::ModelRenderer
+    shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+    shell->AddComponent(mr);
+    {
+        shell->GetModelRenderer()->SetModel(shellModel);
+        shell->GetModelRenderer()->SetPass(1);
+    }
+
+    // Collider
+    auto collider = make_shared<AABBBoxCollider>();
+    collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+    collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+    OCTREE->InsertCollider(collider);
+    shell->AddComponent(collider);
+    shell->SetActive(false);
+    CUR_SCENE->Add(shell);
+
 	// Player
     {
         auto player = make_shared<GameObject>();
@@ -744,6 +777,8 @@ void Client2::Init()
         playerScript->SetBubble(bubbleMaterial);
         playerScript->SetEffect(effectObj);
         playerScript->SetHitEffect(hitObj);
+        playerScript->SetArmorGroup(armorGroup);
+        playerScript->SetShellObject(shell);
 
         player->SetController(playerScript);
         player->AddComponent(playerScript);

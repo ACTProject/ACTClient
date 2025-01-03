@@ -148,7 +148,7 @@ void Client::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, false);
 		CUR_SCENE->Add(camera);
 	}
-
+    vector<shared_ptr<GameObject>> armorGroup;
     //UI_HPBar
     {
         // Material
@@ -328,7 +328,7 @@ void Client::Init()
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
             }
-
+            armorGroup.push_back(obj);
             CUR_SCENE->Add(obj);
         }
 
@@ -352,11 +352,11 @@ void Client::Init()
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
             }
-
+            armorGroup.push_back(obj);
             CUR_SCENE->Add(obj);
         }
 
-        // RedBar ArmorMesh
+        // ArmorMesh
         {
             // 슬라이더 컴포넌트 추가.
             auto obj = make_shared<GameObject>();
@@ -365,6 +365,7 @@ void Client::Init()
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("PlayerArmor");
+            armorGroup.push_back(obj);
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
@@ -720,6 +721,7 @@ void Client::Init()
     playerScript->SetBubble(bubbleMaterial);
     playerScript->SetEffect(effectObj);
     playerScript->SetHitEffect(hitObj);
+    playerScript->SetArmorGroup(armorGroup);
 
     player->SetController(playerScript);
 	player->AddComponent(playerScript);
