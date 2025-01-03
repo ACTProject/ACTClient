@@ -67,6 +67,11 @@ void PlayerController::Update()
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
 
+    if (_isDead)
+    {
+        return;
+    }
+
     if (_playerActive == true)
     {
         // 입력 처리
@@ -698,7 +703,7 @@ void PlayerController::UpdateChargeHitBox()
         _transform->GetPosition() + _chargeHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
     );
 
-    CheckAtk(hitboxCollider, _atk * 2.f);
+    CheckAtk(hitboxCollider, _atk * 2.5f);
 }
 
 void PlayerController::UpdateDashHitBox()
@@ -1012,7 +1017,7 @@ void PlayerController::UpdateDashAttack()
 
 void PlayerController::StartHit()
 {
-    if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking)
+    if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking || _isDashAttacking)
         return;
 
     int randNum = rand() % 4 + 1;
@@ -1177,6 +1182,7 @@ void PlayerController::Jump()
         CreateBubbleEffect(10, Vec3(2.f,1.f,1.f),1.f, -1.f);
     }
 }
+
 void PlayerController::ResetToIdleState() {
 	_isPlayeringAttackAnimation = false;
 	EndAttackCoroutine();
@@ -1258,5 +1264,31 @@ void PlayerController::LoadPlayer(SaveData data)
 
 void PlayerController::OnDeath()
 {
+    // 게임 오버 메시지 출력
     std::cout << "Player has died! Game Over!" << std::endl;
+
+    // 죽었을 때 UI 표시
+    // TODO
+\
+    // 플레이어 Death 애니메이션
+    _isDead = true;
+    _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
+    _deadDuration /= _FPS;
+    SetAnimationState(AnimationState::Die);
+
+    // 죽음 처리 이후 리스폰 또는 종료 처리
+    // TODO
+    //TaskQueue::GetInstance().AddTask([this]() {
+    //    std::this_thread::sleep_for(std::chrono::seconds(3)); // 3초 대기
+
+    //    // 선택적으로 리스폰 또는 메인 메뉴로 이동
+    //    if (_allowRespawn)
+    //    {
+    //        RespawnPlayer(); // 리스폰 함수 호출
+    //    }
+    //    else
+    //    {
+    //        Game::GetInstance().ChangeScene(SceneTag::TITLE); // 타이틀 화면으로 이동
+    //    }
+    //    });
 }

@@ -130,6 +130,11 @@ private:
 
     Vec3 _moveDir = Vec3(0.f);
 
+    // Death
+    bool _isDead = false;       // 플레이어 죽었는지
+    float _deadDuration = 0.0f; // 죽음 애니메이션 지속시간 (초)
+    float _deadTimer = 0.0f;    // 죽음 애니메이션 시간 추적
+
     // Jump
     float _jumpSpeed = 15.f;
     bool _isJumping = false;
