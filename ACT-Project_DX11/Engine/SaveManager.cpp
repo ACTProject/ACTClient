@@ -54,6 +54,7 @@ void SaveManager::CreateSaveUI()
     {
         auto obj = make_shared<GameObject>();
         obj->AddComponent(make_shared<Button>());
+        UIMANAGER->AddButton(obj->GetButton());
 
         obj->GetButton()->Create(Vec3(100.f, 100.f, 0.1f), Vec2(180, 80), RESOURCES->Get<Material>(L"Save"));
         obj->SetObjectType(ObjectType::UI);
@@ -133,6 +134,7 @@ void SaveManager::CreateButton()
 {
     auto obj = make_shared<GameObject>();
     obj->AddComponent(make_shared<Button>());
+    UIMANAGER->AddButton(obj->GetButton());
     obj->GetButton()->Create(Vec3(300.f, startY + (padding * index), 0.1f), Vec2(180, 40), RESOURCES->Get<Material>(L"Load"));
     obj->GetButton()->SetID(_btnIndex);
     obj->SetObjectType(ObjectType::UI);

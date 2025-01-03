@@ -46,13 +46,13 @@ public:
     void HandleInteraction();   // 상호작용 처리
     void HandlePortal();        // 포탈 상호작용 처리
     void HandleHit();           // 히트 상태 처리
+    void HandleTrap();          // 함정충돌 상태 처리
     void HandleShellHit();      // Shell 히트 상태 처리
 
-
     // Attack
-	void StartAttack();
-	void ContinueAttack();
-	void PlayAttackAnimation(int stage);
+	  void StartAttack();
+	  void ContinueAttack();
+	  void PlayAttackAnimation(int stage);
     void UpdateHitBox();
     void UpdateAirHitBox();
     void UpdateChargeHitBox();
@@ -104,8 +104,14 @@ public:
     
     void HealPlayer();
 
+    void StartTrap();
+    void UpdateTrap();
+
     // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
     void LoadPlayer(SaveData data);
+
+    // rope에 매달린 상태
+    void OnRope();
 
 public:
     void OnDeath() override;
@@ -141,13 +147,13 @@ private:
     float _jumpDuration = 0.0f; // 점프 애니메이션 지속시간 (초)
     float _jumpTimer = 0.0f;   // 점프 애니메이션 시간 추적
 
-	// Attack
-	int _attackStage = 0;           // 현재 공격 단계 (0: Idle, 1~4: 연속 공격 단계)
-	bool _isAttacking = false;      // 공격 중인지 여부
-	float _attackCooldown = 0.f;    // 공격 애니메이션 최소 실행 시간
-	float _attackTimer = 0.0f;      // 현재 공격 단계의 경과 시간
-	float _attackDurations[4];      // 각 공격 애니메이션 지속 시간 (초)
-	float _currentDuration = 0.f;
+	  // Attack
+	  int _attackStage = 0;           // 현재 공격 단계 (0: Idle, 1~4: 연속 공격 단계)
+    bool _isAttacking = false;      // 공격 중인지 여부
+	  float _attackCooldown = 0.f;    // 공격 애니메이션 최소 실행 시간
+	  float _attackTimer = 0.0f;      // 현재 공격 단계의 경과 시간
+	  float _attackDurations[4];      // 각 공격 애니메이션 지속 시간 (초)
+	  float _currentDuration = 0.f;
     bool _isHit = false;            // 공격을 Hit 시켰는지 여부
 
     // AirAttack
@@ -218,6 +224,11 @@ private:
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
 
+    // Trap
+    bool _trap = false;
+    float _trapDuration = 0.1f;
+    float _trapTimer = 0.0f;
+
     // Bubble
     shared_ptr<Material> _bubbleMaterial;
 
@@ -225,6 +236,8 @@ private:
     float _footstepTimer = 0.0f;
     float _runningInterval = 0.2f;
     float _walkingInterval = 0.3f;
+
+    bool _isRope = false;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }

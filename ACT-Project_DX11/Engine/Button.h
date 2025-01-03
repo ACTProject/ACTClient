@@ -27,6 +27,8 @@ public:
     int GetID() { return _BtnId; };
     void SetID(int id) { _BtnId = id; };
 
+    void ResizeRect(float width, float height);
+
 private:
 	std::function<void(void)> _onClicked;
     std::function<void(void)> _onHover;
@@ -34,6 +36,9 @@ private:
     std::unordered_map<KEY_TYPE, std::function<void(void)>> _onKeyPress;
     bool _isHoverd = false;
 	RECT _rect;
+
+    Vec3 _screenPos;
+    Vec2 _size;
 
     int _BtnId = 0;
 };
