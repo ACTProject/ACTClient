@@ -545,7 +545,7 @@ void PlayerController::BreakShell()
     _isShellEquipped = false;
 
     // 깨지는 소리 효과 재생
-    // TODO
+    // TO DO
 
     // 애니메이션 상태 업데이트 (쉘 깨지는 애니메이션이 있을 경우)
     // TODO
@@ -938,6 +938,8 @@ void PlayerController::StartChargeAttack()
 
     _isPlayeringChargeAttackAnimation = true;
     SetAnimationState(AnimationState::AtkChargeThrust);
+
+    SOUND->PlayEffect(L"player_chargeUp");
 }
 
 void PlayerController::UpdateChargeAttack()
@@ -948,12 +950,22 @@ void PlayerController::UpdateChargeAttack()
 
     UpdateChargeHitBox();
 
+    if (_chargeAttackTimer >= _chargeAttackDuration * 3 / 5)
+    {
+        if (!_isPlaySound)
+        {
+            SOUND->PlayEffect(L"player_chargeAtk");
+            _isPlaySound = true;
+        }
+    }
+
     // 차지 공격 종료 처리
     if (_chargeAttackTimer >= _chargeAttackDuration)
     {
         _isChargeAttacking = false;
         _isPlayeringChargeAttackAnimation = false;
         _isCharging = false;
+        _isPlaySound = false;
         _chargeTimer = 0.f;
         _chargeAttackTimer = 0.f;
         SetAnimationState(AnimationState::Idle);
@@ -1046,11 +1058,6 @@ void PlayerController::StartShellHit(shared_ptr<GameObject> attacker)
     if (_shellHit || _isAttacking || _isAirAttacking || _isChargeAttacking)
         return;
 
-    // 사운드
-    //int randNum = rand() % 4 + 1;
-    //wstring s = L"player_hit" + std::to_wstring(rand() % 4 + 1);
-    //SOUND->PlayEffect(s);
-
     _shellHit = true;
     _shellHitTimer = 0.0f;
     _shellHitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::BlockHit)); // 히트 동작 시간
@@ -1058,6 +1065,7 @@ void PlayerController::StartShellHit(shared_ptr<GameObject> attacker)
 
     _isPlayeringShellHitAnimation = true;
     SetAnimationState(AnimationState::BlockHit);
+    SOUND->PlayEffect(L"player_impachShell");
 
     // 공격자로부터 밀리는 로직
     if (attacker)
@@ -1264,7 +1272,7 @@ void PlayerController::OnDeath()
 
     // 죽었을 때 UI 표시
     // TODO
-\
+
     // 플레이어 Death 애니메이션
     _isDead = true;
     _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
