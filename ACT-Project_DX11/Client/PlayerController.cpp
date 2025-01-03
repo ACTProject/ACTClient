@@ -74,9 +74,20 @@ void PlayerController::Update()
     if (DEBUG->IsDebugEnabled())
         return;
 
+    // 포탈 충돌 처리
+    HandlePortal();
+
+    Vec3 temp = { (float)_isRope,(float)_isRope ,(float)_isRope };
+    DEBUG->LogVec3ToConsole(temp, "rope");
+
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
+
+    if (_isDead)
+    {
+        return;
+    }
 
     if (_playerActive == true)
     {
@@ -96,6 +107,9 @@ void PlayerController::Update()
     // 차지 공격 처리
     HandleChargeAttack();
 
+    // 대쉬 공격 처리
+    HandleDashAttack();
+
     // 회피 처리
     HandleDodge();
 
@@ -114,13 +128,18 @@ void PlayerController::Update()
     // 상호작용 처리
     HandleInteraction();
 
-    // 포탈 충돌 처리
-    HandlePortal();
+
+
+    HandleTrap();
 
     SOUND->SetVolume(L"bgm", 0.3);
 
-    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking)
+    // 중복 데미지 처리 방지
+    if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking && !_isDashAttacking)
         _isHit = false;
+
+    if (_isRope)
+        _isRope = false;
 }
 
 void PlayerController::HandleInput()
@@ -185,6 +204,11 @@ void PlayerController::HandleInput()
     // 공격 입력 처리
     if (INPUT->GetButtonDown(KEY_TYPE::LBUTTON))
     {
+        if (_isRunning)
+        {
+            StartDashAttack();
+            return;
+        }
         // 기본 공격 Start
         if (_attackStage > 0)
             _currentDuration = _attackDurations[_attackStage - 1] / _FPS;
@@ -205,7 +229,7 @@ void PlayerController::HandleInput()
 
 void PlayerController::HandleMovement()
 {
-    if (_isAttacking)
+    if (_isAttacking || _isDashAttacking)
         return;
 
     if (_moveDir.LengthSquared() > 0.0f)
@@ -213,7 +237,15 @@ void PlayerController::HandleMovement()
         _moveDir.Normalize();
 
         float dt = TIME->GetDeltaTime();
-        float speed = INPUT->GetButton(KEY_TYPE::SHIFT) ? _speed * 2 : _speed;
+        float speed = _speed;
+
+        if (INPUT->GetButton(KEY_TYPE::SHIFT))
+        {
+            speed *= 2;
+            _isRunning = true;
+        }
+        else
+            _isRunning = false;
 
         if (_isJumping)
             speed = _speed;
@@ -290,6 +322,7 @@ void PlayerController::HandleAnimations()
         !_isPlayeringJumpAnimation      && 
         !_isPlayeringHitAnimation       &&
         !_isPlayeringAirAttackAnimation &&
+        !_isPlayeringDashAttackAnimation &&
         !_isPlayeringChargeAttackAnimation)
     {
         if (_currentAnimationState != targetState)
@@ -335,8 +368,8 @@ void PlayerController::HandleAirAttack()
 
     else
     {
-        if (_airhitbox)
-            _airhitbox->GetCollider()->SetActive(false);
+        if (_airHitbox)
+            _airHitbox->GetCollider()->SetActive(false);
         return;
     }
 
@@ -348,8 +381,20 @@ void PlayerController::HandleChargeAttack()
         UpdateChargeAttack();
     else
     {
-        if (_chargehitbox)
-            _chargehitbox->GetCollider()->SetActive(false);
+        if (_chargeHitbox)
+            _chargeHitbox->GetCollider()->SetActive(false);
+        return;
+    }
+}
+
+void PlayerController::HandleDashAttack()
+{
+    if (_isDashAttacking)
+        UpdateDashAttack();
+    else
+    {
+        if (_dashHitbox)
+            _dashHitbox->GetCollider()->SetActive(false);
         return;
     }
 }
@@ -465,18 +510,35 @@ void PlayerController::HandlePortal()
 
     for (const auto& collider : nearbyColliders)
     {
-        if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
+        if (collider->GetGameObject()->GetDynamicObj() == nullptr)
             return;
 
-        bool isClear = CUR_SCENE->GetMissionClear();
-        if (collider->Intersects(playerCollider) && isClear)
+        if (collider->Intersects(playerCollider))
         {
-            SOUND->PlayEffect(L"player_enterPortal");
-            TaskQueue::GetInstance().Stop();
-            GAME->ChangeScene(2, _isShellEquipped);
-            break;
-        }
+            // 트랩 충돌
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::PitFall)
+            {
+                StartTrap();
+            }
 
+            // 로프 충돌
+            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Rope)
+            {
+                OnRope();
+            }
+
+            if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
+                return;
+
+            bool isClear = CUR_SCENE->GetMissionClear();
+            if (isClear)
+            {
+                SOUND->PlayEffect(L"player_enterPortal");
+                TaskQueue::GetInstance().Stop();
+                GAME->ChangeScene(2);
+                break;
+            }
+        }
     }
 }
 
@@ -484,6 +546,11 @@ void PlayerController::HandleHit()
 {
     if (_hit)
         UpdateHit();
+}
+void PlayerController::HandleTrap()
+{
+    if (_trap)
+        UpdateTrap();
 }
 
 void PlayerController::HandleShellHit()
@@ -527,7 +594,7 @@ void PlayerController::BreakShell()
         armor->SetActive(false);
     }
     // 깨지는 소리 효과 재생
-    // TODO
+    // TO DO
 
     // 애니메이션 상태 업데이트 (쉘 깨지는 애니메이션이 있을 경우)
     // TODO
@@ -652,15 +719,15 @@ void PlayerController::UpdateHitBox()
 
 void PlayerController::UpdateAirHitBox()
 {
-    if (!_airhitbox || _isHit)
+    if (!_airHitbox || _isHit)
         return;
 
-    auto hitboxCollider = _airhitbox->GetCollider();
+    auto hitboxCollider = _airHitbox->GetCollider();
     hitboxCollider->SetActive(true);
 
     // 히트박스 위치 갱신
-    _airhitbox->GetTransform()->SetPosition(
-        _transform->GetPosition() + _airhitbox->GetHitBox()->GetOffSet()
+    _airHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _airHitbox->GetHitBox()->GetOffSet()
     );
 
     CheckAtk(hitboxCollider, _atk * 1.5f);
@@ -668,18 +735,34 @@ void PlayerController::UpdateAirHitBox()
 
 void PlayerController::UpdateChargeHitBox()
 {
-    if (!_chargehitbox || _isHit)
+    if (!_chargeHitbox || _isHit)
         return;
 
-    auto hitboxCollider = _chargehitbox->GetCollider();
+    auto hitboxCollider = _chargeHitbox->GetCollider();
     hitboxCollider->SetActive(true);
 
     // 히트박스 위치 갱신
-    _chargehitbox->GetTransform()->SetPosition(
-        _transform->GetPosition() + _chargehitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
+    _chargeHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _chargeHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
     );
 
-    CheckAtk(hitboxCollider, _atk * 2.f);
+    CheckAtk(hitboxCollider, _atk * 2.5f);
+}
+
+void PlayerController::UpdateDashHitBox()
+{
+    if (!_dashHitbox || _isHit)
+        return;
+
+    auto hitboxCollider = _dashHitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    // 히트박스 위치 갱신
+    _dashHitbox->GetTransform()->SetPosition(
+        _transform->GetPosition() + _dashHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 2.5f
+    );
+
+    CheckAtk(hitboxCollider, _atk * 1.5f);
 }
 
 void PlayerController::CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage)
@@ -903,6 +986,8 @@ void PlayerController::StartChargeAttack()
 
     _isPlayeringChargeAttackAnimation = true;
     SetAnimationState(AnimationState::AtkChargeThrust);
+
+    SOUND->PlayEffect(L"player_chargeUp");
 }
 
 void PlayerController::UpdateChargeAttack()
@@ -913,21 +998,81 @@ void PlayerController::UpdateChargeAttack()
 
     UpdateChargeHitBox();
 
+    if (_chargeAttackTimer >= _chargeAttackDuration * 3 / 5)
+    {
+        if (!_isPlaySound)
+        {
+            SOUND->PlayEffect(L"player_chargeAtk");
+            _isPlaySound = true;
+        }
+    }
+
     // 차지 공격 종료 처리
     if (_chargeAttackTimer >= _chargeAttackDuration)
     {
         _isChargeAttacking = false;
         _isPlayeringChargeAttackAnimation = false;
         _isCharging = false;
+        _isPlaySound = false;
         _chargeTimer = 0.f;
         _chargeAttackTimer = 0.f;
         SetAnimationState(AnimationState::Idle);
     }
 }
 
+void PlayerController::StartDashAttack()
+{
+    if (_isDashAttacking)
+        return;
+
+    _isDashAttacking = true;
+    _dashAttackTimer = 0.0f;
+    _dashAttackDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::DashAtk));
+    _dashAttackDuration /= _FPS;
+
+    _isPlayeringDashAttackAnimation = true;
+    SetAnimationState(AnimationState::DashAtk);
+
+    // 대쉬 방향과 속도 설정
+    Vec3 forward = _transform->GetLook(); // 플레이어가 바라보는 방향
+    forward.Normalize();
+    _dashDirection = forward;
+
+    _dashSpeed = 10.0f; // 대쉬 속도
+    _dashDistance = 5.0f; // 대쉬 거리
+    _remainingDashDistance = _dashDistance; // 남은 대쉬 거리 초기화
+}
+
+void PlayerController::UpdateDashAttack()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _dashAttackTimer += dt;
+
+    UpdateDashHitBox();
+
+    // 대쉬 이동 처리
+    if (_remainingDashDistance > 0.0f)
+    {
+        float moveStep = min(_dashSpeed * dt, _remainingDashDistance); // 이동 거리 계산
+        Vec3 newPosition = _transform->GetPosition() + _dashDirection * moveStep; // 새 위치 계산
+        _transform->SetPosition(newPosition); // 위치 업데이트
+        _remainingDashDistance -= moveStep; // 남은 거리 감소
+    }
+
+    // 대쉬 공격 종료 처리
+    if (_dashAttackTimer >= _dashAttackDuration)
+    {
+        _isDashAttacking = false;
+        _isPlayeringDashAttackAnimation = false;
+        _remainingDashDistance = 0.f;
+        SetAnimationState(AnimationState::Idle);
+    }
+}
+
 void PlayerController::StartHit()
 {
-    if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking)
+    if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking || _isDashAttacking)
         return;
 
     int randNum = rand() % 4 + 1;
@@ -956,23 +1101,32 @@ void PlayerController::UpdateHit()
     }
 }
 
-void PlayerController::StartShellHit()
+void PlayerController::StartShellHit(shared_ptr<GameObject> attacker)
 {
     if (_shellHit || _isAttacking || _isAirAttacking || _isChargeAttacking)
         return;
 
-    // 사운드
-    //int randNum = rand() % 4 + 1;
-    //wstring s = L"player_hit" + std::to_wstring(rand() % 4 + 1);
-    //SOUND->PlayEffect(s);
-
     _shellHit = true;
     _shellHitTimer = 0.0f;
     _shellHitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::BlockHit)); // 히트 동작 시간
-    _shellHitDuration /= _FPS;
+    _shellHitDuration /= (_FPS / 2); // 30프레임 애니메이션
 
     _isPlayeringShellHitAnimation = true;
     SetAnimationState(AnimationState::BlockHit);
+    SOUND->PlayEffect(L"player_impachShell");
+
+    // 공격자로부터 밀리는 로직
+    if (attacker)
+    {
+        Vec3 attackerPosition = attacker->GetTransform()->GetPosition(); // 공격자의 위치
+        Vec3 playerPosition = _transform->GetPosition();                // 플레이어의 위치
+
+        Vec3 knockbackDirection = playerPosition - attackerPosition; // 공격자 -> 플레이어 방향
+        knockbackDirection.Normalize();                              // 방향 벡터 정규화
+
+        float knockbackForce = 100.0f; // 밀리는 힘
+        _rigidbody->Addforce(knockbackDirection * knockbackForce); // 힘 적용
+    }
 }
 void PlayerController::UpdateShellHit()
 {
@@ -1079,6 +1233,7 @@ void PlayerController::Jump()
         CreateBubbleEffect(10, Vec3(2.f,1.f,1.f),1.f, -1.f);
     }
 }
+
 void PlayerController::ResetToIdleState() {
 	_isPlayeringAttackAnimation = false;
 	EndAttackCoroutine();
@@ -1153,12 +1308,81 @@ void PlayerController::HealPlayer()
     }
 }
 
+void PlayerController::StartTrap()
+{
+    if (_trap)
+        return;
+
+    _trap = true;
+    _trapTimer = 0.0f;
+    _trapDuration = 0.5f;
+
+    if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+    {
+        _hp -= 30;
+        _hp = std::clamp(_hp, 0.0f, _maxHp);
+
+        auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+        float hpRatio = _hp / _maxHp;
+        hpSlider->SetRatio(hpRatio);
+    }
+}
+
+void PlayerController::UpdateTrap()
+{
+    float dt = TIME->GetDeltaTime();
+
+    _trapTimer += dt;
+
+    // 히트 상태 종료 처리
+    if (_trapTimer >= _trapDuration)
+    {
+        _trap = false;
+    }
+}
+
 void PlayerController::LoadPlayer(SaveData data)
 {
     _transform->SetLocalPosition(data.playerPos);
 }
 
+void PlayerController::OnRope()
+{
+    if (_isRope)
+        return;
+    // wasd 이동방향 바꾸기.
+    // 애니메이션 다 멈추고 공격 없애고 회피키 없애고
+    _isRope = true;
+
+}
+
 void PlayerController::OnDeath()
 {
+    // 게임 오버 메시지 출력
     std::cout << "Player has died! Game Over!" << std::endl;
+
+    // 죽었을 때 UI 표시
+    // TODO
+
+    // 플레이어 Death 애니메이션
+    _isDead = true;
+    _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
+    _deadDuration /= _FPS;
+    SetAnimationState(AnimationState::Die);
+
+    // 죽음 처리 이후 리스폰 또는 종료 처리
+    // TODO
+    //TaskQueue::GetInstance().AddTask([this]() {
+    //    std::this_thread::sleep_for(std::chrono::seconds(3)); // 3초 대기
+
+    //    // 선택적으로 리스폰 또는 메인 메뉴로 이동
+    //    if (_allowRespawn)
+    //    {
+    //        RespawnPlayer(); // 리스폰 함수 호출
+    //    }
+    //    else
+    //    {
+    //        Game::GetInstance().ChangeScene(SceneTag::TITLE); // 타이틀 화면으로 이동
+    //    }
+    //    });
 }

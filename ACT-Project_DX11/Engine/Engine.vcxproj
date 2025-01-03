@@ -223,6 +223,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PitFallObj.h" />
     <ClInclude Include="Potal.h" />
     <ClInclude Include="Primitive3D.h" />
     <ClInclude Include="RawBuffer.h" />
@@ -231,6 +232,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="ResourceBase.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="RopeObj.h" />
     <ClInclude Include="SaveManager.h" />
     <ClInclude Include="SaveObj.h" />
     <ClInclude Include="Scene.h" />
@@ -342,6 +344,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PitFallObj.cpp" />
     <ClCompile Include="Potal.cpp" />
     <ClCompile Include="Primitive3D.cpp" />
     <ClCompile Include="RawBuffer.cpp" />
@@ -350,6 +353,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="ResourceBase.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
+    <ClCompile Include="RopeObj.cpp" />
     <ClCompile Include="SaveManager.cpp" />
     <ClCompile Include="SaveObj.cpp" />
     <ClCompile Include="Scene.cpp" />

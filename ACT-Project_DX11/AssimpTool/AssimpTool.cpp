@@ -123,6 +123,11 @@ void AssimpTool::Init()
             converter->ReadAssetFile(L"Player/Crab_BlockHit.fbx");
             converter->ExportAnimationData(L"Player/Crab_BlockHit");
         }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Player/Crab_DashAtk.fbx");
+            converter->ExportAnimationData(L"Player/Crab_DashAtk");
+        }
 	}
     
 	// Enemy
@@ -668,6 +673,18 @@ void AssimpTool::Init()
             converter->ReadAssetFile(L"MapObject/mushroom.fbx");
             converter->ExportMaterialData(L"MapObject/mushroom");
             converter->ExportModelData(L"MapObject/mushroom");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/urchin.fbx");
+            converter->ExportMaterialData(L"MapObject/urchin");
+            converter->ExportModelData(L"MapObject/urchin");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"MapObject/rope.fbx");
+            converter->ExportMaterialData(L"MapObject/rope");
+            converter->ExportModelData(L"MapObject/rope");
         }
        /* {
             shared_ptr<Converter> converter = make_shared<Converter>();

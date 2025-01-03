@@ -71,8 +71,29 @@ void ModelAnimator::UpdateTweenData()
 			if (desc.curr.sumTime >= timePerFrame)
 			{
 				desc.curr.sumTime = 0;
-				desc.curr.currFrame = (desc.curr.currFrame + 1) % currentAnim->frameCount;
-				desc.curr.nextFrame = (desc.curr.currFrame + 1) % currentAnim->frameCount;
+
+                // Die 애니메이션일 경우 한 바퀴 돌고 마지막 프레임에서 멈춤
+                if (desc.curr.state == static_cast<int>(AnimationState::Die))
+                {
+                    if (desc.curr.currFrame < currentAnim->frameCount - 1)
+                    {
+                        // 마지막 프레임에 도달하지 않았으면 다음 프레임으로 이동
+                        desc.curr.currFrame++;
+                        desc.curr.nextFrame = (desc.curr.currFrame + 1) % currentAnim->frameCount;
+                    }
+                    else
+                    {
+                        // 마지막 프레임에 도달하면 고정
+                        desc.curr.currFrame = currentAnim->frameCount - 1;
+                        desc.curr.nextFrame = currentAnim->frameCount - 1;
+                    }
+                }
+                else
+                {
+                    // 일반 애니메이션의 경우 프레임 업데이트
+                    desc.curr.currFrame = (desc.curr.currFrame + 1) % currentAnim->frameCount;
+                    desc.curr.nextFrame = (desc.curr.currFrame + 1) % currentAnim->frameCount;
+                }
 			}
 
 			// 다음 프레임으로 넘어가는 비율 계산

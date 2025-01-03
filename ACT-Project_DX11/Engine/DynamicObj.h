@@ -9,6 +9,8 @@ enum class DynamicType
     Jump,
     Save,
     Heal,
+    PitFall,
+    Rope,
 
     End,
 };

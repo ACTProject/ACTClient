@@ -24,8 +24,9 @@ public:
 	void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
 	void SetAnimationState(AnimationState state);
 	void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
-	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airhitbox = hitbox; }
-	void SetChargeHitBox(shared_ptr<GameObject> hitbox) { _chargehitbox = hitbox; }
+	void SetAirHitBox(shared_ptr<GameObject> hitbox) { _airHitbox = hitbox; }
+	void SetChargeHitBox(shared_ptr<GameObject> hitbox) { _chargeHitbox = hitbox; }
+	void SetDashHitBox(shared_ptr<GameObject> hitbox) { _dashHitbox = hitbox; }
 	void SetCamera(shared_ptr<GameObject> camera) { _camera = camera; }
     void SetDust(shared_ptr<Material> dust);
     void SetBubble(shared_ptr<Material> bubble);
@@ -40,22 +41,24 @@ public:
     void HandleAttack();        // 공격 처리
     void HandleAirAttack();     // 공중 공격 상태 처리
     void HandleChargeAttack();  // 차지 공격 상태 처리
+    void HandleDashAttack();    // 대쉬 공격 상태 처리
     void HandleDodge();         // 회피 처리
     void HandleJump();          // 점프 처리
     void HandleMovement();      // 이동 처리
     void HandleInteraction();   // 상호작용 처리
     void HandlePortal();        // 포탈 상호작용 처리
     void HandleHit();           // 히트 상태 처리
+    void HandleTrap();          // 함정충돌 상태 처리
     void HandleShellHit();      // Shell 히트 상태 처리
 
-
     // Attack
-	void StartAttack();
-	void ContinueAttack();
-	void PlayAttackAnimation(int stage);
+	  void StartAttack();
+	  void ContinueAttack();
+	  void PlayAttackAnimation(int stage);
     void UpdateHitBox();
     void UpdateAirHitBox();
     void UpdateChargeHitBox();
+    void UpdateDashHitBox();
     void SetAttackReaource();
     void ActiveEffect(shared_ptr<GameObject> effect);
     void CheckAtk(shared_ptr<BaseCollider> hitboxCollider, float damage);
@@ -68,6 +71,10 @@ public:
     void StartChargeAttack();
     void UpdateChargeAttack();
 
+    // Dash Attack
+    void StartDashAttack();
+    void UpdateDashAttack();
+
     // Shell
     bool GetIsBlocking() { return _isBlocking; }
     void InteractWithShell(shared_ptr<GameObject> gameObject);
@@ -78,7 +85,7 @@ public:
     void UpdateHit();
 
     // ShellHit
-    void StartShellHit();
+    void StartShellHit(shared_ptr<GameObject> attacker);
     void UpdateShellHit();
 
     // Dodge
@@ -99,8 +106,14 @@ public:
     
     void HealPlayer();
 
+    void StartTrap();
+    void UpdateTrap();
+
     // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
     void LoadPlayer(SaveData data);
+
+    // rope에 매달린 상태
+    void OnRope();
 
 public:
     void OnDeath() override;
@@ -112,8 +125,9 @@ private:
 	shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _camera;
 	shared_ptr<GameObject> _hitbox;
-	shared_ptr<GameObject> _airhitbox;
-	shared_ptr<GameObject> _chargehitbox;
+	shared_ptr<GameObject> _airHitbox;
+	shared_ptr<GameObject> _chargeHitbox;
+	shared_ptr<GameObject> _dashHitbox;
 	shared_ptr<Rigidbody> _rigidbody;
     shared_ptr<GameObject> _effect;
     shared_ptr<GameObject> _hitEffect;
@@ -125,19 +139,24 @@ private:
 
     Vec3 _moveDir = Vec3(0.f);
 
+    // Death
+    bool _isDead = false;       // 플레이어 죽었는지
+    float _deadDuration = 0.0f; // 죽음 애니메이션 지속시간 (초)
+    float _deadTimer = 0.0f;    // 죽음 애니메이션 시간 추적
+
     // Jump
     float _jumpSpeed = 15.f;
     bool _isJumping = false;
     float _jumpDuration = 0.0f; // 점프 애니메이션 지속시간 (초)
     float _jumpTimer = 0.0f;   // 점프 애니메이션 시간 추적
 
-	// Attack
-	int _attackStage = 0;           // 현재 공격 단계 (0: Idle, 1~4: 연속 공격 단계)
-	bool _isAttacking = false;      // 공격 중인지 여부
-	float _attackCooldown = 0.f;    // 공격 애니메이션 최소 실행 시간
-	float _attackTimer = 0.0f;      // 현재 공격 단계의 경과 시간
-	float _attackDurations[4];      // 각 공격 애니메이션 지속 시간 (초)
-	float _currentDuration = 0.f;
+	  // Attack
+	  int _attackStage = 0;           // 현재 공격 단계 (0: Idle, 1~4: 연속 공격 단계)
+    bool _isAttacking = false;      // 공격 중인지 여부
+	  float _attackCooldown = 0.f;    // 공격 애니메이션 최소 실행 시간
+	  float _attackTimer = 0.0f;      // 현재 공격 단계의 경과 시간
+	  float _attackDurations[4];      // 각 공격 애니메이션 지속 시간 (초)
+	  float _currentDuration = 0.f;
     bool _isHit = false;            // 공격을 Hit 시켰는지 여부
 
     // AirAttack
@@ -148,10 +167,22 @@ private:
     // ChargeAttack
     bool _isCharging = false;              // 차지 중인지 여부
     bool _isChargeAttacking = false;       // 차지 공격 중인지 여부
+    bool _isPlaySound = false;             // 차지 공격 사운드 플레이 여부
     float _chargeAttackDuration = 0.0f;    // 차지 공격 동작 시간
     float _chargeThreshold = 0.2f;         // 차지 공격 발동 시간 (초)
     float _chargeTimer = 0.0f;             // 차지 발동 시간 (초)
     float _chargeAttackTimer = 0.0f;       // 차지 공격 발동 시간
+
+    // DashAttack
+    bool _isRunning = false;             // 뛰고 있는지
+    bool _isDashAttacking = false;       // 대쉬 공격 중인지 여부
+    float _dashAttackDuration = 0.0f;    // 대쉬 공격 동작 시간
+    Vec3 _dashDirection = Vec3(0.f);     // 대쉬 방향
+    float _dashSpeed = 0.0f;             // 대쉬 속도
+    float _dashDistance = 0.0f;          // 대쉬 거리
+    float _remainingDashDistance = 0.0f; // 남은 대쉬 거리
+    float _dashAttackTimer = 0.0f;
+
     // AttackMove
     float _attackMoveDistance = 1.0f;  // 공격 시 이동할 거리
     float _attackMoveSpeed = 2.0f;     // 이동 속도
@@ -187,6 +218,7 @@ private:
 	bool _isPlayeringAttackAnimation = false; // 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringAirAttackAnimation = false; // 공중 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringChargeAttackAnimation = false; // 차지 공격 애니메이션 재생 중인지 여부 확인
+	bool _isPlayeringDashAttackAnimation = false; // 대쉬 공격 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringDodgeAnimation = false; // 회피 애니메이션 재생 중인지 여부 확인
 	bool _isPlayeringHitAnimation = false; // 히트 애니메이션 재생 중인지 여부 확인
     bool _isPlayeringShellHitAnimation = false; // Shell 히트 애니메이션 재생 중인지 여부 확인
@@ -197,6 +229,11 @@ private:
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
 
+    // Trap
+    bool _trap = false;
+    float _trapDuration = 0.1f;
+    float _trapTimer = 0.0f;
+
     // Bubble
     shared_ptr<Material> _bubbleMaterial;
 
@@ -204,6 +241,8 @@ private:
     float _footstepTimer = 0.0f;
     float _runningInterval = 0.2f;
     float _walkingInterval = 0.3f;
+
+    bool _isRope = false;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }

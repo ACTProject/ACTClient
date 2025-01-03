@@ -14,6 +14,8 @@
 #include "JumpObj.h"
 #include "SaveObj.h"
 #include "HealObj.h"
+#include "RopeObj.h"
+#include "PitFallObj.h"
 
 
 void MapManager::Init()
@@ -131,6 +133,10 @@ void MapManager::Init()
         src = make_shared<MapObjDesc>(L"MapObject/Portal", L"23. RenderDemo.fx", false, true, DynamicType::Save, true);
         MAP->AddMapObj(src);
         src = make_shared<MapObjDesc>(L"MapObject/mushroom", L"23. RenderDemo.fx", false, true, DynamicType::Heal, true);
+        MAP->AddMapObj(src);
+        src = make_shared<MapObjDesc>(L"MapObject/urchin", L"normalRender.fx", false, true, DynamicType::PitFall, true);
+        MAP->AddMapObj(src);
+        src = make_shared<MapObjDesc>(L"MapObject/rope", L"normalRender.fx", false, true, DynamicType::Rope, true);
         MAP->AddMapObj(src);
 
         src = make_shared<MapObjDesc>(L"MapObject/Medieval_Door", L"23. RenderDemo.fx" , false, true, DynamicType::Potal);
@@ -854,6 +860,16 @@ void MapManager::CreateDynamicObject(shared_ptr<GameObject> obj,DynamicType type
     case DynamicType::Heal:
     {
         obj->AddComponent(make_shared<HealObj>(DynamicType::Heal));
+    }
+    break;
+    case DynamicType::PitFall:
+    {
+        obj->AddComponent(make_shared<PitFallObj>(DynamicType::PitFall));
+    }
+    break;
+    case DynamicType::Rope:
+    {
+        obj->AddComponent(make_shared<RopeObj>(DynamicType::Rope));
     }
     break;
     default:

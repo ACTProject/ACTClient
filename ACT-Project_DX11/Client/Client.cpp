@@ -417,7 +417,7 @@ void Client::Init()
             {
                 auto obj = make_shared<GameObject>();
                 obj->AddComponent(make_shared<Button>());
-
+                UIMANAGER->AddButton(obj->GetButton());
                 obj->GetButton()->Create(Vec3(400.f, 250.f, 0.4f), Vec2(595, 404), RESOURCES->Get<Material>(L"Option"));
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
@@ -432,7 +432,7 @@ void Client::Init()
             {
                 auto obj = make_shared<GameObject>();
                 obj->AddComponent(make_shared<Button>());
-
+                UIMANAGER->AddButton(obj->GetButton());
                 obj->GetButton()->Create(Vec3(532, 359, 0.3f), Vec2(175, 38), nullptr);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"GameEnd")); });
@@ -449,7 +449,7 @@ void Client::Init()
             {
                 auto obj = make_shared<GameObject>();
                 obj->AddComponent(make_shared<Button>());
-
+                UIMANAGER->AddButton(obj->GetButton());
                 obj->GetButton()->Create(Vec3(532, 308, 0.3f), Vec2(175, 38), nullptr);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Continue")); });
@@ -548,6 +548,7 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_DodgeStepback", AnimationState::DodgeStepback);
         playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
         playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
+        playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -607,6 +608,14 @@ void Client::Init()
     chargehitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
     chargehitbox->Craete(player, Vec3(2.f, 1.f, 2.f));
     CUR_SCENE->Add(chargehitboxGO);
+
+    // DashHitBox
+    shared_ptr<GameObject> dashhitboxGO = make_shared<GameObject>();
+    shared_ptr<HitBox> dashhitbox = make_shared<HitBox>();
+    dashhitboxGO->AddComponent(dashhitbox);
+    dashhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+    dashhitbox->Craete(player, Vec3(3.f, 1.f, 3.f));
+    CUR_SCENE->Add(dashhitboxGO);
 
     // Dust Material 생성
     shared_ptr<Material> dustMaterial = make_shared<Material>();
@@ -707,6 +716,7 @@ void Client::Init()
 	playerScript->SetHitBox(hitboxGO);
 	playerScript->SetAirHitBox(airhitboxGO);
 	playerScript->SetChargeHitBox(chargehitboxGO);
+	playerScript->SetDashHitBox(dashhitboxGO);
     playerScript->SetDust(dustMaterial);
     playerScript->SetBubble(bubbleMaterial);
     playerScript->SetEffect(effectObj);
