@@ -164,6 +164,7 @@ private:
     // ChargeAttack
     bool _isCharging = false;              // 차지 중인지 여부
     bool _isChargeAttacking = false;       // 차지 공격 중인지 여부
+    bool _isPlaySound = false;             // 차지 공격 사운드 플레이 여부
     float _chargeAttackDuration = 0.0f;    // 차지 공격 동작 시간
     float _chargeThreshold = 0.2f;         // 차지 공격 발동 시간 (초)
     float _chargeTimer = 0.0f;             // 차지 발동 시간 (초)
