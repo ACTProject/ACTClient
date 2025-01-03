@@ -28,8 +28,11 @@ void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> materi
 	float height = GRAPHICS->GetViewport().GetHeight();
 	float width = GRAPHICS->GetViewport().GetWidth();
 
-	float x = screenPos.x - width / 2;
-	float y = height / 2 - screenPos.y;
+    _screenPos = screenPos;
+    _size = size;
+
+	float x = _screenPos.x - width / 2;
+	float y = height / 2 - _screenPos.y;
 	Vec3 position = Vec3(x, y, 0);
 
 	go->GetOrAddTransform()->SetPosition(position);
@@ -53,10 +56,10 @@ void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> materi
 	go->GetMeshRenderer()->SetPass(0);
 
 	// Picking
-	_rect.left = screenPos.x - size.x / 2;
-	_rect.right = screenPos.x + size.x / 2;
-	_rect.top = screenPos.y - size.y / 2;
-	_rect.bottom = screenPos.y + size.y / 2;
+	_rect.left = _screenPos.x - _size.x / 2;
+	_rect.right = _screenPos.x + _size.x / 2;
+	_rect.top = _screenPos.y - _size.y / 2;
+	_rect.bottom = _screenPos.y + _size.y / 2;
 }
 
 void Button::AddOnClickedEvent(std::function<void(void)> func)
@@ -123,4 +126,22 @@ void Button::CheckKeyInput()
             InvokeOnKeyPress(key);
         }
     }
+}
+
+void Button::ResizeRect(float width, float height)
+{
+    float initWidth = GRAPHICS->GetViewport().GetWidth();
+    float initHeight = GRAPHICS->GetViewport().GetHeight();
+
+    float WidthRatio = width / initWidth;
+    float HeightRatio = height / initHeight;
+    _screenPos = Vec3(_screenPos.x * WidthRatio, _screenPos.y * HeightRatio,_screenPos.z);
+    _size = Vec2(_size.x * WidthRatio,_size.y * HeightRatio);
+
+
+    // Picking
+    _rect.left = _screenPos.x - _size.x / 2;
+    _rect.right = _screenPos.x + _size.x / 2;
+    _rect.top = _screenPos.y - _size.y / 2;
+    _rect.bottom = _screenPos.y + _size.y / 2;
 }

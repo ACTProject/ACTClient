@@ -414,7 +414,7 @@ void Client::Init()
             {
                 auto obj = make_shared<GameObject>();
                 obj->AddComponent(make_shared<Button>());
-
+                UIMANAGER->AddButton(obj->GetButton());
                 obj->GetButton()->Create(Vec3(400.f, 250.f, 0.4f), Vec2(595, 404), RESOURCES->Get<Material>(L"Option"));
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
@@ -429,7 +429,7 @@ void Client::Init()
             {
                 auto obj = make_shared<GameObject>();
                 obj->AddComponent(make_shared<Button>());
-
+                UIMANAGER->AddButton(obj->GetButton());
                 obj->GetButton()->Create(Vec3(532, 359, 0.3f), Vec2(175, 38), nullptr);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"GameEnd")); });
@@ -446,7 +446,7 @@ void Client::Init()
             {
                 auto obj = make_shared<GameObject>();
                 obj->AddComponent(make_shared<Button>());
-
+                UIMANAGER->AddButton(obj->GetButton());
                 obj->GetButton()->Create(Vec3(532, 308, 0.3f), Vec2(175, 38), nullptr);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Continue")); });

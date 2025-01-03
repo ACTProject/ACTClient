@@ -44,7 +44,7 @@ void Scene::Update()
 
     UpdateUI();
 
-    if (INPUT->GetButtonDown(KEY_TYPE::ESC))
+    if (INPUT->GetButtonDown(KEY_TYPE::TILDE))
     {
         SAVE->OpenSaveUI();
     }
@@ -147,6 +147,7 @@ void Scene::Clear()
     {
         if (object)
         {
+            UIMANAGER->RemoveButton(object);
             Remove(object);
         }
     }

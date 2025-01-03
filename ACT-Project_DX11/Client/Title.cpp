@@ -190,7 +190,7 @@ void Title::Init()
     {
         auto obj = make_shared<GameObject>();
         obj->AddComponent(make_shared<Button>());
-
+        UIMANAGER->AddButton(obj->GetButton());
         obj->GetButton()->Create(Vec3(250, 300, 0.3), Vec2(166, 44), RESOURCES->Get<Material>(L"StartBtn"));
         obj->GetMeshRenderer()->SetAlphaBlend(true);
         obj->GetButton()->AddOnHoverEvent([obj]() { 
@@ -212,7 +212,7 @@ void Title::Init()
     {
         auto obj = make_shared<GameObject>();
         obj->AddComponent(make_shared<Button>());
-
+        UIMANAGER->AddButton(obj->GetButton());
         obj->GetButton()->Create(Vec3(250, 360, 0.3), Vec2(166, 44), RESOURCES->Get<Material>(L"EndBtn"));
         obj->GetMeshRenderer()->SetAlphaBlend(true);
         obj->GetButton()->AddOnHoverEvent([obj]() { 
