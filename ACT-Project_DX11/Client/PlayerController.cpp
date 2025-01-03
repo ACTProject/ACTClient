@@ -52,6 +52,17 @@ void PlayerController::Start()
 
     std::cout << "PlayerController Start()" << std::endl;
 
+    if (GAME->GetShellState())
+    {
+        //auto obj = GAME->GetShellObject();
+
+        InteractWithShell(_shellObject);
+    }
+
+    for (auto& armor : _armorGroup) {
+        armor->SetActive(_isShellEquipped);
+    }
+
     // 로드 이벤트 등록.
     SAVE->AddLoadEvent(std::bind(&PlayerController::LoadPlayer,this,std::placeholders::_1));
 }
@@ -462,7 +473,7 @@ void PlayerController::HandlePortal()
         {
             SOUND->PlayEffect(L"player_enterPortal");
             TaskQueue::GetInstance().Stop();
-            GAME->ChangeScene(2);
+            GAME->ChangeScene(2, _isShellEquipped);
             break;
         }
 
@@ -493,6 +504,9 @@ void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
 
     // 플레이어의 상태를 Shell 장착 상태로 변경
     _isShellEquipped = true;
+    for (auto& armor : _armorGroup) {
+        armor->SetActive(true);
+    }
 }
 
 void PlayerController::BreakShell()
@@ -509,6 +523,9 @@ void PlayerController::BreakShell()
     // 플레이어 상태 업데이트
     _isShellEquipped = false;
 
+    for (auto& armor : _armorGroup) {
+        armor->SetActive(false);
+    }
     // 깨지는 소리 효과 재생
     // TODO
 
@@ -552,7 +569,6 @@ void PlayerController::ContinueAttack()
 		float duration = _attackDurations[_attackStage - 1] / _FPS;
         _attackMoveDistance = 1.0f;
         _isHit = false;
-        //std::wstring effectName = L"HitEffect" + std::to_wstring(_attackStage);
         _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect2"));
 
         {   // sound

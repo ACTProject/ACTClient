@@ -1,6 +1,7 @@
 #pragma once
 
 class Iexecute;
+class GameObject;
 
 enum class SceneTag
 {
@@ -33,9 +34,11 @@ public:
     void SetGameDesc(GameDesc desc) { _scenes[_num] = desc; }
     void GameEnd() { _msg.message = WM_QUIT; }
     void AddScene(GameDesc desc) { _scenes.push_back(desc); }
-    void ChangeScene(uint32 num);
+    void ChangeScene(uint32 num, bool previousSceneShell = false, shared_ptr<GameObject> previousShellObject = nullptr);
 
     HWND GetHWND();
+    bool GetShellState() { return _isPreviousSceneShellEquipped; }
+    shared_ptr<GameObject> GetShellObject() { return _previousShellObject; }
 
 private:
     ATOM MyRegisterClass();
@@ -53,5 +56,8 @@ private:
     bool _changeScene = false;
     uint32 _num = 0;
     bool _init = false;
-};
 
+    //이전 씬의 Shell정보
+    bool _isPreviousSceneShellEquipped = false;
+    shared_ptr<GameObject> _previousShellObject;
+};
