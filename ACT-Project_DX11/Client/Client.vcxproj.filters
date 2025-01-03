@@ -244,5 +244,8 @@
     <FxCompile Include="..\Shaders\Bubble.fx">
       <Filter>Shaders\Week5</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shaders\BubbleMap.fx">
+      <Filter>Shaders\Week5</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

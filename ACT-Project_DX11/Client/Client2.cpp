@@ -39,6 +39,7 @@
 #include "Shadow.h"
 #include "Particle.h"
 #include "SoundManager.h"
+#include "MathUtils.h"
 
 void Client2::Init()
 {
@@ -48,6 +49,7 @@ void Client2::Init()
     shared_ptr<Shader> particleShader = make_shared<Shader>(L"Particle.fx");
     shared_ptr<Shader> effectShader = make_shared<Shader>(L"EffectTest.fx");
     shared_ptr<Shader> bubbleShader = make_shared<Shader>(L"Bubble.fx");
+    shared_ptr<Shader> bubbleMapShader = make_shared<Shader>(L"BubbleMap.fx");
 
     // SOUND
     {
@@ -646,7 +648,7 @@ void Client2::Init()
     hitObj->GetParticle()->SetLifetime(0.3f);
     hitObj->GetParticle()->SetfadeStart(0.15f);
     hitObj->GetParticle()->SetReuse(true);
-    hitObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(5.0f, 5.0f));
+    hitObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(2.0f, 2.0f));
     CUR_SCENE->Add(hitObj);
 
 	// Player
@@ -824,7 +826,43 @@ void Client2::Init()
         }
     }
 
+    //Bubble in Map
+    {
+        int bubbleCount = 30;
+        float mapSize = 100.f;
 
+        //material
+        shared_ptr<Material> bubbleMaterial = make_shared<Material>();
+        bubbleMaterial->SetShader(bubbleMapShader);
+        auto texture = RESOURCES->Load<Texture>(L"BubbleMap", L"..\\Resources\\Textures\\Effect\\bubble.png");
+        bubbleMaterial->SetDiffuseMap(texture);
+        MaterialDesc& desc = bubbleMaterial->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"BubbleMap", bubbleMaterial);
+
+        for (int i = 0; i < bubbleCount; i++)
+        {
+            auto bubbleObj = make_shared<GameObject>();
+            bubbleObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+            bubbleObj->AddComponent(make_shared<Particle>());
+
+            bubbleObj->GetParticle()->SetMaterial(bubbleMaterial);
+
+            bubbleObj->GetParticle()->SetReuse(true);
+            bubbleObj->GetParticle()->SetBubble(true);
+            float y = MathUtils::Random(-100.f, -8.f);
+
+            float lifetime = 4 - y / 20;
+
+            bubbleObj->GetParticle()->SetLifetime(lifetime);
+            bubbleObj->GetParticle()->SetfadeStart(lifetime);
+            bubbleObj->GetParticle()->Add(Vec3(MathUtils::Random(0.f, mapSize), y, MathUtils::Random(0.f, mapSize)), Vec2(2.0f, 2.0f));
+
+            CUR_SCENE->Add(bubbleObj);
+        }
+    }
 	// Terrain
     {
         auto obj = make_shared<GameObject>();

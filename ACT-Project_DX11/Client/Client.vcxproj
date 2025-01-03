@@ -98,6 +98,7 @@
     <FxCompile Include="..\Shaders\28. BillBoardDemo.fx" />
     <FxCompile Include="..\Shaders\29. SnowDemo.fx" />
     <FxCompile Include="..\Shaders\Bubble.fx" />
+    <FxCompile Include="..\Shaders\BubbleMap.fx" />
     <FxCompile Include="..\Shaders\DepthMapShadow.fx" />
     <FxCompile Include="..\Shaders\normalRender.fx" />
     <FxCompile Include="..\Shaders\EffectTest.fx" />
