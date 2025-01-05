@@ -74,12 +74,6 @@ void PlayerController::Update()
     if (DEBUG->IsDebugEnabled())
         return;
 
-    // 포탈 충돌 처리
-    HandlePortal();
-
-    Vec3 temp = { (float)_isRope,(float)_isRope ,(float)_isRope };
-    DEBUG->LogVec3ToConsole(temp, "rope");
-
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
@@ -128,18 +122,14 @@ void PlayerController::Update()
     // 상호작용 처리
     HandleInteraction();
 
-
-
-    HandleTrap();
+    // 충돌 처리
+    HandleCollision();
 
     SOUND->SetVolume(L"bgm", 0.3);
 
     // 중복 데미지 처리 방지
     if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking && !_isDashAttacking)
         _isHit = false;
-
-    if (_isRope)
-        _isRope = false;
 }
 
 void PlayerController::HandleInput()
@@ -502,7 +492,7 @@ void PlayerController::HandleInteraction()
         }
     }
 }
-void PlayerController::HandlePortal()
+void PlayerController::HandleCollision()
 {
     auto playerCollider = GetGameObject()->GetCollider();
     // 옥트리에서 충돌 가능한 객체 가져오기
@@ -518,13 +508,30 @@ void PlayerController::HandlePortal()
             // 트랩 충돌
             if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::PitFall)
             {
-                StartTrap();
-            }
+                if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+                {
+                    _hp -= 20;
+                    _hp = std::clamp(_hp, 0.0f, _maxHp);
 
-            // 로프 충돌
-            if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Rope)
-            {
-                OnRope();
+                    auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+                    float hpRatio = _hp / _maxHp;
+                    hpSlider->SetRatio(hpRatio);
+
+                    if (_hp <= 0.f)
+                        OnDeath();
+                    else
+                        StartHit();
+
+                    // 밀리는 로직
+                    Vec3 TrapPosition = collider->GetGameObject()->GetTransform()->GetPosition(); // 가시의 위치
+                    Vec3 playerPosition = _transform->GetPosition();                // 플레이어의 위치
+
+                    Vec3 knockbackDirection = playerPosition - TrapPosition; // 가시 -> 플레이어 방향
+                    knockbackDirection.Normalize();                              // 방향 벡터 정규화
+
+                    float knockbackForce = 150.0f; // 밀리는 힘
+                    _rigidbody->Addforce(knockbackDirection * knockbackForce); // 힘 적용
+                }
             }
 
             if (collider->GetGameObject()->GetObjectType() != ObjectType::Portal)
@@ -546,11 +553,6 @@ void PlayerController::HandleHit()
 {
     if (_hit)
         UpdateHit();
-}
-void PlayerController::HandleTrap()
-{
-    if (_trap)
-        UpdateTrap();
 }
 
 void PlayerController::HandleShellHit()
@@ -1075,9 +1077,11 @@ void PlayerController::StartHit()
     if (_hit || _isAttacking || _isAirAttacking || _isChargeAttacking || _isDashAttacking)
         return;
 
+    // 랜덤 사운드 재생
     int randNum = rand() % 4 + 1;
     wstring s = L"player_hit" + std::to_wstring(rand() % 4 + 1);
     SOUND->PlayEffect(s);
+
     _hit = true;
     _hitTimer = 0.0f;
     _hitDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Hit1)); // 히트 동작 시간
@@ -1308,52 +1312,9 @@ void PlayerController::HealPlayer()
     }
 }
 
-void PlayerController::StartTrap()
-{
-    if (_trap)
-        return;
-
-    _trap = true;
-    _trapTimer = 0.0f;
-    _trapDuration = 0.5f;
-
-    if (auto ui = UIMANAGER->GetUi("PlayerHP"))
-    {
-        _hp -= 30;
-        _hp = std::clamp(_hp, 0.0f, _maxHp);
-
-        auto hpSlider = dynamic_pointer_cast<Slider>(ui);
-        float hpRatio = _hp / _maxHp;
-        hpSlider->SetRatio(hpRatio);
-    }
-}
-
-void PlayerController::UpdateTrap()
-{
-    float dt = TIME->GetDeltaTime();
-
-    _trapTimer += dt;
-
-    // 히트 상태 종료 처리
-    if (_trapTimer >= _trapDuration)
-    {
-        _trap = false;
-    }
-}
-
 void PlayerController::LoadPlayer(SaveData data)
 {
     _transform->SetLocalPosition(data.playerPos);
-}
-
-void PlayerController::OnRope()
-{
-    if (_isRope)
-        return;
-    // wasd 이동방향 바꾸기.
-    // 애니메이션 다 멈추고 공격 없애고 회피키 없애고
-    _isRope = true;
-
 }
 
 void PlayerController::OnDeath()
