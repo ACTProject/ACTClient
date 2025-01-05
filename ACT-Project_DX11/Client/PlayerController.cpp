@@ -1387,3 +1387,14 @@ void PlayerController::OnDeath()
     //    }
     //    });
 }
+
+void PlayerController::onChoked()
+{
+    if (_isDodging)
+        return;
+
+    while (_transform->GetPosition().y < 5.0f)
+    {
+        _transform->SetPosition(_transform->GetPosition() + Vec3(0, 1, 0) * 5.0f * DT);
+    }
+}

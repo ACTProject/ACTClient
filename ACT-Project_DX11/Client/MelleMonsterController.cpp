@@ -55,21 +55,6 @@ void MelleMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
     _transform->SetRotation(newRotation);
 }
 
-//void MelleMonsterController::Tracking(Vec3 pos, const std::vector<Node3D>& path)
-//{
-//	if (path.empty()) {
-//		return;
-//	}
-//
-//	// 경로 상의 각 노드를 따라 이동
-//	for (size_t i = 0; i < path.size(); ++i) {
-//		// 현재 위치가 목표 노드에 도달했다면 다음 노드로 이동
-//		if (i + 1 < path.size()) {
-//			//Move(path[i + 1].pos);
-//		}
-//	}
-//}
-
 void MelleMonsterController::Punch(int type)
 {
     if (animPlayingTime >= animDuration / 1.4f)
@@ -122,15 +107,11 @@ void MelleMonsterController::Update()
     Super::Update();
 
     // 플레이어 위치 계산4
-    _player = SCENE->GetCurrentScene()->GetPlayer();
-    PlayerPos = _player->GetTransform()->GetPosition();
     EnemyPos = _transform->GetPosition();
 
-    _FPS = static_cast<float>(TIME->GetFps());
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
-    float currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
-    direction = PlayerPos - EnemyPos;
+    direction = playerPos - EnemyPos;
     distance = direction.Length();
     rangeDis = (EnemyPos - StartPos).Length();
 
@@ -251,8 +232,8 @@ void MelleMonsterController::Update()
         }
         else
         {
-            Rota(EnemyPos, PlayerPos);
-            Move(EnemyPos, PlayerPos, _speed);
+            Rota(EnemyPos, playerPos);
+            Move(EnemyPos, playerPos, _speed);
         }
     }
     else

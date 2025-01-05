@@ -8,9 +8,10 @@ class MonsterController : public CreatureController
     using Super = CreatureController;
 
 public:
+    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
+
     void Start() override;
     void Update() override;
-
 
 public:
     float currentTime;            //현재 게임 시간

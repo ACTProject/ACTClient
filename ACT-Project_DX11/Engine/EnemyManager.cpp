@@ -282,11 +282,11 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
             enemyModel->ReadModel(L"Enemy/FinalBoss/mrKrab");
             enemyModel->ReadMaterial(L"Enemy/FinalBoss/angryKrab");
 
-            enemyModel->ReadAnimation(L"Enemy/FinalBoss/00_mrKRAB_idle", AnimationState::Idle);
+            enemyModel->ReadAnimation(L"Enemy/FinalBoss/00_mrKRAB_idle", AnimationState::Combat);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/01_boss_walk", AnimationState::Walk);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/02_boss_roar", AnimationState::Roar);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/03_warming_up", AnimationState::Appear);
-            enemyModel->ReadAnimation(L"Enemy/FinalBoss/04_fight_idle", AnimationState::Combat);
+            enemyModel->ReadAnimation(L"Enemy/FinalBoss/04_fight_idle", AnimationState::Idle);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/05_run_forward", AnimationState::Run);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/06_sprint", AnimationState::Run2);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/07_back_sprint", AnimationState::Run3);
@@ -333,6 +333,15 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         hitbox->Craete(FinalBoss, Vec3(1.0f));
         CUR_SCENE->Add(hitboxGO);
         BossScript->SetHitBox(hitboxGO);
+        
+        // ChokeHitBox
+        shared_ptr<GameObject> chokehitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> chokehitbox = make_shared<HitBox>();
+        chokehitboxGO->AddComponent(chokehitbox);
+        chokehitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        chokehitbox->Craete(FinalBoss, Vec3(1.0f));
+        CUR_SCENE->Add(chokehitboxGO);
+        BossScript->SetChokeHitBox(chokehitboxGO);
 
         // SlamHitBox
         shared_ptr<GameObject> slamhitboxGO = make_shared<GameObject>();

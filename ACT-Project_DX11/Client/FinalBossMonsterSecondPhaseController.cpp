@@ -12,7 +12,7 @@ void FinalBossMonsterSecondPhaseController::SetAnimationState(AnimationState sta
 
 void FinalBossMonsterSecondPhaseController::ResetToIdleState()
 {
-    SetAnimationState(AnimationState::Combat);
+    SetAnimationState(AnimationState::Idle);
 }
 
 bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState state)
@@ -36,25 +36,19 @@ void FinalBossMonsterSecondPhaseController::Start()
 {
     Super::Start();
 
-    SetAnimationState(AnimationState::GetUP2);
     _maxHp = 500.f;
     _hp = 500.0f;
     _atk = 50.0f;
     speed = 10.0f;
     _transform = GetTransform();
-    _player = SCENE->GetCurrentScene()->GetPlayer();
     randPunchType = rand() % 4;
-    randType = rand() % 8;
+    randType = rand() % 7;
 }
 
 void FinalBossMonsterSecondPhaseController::Update()
 {
     Super::Update();
-    currentTime = GAMETIME; // 현재 게임 시간
-    _FPS = FPS;
 
-    _transform = GetTransform();
-    _player = SCENE->GetCurrentScene()->GetPlayer();
     if (INPUT->GetButton(KEY_TYPE::KEY_4))
     {
         int a = 0;
@@ -64,6 +58,11 @@ void FinalBossMonsterSecondPhaseController::Update()
     {
         if (PlayCheckAnimating(AnimationState::Die))
         {
+            if (!playingSound)
+            {
+                SOUND->PlayEffect(L"boss_die");
+                playingSound = true;
+            }
             return;
         }
         _hpBar->SetActive(false);
@@ -73,7 +72,6 @@ void FinalBossMonsterSecondPhaseController::Update()
     }
 
     bossPos = _transform->GetPosition();
-    playerPos = _player->GetTransform()->GetPosition();
 
     direction = bossPos - playerPos;
     distance = direction.Length();
@@ -86,14 +84,13 @@ void FinalBossMonsterSecondPhaseController::Update()
 
 void FinalBossMonsterSecondPhaseController::Phase_2()
 {
-    if (isFirstTime) // 2페이즈 시작
+    if (isFirstTime) // 2페이즈 시작 (안되게 해놨음)
     {
         if (!Phase2Flag) // 한번만 실행
         {
             SOUND->Stop(L"bgm");
             SOUND->Load(L"bgm", L"bgm/Nephro ogg 117bpm final");
             SOUND->Play(L"bgm");
-            _hp = 500.0f;
             DEBUG->Log(L"Boss 2nd Phase Start");
             Phase2Flag = true;
             _hpBar->SetActive(true);
@@ -102,19 +99,29 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
         {
             if (PlayCheckAnimating(AnimationState::GetUP2))
             {
+                if (!playingSound)
+                {
+                    SOUND->PlayEffect(L"boss_narrate_laugh_full");
+                    playingSound = true;
+                }
                 return;
             }
+            playingSound = false;
             isExecuted = true;
         }
         Rota(bossPos, playerPos);
         if (PlayCheckAnimating(AnimationState::Roar))
         {
+            if (!playingSound)
+            {
+                SOUND->PlayEffect(L"boss_getuproar");
+                playingSound = true;
+            }
             return;
         }
+        playingSound = false;
         isFirstTime = true; // 플래그
-        randType = 1;
     }
-    randType = 6;
 
     if (randType >= 0 && randType < phaseActions.size()) {
         (this->*phaseActions[randType])();
@@ -403,24 +410,27 @@ void FinalBossMonsterSecondPhaseController::Punch()
                     }
                 }
             }
-            if (_hit && !hasDealing)
-            {
-                auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
-                player->OnDamage(GetGameObject(), _atk);
-                hasDealing = true;
-            }
             return;
         }
         else
         {
             randPunchType = rand() % 4;
-            randType = 0;
+            randType = rand() % 7;
             punchState = false;
             _hitbox->GetCollider()->SetActive(false);
-            ResetHit();
+            _hit = false;
+            playingSound = false;
         }
     }
+    else
     {
+        if (!playingSound && (randPunchType == 1 || randPunchType == 2))
+        {
+            int randvoice = rand() % 7 + 1;
+            wstring s = L"boss_narrate_" + std::to_wstring(randvoice);
+            SOUND->PlayEffect(s);
+            playingSound = true;
+        }
         Sprint();
         Rota(bossPos, playerPos);
     }
@@ -440,13 +450,21 @@ void FinalBossMonsterSecondPhaseController::Fireball()
             float randY = rand() % 10 / 5.f;
             float randZ = rand() % 10 / 5.f;
             makeBubble({ bossPos.x + randX, bossPos.y + randY , bossPos.z + randZ }, playerPos - bossPos);
+            SOUND->PlayEffect(L"boss_bubbleSpawn");
+            if (!playingSound)
+            {
+                SOUND->Play(L"boss_bubbleMove", true);
+                SOUND->PlayEffect(L"boss_bubbleBullet_vo");
+                playingSound = true;
+            }
         }
         return;
     }
     else
     {
         shootTime = 0.0f;
-        randType = rand() % 8;
+        randType = rand() % 7;
+        playingSound = false;
     }
     
 }
@@ -477,13 +495,20 @@ void FinalBossMonsterSecondPhaseController::FireMoney()
 
             shootState = true;
         }
+        if (!playingSound)
+        {
+            SOUND->Play(L"boss_bubbleMove", true);
+            SOUND->PlayEffect(L"boss_moenySpawn");
+            playingSound = true;
+        }
         return;
     }
     else
     {
+        playingSound = false;
         shootState = false;
         shootTime = 0.0f;
-        randType = rand() % 8;
+        randType = rand() % 7;
     }
     
 }
@@ -566,8 +591,6 @@ void FinalBossMonsterSecondPhaseController::makeCash(Vec3 pos, Vec3 dir)
 
 void FinalBossMonsterSecondPhaseController::Choke_lift()
 {
-    Move(bossPos, playerPos, speed);
-    Rota(bossPos, playerPos);
     if (distance < 5.f)
     {
         attackState = true;
@@ -576,17 +599,30 @@ void FinalBossMonsterSecondPhaseController::Choke_lift()
     {
         if (PlayCheckAnimating(AnimationState::Skill1))
         {
-            //Choke_lift();
+            if (animPlayingTime >= duration / 4.0f)
+            {
+                UpdateChokeHitBox();
+                if (_hit && animPlayingTime >= duration * 3.0f / 4.0f)
+                {
+                    auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
+                    player->endChoke = true;
+                }
+            }
             return;
         }
         else
         {
             attackState = false;
-            randType = rand() % 8;
+            _hit = false;
+            randType = rand() % 7;
         }
     }
+    else
+    {
+        Sprint();
+        Rota(bossPos, playerPos);
+    }
 }
-
 
 void FinalBossMonsterSecondPhaseController::Slash()
 {
@@ -602,19 +638,14 @@ void FinalBossMonsterSecondPhaseController::Slash()
             {
                 UpdateHitBox(10.0f);
             }
-            if (_hit && !hasDealing)
-            {
-                auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
-                player->OnDamage(GetGameObject(), _atk * 2);
-                hasDealing = true;
-            }
             return;
         }
         else
         {
+            _hitbox->GetCollider()->SetActive(false);
             punchState = false;
-            randType = rand() % 8;
-            ResetHit();
+            randType = rand() % 7;
+            _hit = false;
         }
     }
     else
@@ -643,9 +674,9 @@ void FinalBossMonsterSecondPhaseController::Hurricane()
     }
     else
     {
-        randType = 6;
+        randType = rand() % 7;
         _hurricaneHitbox->GetCollider()->SetActive(false);
-        ResetHit();
+        _hit = false;
     }
     
 }
@@ -658,7 +689,7 @@ void FinalBossMonsterSecondPhaseController::OnDeath()
 
 void FinalBossMonsterSecondPhaseController::UpdateHitBox(float f)
 {
-    if (_hit)
+    if (!_hitbox || _hit)
         return;
 
     auto hitboxCollider = _hitbox->GetCollider();
@@ -667,31 +698,7 @@ void FinalBossMonsterSecondPhaseController::UpdateHitBox(float f)
     _hitbox->GetTransform()->SetPosition(_transform->GetPosition()
         + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * f);
 
-    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
-
-    for (const auto& collider : nearbyColliders)
-    {
-        ObjectType type = collider->GetGameObject()->GetObjectType();
-        if (type != ObjectType::Player)
-            continue;
-
-        if (hitboxCollider->Intersects(collider))
-        {
-            auto controller = collider->GetGameObject()->GetController();
-            if (!controller)
-                continue;
-
-            auto player = dynamic_pointer_cast<PlayerController>(controller);
-            if (player)
-                _hit = true;
-        }
-    }
-}
-
-void FinalBossMonsterSecondPhaseController::ResetHit()
-{
-    hasDealing = false;
-    _hit = false;
+    checkHit(hitboxCollider, _atk);
 }
 
 void FinalBossMonsterSecondPhaseController::Slam()
@@ -712,12 +719,11 @@ void FinalBossMonsterSecondPhaseController::Slam()
             if (animPlayingTime >= duration / 2.0f)
             {
                 UpdateSlamHitBox();
-            }
-            if (_hit && !hasDealing)
-            {
-                auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
-                player->OnDamage(GetGameObject(), _atk * 2);
-                hasDealing = true;
+                if (!playingSound)
+                {
+                    SOUND->PlayEffect(L"boss_slam");
+                    playingSound = true;
+                }
             }
             return;
         }
@@ -726,9 +732,10 @@ void FinalBossMonsterSecondPhaseController::Slam()
             _transform->SetLocalPosition(_slamhitbox->GetTransform()->GetPosition());
             punchState = false;
             isExecuted_2 = false;
-            randType = 6;
-            ResetHit();
+            randType = rand() % 7;
+            _hit = false;
             _slamhitbox->GetCollider()->SetActive(false);
+            playingSound = false;
         }
     }
     else
@@ -764,6 +771,41 @@ void FinalBossMonsterSecondPhaseController::UpdateHurricaneHitBox()
     _hurricaneHitbox->GetTransform()->SetPosition(_transform->GetPosition() + _hurricaneHitbox->GetHitBox()->GetOffSet());
 
     checkHit(hitboxCollider, 10.0f);
+}
+
+void FinalBossMonsterSecondPhaseController::UpdateChokeHitBox()
+{
+    if (!_chokeHitbox || _hit)
+        return;
+
+    auto hitboxCollider = _chokeHitbox->GetCollider();
+    hitboxCollider->SetActive(true);
+
+    _chokeHitbox->GetTransform()->SetPosition(_transform->GetPosition()
+        + _chokeHitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 5.0f);
+
+    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
+
+    for (const auto& collider : nearbyColliders)
+    {
+        ObjectType type = collider->GetGameObject()->GetObjectType();
+        if (type != ObjectType::Player)
+            continue;
+
+        if (hitboxCollider->Intersects(collider))
+        {
+            auto controller = collider->GetGameObject()->GetController();
+            if (!controller)
+                continue;
+
+            auto player = dynamic_pointer_cast<PlayerController>(controller);
+            if (player)
+            {
+                _hit = true;
+                player->onChoked();
+            }
+        }
+    }
 }
 
 void FinalBossMonsterSecondPhaseController::checkHit(shared_ptr<BaseCollider> hitboxCollider, float damage)

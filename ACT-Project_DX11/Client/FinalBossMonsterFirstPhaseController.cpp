@@ -12,7 +12,7 @@ void FinalBossMonsterFirstPhaseController::SetAnimationState(AnimationState stat
 
 void FinalBossMonsterFirstPhaseController::ResetToIdleState()
 {
-    SetAnimationState(AnimationState::Combat);
+    SetAnimationState(AnimationState::Idle);
 }
 
 bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState state)

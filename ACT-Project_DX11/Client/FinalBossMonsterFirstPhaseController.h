@@ -21,8 +21,6 @@ class FinalBossMonsterFirstPhaseController : public MonsterController
 {
     using Super = MonsterController;
 
-    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
-
     void Start() override;
     void Update() override;
 
@@ -35,18 +33,21 @@ public:
     shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
     void SetModelRenderer(shared_ptr<ModelRenderer> modelRenderer) { _modelRenderer = modelRenderer; }
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
-
-    void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
-    
     void SetSecondPhase(shared_ptr<GameObject> secondPhase) { _secondPhase = secondPhase; }
+
     void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
+
     string GetObjID() { return objID; }
     void SetObjID(string str) { objID = str; }
 
     void SetAnimationState(AnimationState state);
     void ResetToIdleState();
+
+    void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void UpdateHitBox();
+
     void ResetHit();
+
     bool PlayingHitMotion = false;
 
     void OnDeath() override;
@@ -64,7 +65,7 @@ private:
     void Fireball();
     void makeBubble(Vec3 pos, Vec3 dir);
 
-public:
+private:
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float duration;
 
@@ -73,15 +74,14 @@ public:
     Vec3 direction;                     //플레이어 - 보스 방향
     float speed = 10.0f;
 
-    int patternCnt = 1;
+    int  patternCnt = 1;
     float shootTime = 0.0f;
-    int randPunchType;                  //랜덤한 펀치 타입
+    int  randPunchType;                  //랜덤한 펀치 타입
     Vec3 lastPos;
 
     // 플래그
     bool isFirstTime = false;            //조우인지 여부 ( Appear 용 )
     bool postpone = false;              //패턴 끝나고 잠깐의 공백 시간
-    bool Phase2Flag = false;
     bool isExecuted = false;
     bool isExecuted_2 = false;
     bool isExecuted_3 = false;
@@ -89,7 +89,6 @@ public:
 
     // 상태
     bool punchState = false;             //펀치 
-    bool shootState = false;
     bool _isDead = false;
     bool _hit = false;
 

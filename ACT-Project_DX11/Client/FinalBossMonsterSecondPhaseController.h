@@ -31,13 +31,13 @@ public:
 
     using PhaseFunction = void (FinalBossMonsterSecondPhaseController::*)();
     std::vector<PhaseFunction> phaseActions = {
-    &FinalBossMonsterSecondPhaseController::Punch,
-    &FinalBossMonsterSecondPhaseController::Choke_lift,
-    &FinalBossMonsterSecondPhaseController::Fireball,
-    &FinalBossMonsterSecondPhaseController::FireMoney,
-    &FinalBossMonsterSecondPhaseController::Slash,
-    &FinalBossMonsterSecondPhaseController::Slam,
-    &FinalBossMonsterSecondPhaseController::Hurricane,
+    &FinalBossMonsterSecondPhaseController::Punch,          // 0
+    &FinalBossMonsterSecondPhaseController::Choke_lift,     // 1
+    &FinalBossMonsterSecondPhaseController::Fireball,       // 2
+    &FinalBossMonsterSecondPhaseController::FireMoney,      // 3
+    &FinalBossMonsterSecondPhaseController::Slash,          // 4
+    &FinalBossMonsterSecondPhaseController::Slam,           // 5
+    &FinalBossMonsterSecondPhaseController::Hurricane,      // 6
     };
 
     shared_ptr<Model> GetEnemy() { return _enemy; }
@@ -49,14 +49,13 @@ public:
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
     void SetSlamHitBox(shared_ptr<GameObject> slamhitbox) { _slamhitbox = slamhitbox; }
     void SetHurricaneHitBox(shared_ptr<GameObject> hurricaneHitbox) { _hurricaneHitbox = hurricaneHitbox; }
+    void SetChokeHitBox(shared_ptr<GameObject> chokeHitbox) { _chokeHitbox = chokeHitbox; }
     void SetAnimationState(AnimationState state);
     void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
     string GetObjID() { return objID; }
     void SetObjID(string str) { objID = str; }
 
     void ResetToIdleState();
-    void UpdateHitBox(float f);
-    void ResetHit();
     bool PlayingHitMotion = false;
 
 private:
@@ -70,8 +69,10 @@ private:
     void Sprint();
     void Run(float speed);
 
+    void UpdateHitBox(float f);
     void UpdateSlamHitBox();
     void UpdateHurricaneHitBox();
+    void UpdateChokeHitBox();
     void Slash();
     void Slam();
     void Punch();                            // 펀치 공격
@@ -85,10 +86,7 @@ private:
 
 public:
     void OnDeath() override;
-    float currentTime = 0.f;            //현재 게임 시간
     float lastTime = 0.f;               //마지막 애니메이션 시간
-    float _FPS;                         //게임 FPS = 60
-    float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
     float duration;
 
     Vec3 bossPos;                       //보스 위치
@@ -98,8 +96,6 @@ public:
     float hp;                  //보스 hp
     float speed;
 
-    int myPhase;                    //1페이즈 2페이즈 구분용
-    int patternCnt = 1;
     float shootTime = 0.0f;
     int randType;                       //랜덤한 타입
     int randPunchType;                  //랜덤한 펀치 타입
@@ -113,7 +109,6 @@ public:
     bool isExecuted_2 = false;
     bool isExecuted_3 = false;
     bool punchExecuted = false;
-    bool hasDealing = false;
     bool playingSound = false;
 
     // 상태
@@ -128,6 +123,7 @@ public:
     shared_ptr<GameObject> _hitbox;
     shared_ptr<GameObject> _slamhitbox;
     shared_ptr<GameObject> _hurricaneHitbox;
+    shared_ptr<GameObject> _chokeHitbox;
     shared_ptr<ModelRenderer> _modelRenderer;
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;

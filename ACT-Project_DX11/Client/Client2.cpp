@@ -76,7 +76,8 @@ void Client2::Init()
             SOUND->Load(L"boss_bubbleBullet_vo", L"monster/boss/bubbleBullet_vo");
             SOUND->Load(L"boss_moenySpawn", L"monster/boss/moenyFire");
             SOUND->Load(L"boss_moenyMove", L"monster/boss/moneyMovement");
-            SOUND->Load(L"boss_slam", L"monster/boss/slam");
+            SOUND->Load(L"boss_slam", L"monster/boss/Nephro EffortHeavy 3");
+            SOUND->Load(L"boss_getuproar", L"monster/boss/Nephro_Attack_Long_1");
             SOUND->Load(L"boss_down", L"monster/boss/down");
             SOUND->Load(L"boss_die", L"monster/boss/die");
             SOUND->Load(L"boss_hit1", L"monster/boss/hit1");
@@ -714,6 +715,10 @@ void Client2::Init()
             playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
             playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
             playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
+            playerModel->ReadAnimation(L"Player/Crab_DodgeStepback", AnimationState::DodgeStepback);
+            playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
+            playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
+            playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
 
             // Weapon
             shared_ptr<Model> weaponModel = make_shared<Model>();

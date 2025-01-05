@@ -115,6 +115,9 @@ public:
     // rope에 매달린 상태
     void OnRope();
 
+    // Choke Hit
+    void onChoked();
+    bool endChoke = false;
 public:
     void OnDeath() override;
 
