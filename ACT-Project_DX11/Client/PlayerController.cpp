@@ -78,7 +78,7 @@ void PlayerController::Update()
     HandlePortal();
 
     Vec3 temp = { (float)_isRope,(float)_isRope ,(float)_isRope };
-    DEBUG->LogVec3ToConsole(temp, "rope");
+    //DEBUG->LogVec3ToConsole(temp, "rope");
 
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
@@ -456,6 +456,7 @@ void PlayerController::HandleInteraction()
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
                     if (_spoil == 1)
                     {
+                        SOUND->PlayEffect(L"openPortal");
                         CUR_SCENE->SetMissionClear(true);
                     }
                 }

@@ -57,7 +57,12 @@ void Client::Init()
     // Sound
     {
         SOUND->Stop(L"bgm");
-        SOUND->Load(L"bgm", L"bgm/Scene1_bgm");
+
+        // 
+        {
+            SOUND->Load(L"bgm", L"bgm/Scene1_bgm");
+            SOUND->Load(L"openPortal", L"bgm/open_Portal");
+        }
 
         //Player
         {

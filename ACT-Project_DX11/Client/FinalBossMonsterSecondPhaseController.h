@@ -29,6 +29,17 @@ class FinalBossMonsterSecondPhaseController : public MonsterController
 public:
     MonoBehaviourType GetMonoBehaviourType() const override { return MonoBehaviourType::FinalBossMonster_2; }
 
+    using PhaseFunction = void (FinalBossMonsterSecondPhaseController::*)();
+    std::vector<PhaseFunction> phaseActions = {
+    &FinalBossMonsterSecondPhaseController::Punch,
+    &FinalBossMonsterSecondPhaseController::Choke_lift,
+    &FinalBossMonsterSecondPhaseController::Fireball,
+    &FinalBossMonsterSecondPhaseController::FireMoney,
+    &FinalBossMonsterSecondPhaseController::Slash,
+    &FinalBossMonsterSecondPhaseController::Slam,
+    &FinalBossMonsterSecondPhaseController::Hurricane,
+    };
+
     shared_ptr<Model> GetEnemy() { return _enemy; }
     void SetEnemy(shared_ptr<Model> enemy) { _enemy = enemy; }
     shared_ptr<ModelRenderer> GetModelRenderer() { return _modelRenderer; }
@@ -36,6 +47,8 @@ public:
     void SetModelRenderer(shared_ptr<ModelRenderer> modelRenderer) { _modelRenderer = modelRenderer; }
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
+    void SetSlamHitBox(shared_ptr<GameObject> slamhitbox) { _slamhitbox = slamhitbox; }
+    void SetHurricaneHitBox(shared_ptr<GameObject> hurricaneHitbox) { _hurricaneHitbox = hurricaneHitbox; }
     void SetAnimationState(AnimationState state);
     void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
     string GetObjID() { return objID; }
@@ -57,6 +70,8 @@ private:
     void Sprint();
     void Run(float speed);
 
+    void UpdateSlamHitBox();
+    void UpdateHurricaneHitBox();
     void Slash();
     void Slam();
     void Punch();                            // 펀치 공격
@@ -64,9 +79,9 @@ private:
     void FireMoney();
     void Choke_lift();
     void Hurricane();
-    Matrix CalculateWorldTransform(shared_ptr<ModelBone> bone);
     void makeBubble(Vec3 pos, Vec3 dir);
     void makeCash(Vec3 pos, Vec3 dir);
+    void checkHit(shared_ptr<BaseCollider> hitboxCollider, float damage);
 
 public:
     void OnDeath() override;
@@ -99,6 +114,7 @@ public:
     bool isExecuted_3 = false;
     bool punchExecuted = false;
     bool hasDealing = false;
+    bool playingSound = false;
 
     // 상태
     bool chaseState = false;             //추격
@@ -110,6 +126,8 @@ public:
 
     shared_ptr<Model> _enemy;
     shared_ptr<GameObject> _hitbox;
+    shared_ptr<GameObject> _slamhitbox;
+    shared_ptr<GameObject> _hurricaneHitbox;
     shared_ptr<ModelRenderer> _modelRenderer;
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;

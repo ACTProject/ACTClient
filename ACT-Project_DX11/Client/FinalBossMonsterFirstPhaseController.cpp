@@ -40,19 +40,21 @@ void FinalBossMonsterFirstPhaseController::Start()
     _atk = 50.0f;
 
     _transform = GetTransform();
-    _player = SCENE->GetCurrentScene()->GetPlayer();
     SetAnimationState(AnimationState::Idle);
     randPunchType = rand() % 4;
-    randType = rand() % 10;
 }
 
 void FinalBossMonsterFirstPhaseController::Update()
 {
     Super::Update();
-    currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
     if (_isDead)
     {
+        if (!isExecuted_3)
+        {
+            SOUND->PlayEffect(L"boss_down");
+            isExecuted_3 = true;
+        }
         if (PlayCheckAnimating(AnimationState::Down2))
         {
             return;
@@ -70,10 +72,8 @@ void FinalBossMonsterFirstPhaseController::Update()
 
         return;
     }
-    _FPS = static_cast<float>(TIME->GetFps());
     
     bossPos = _transform->GetPosition();
-    playerPos = _player->GetTransform()->GetPosition();
 
     direction = bossPos - playerPos;
     distance = direction.Length();
@@ -141,6 +141,13 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
                 Rota(bossPos, playerPos);
                 if (distance < 30.0f)
                 {
+                    if (!playingSound && patternCnt == 1)
+                    {
+                        int randvoice = rand() % 7 + 1;
+                        wstring s = L"boss_narrate_" + std::to_wstring(randvoice);
+                        SOUND->PlayEffect(s);
+                        playingSound = true;
+                    }
                     Run(15.0f);
                 }
                 else
@@ -154,6 +161,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
         {
             if (PlayCheckAnimating(AnimationState::Skill2))
             {
+                // 사운드 필요
                 Fireball();
                 return;
             }
@@ -337,6 +345,7 @@ void FinalBossMonsterFirstPhaseController::Fireball()
         SOUND->PlayEffect(L"boss_bubbleSpawn");
         if (!playingSound)
         {
+            SOUND->Play(L"boss_bubbleMove", true);
             SOUND->PlayEffect(L"boss_bubbleBullet_vo");
             playingSound = true;
         }
@@ -365,7 +374,7 @@ void FinalBossMonsterFirstPhaseController::makeBubble(Vec3 pos, Vec3 dir)
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
     bulletComponent->SetDirection({ dir.x,dir.y - 3.0f,dir.z });
-    bulletComponent->SetSpeed(30.0f);
+    bulletComponent->SetSpeed(40.0f);
 
     // HitBox
     shared_ptr<GameObject> hitboxGO = make_shared<GameObject>();
@@ -424,4 +433,3 @@ void FinalBossMonsterFirstPhaseController::ResetHit()
     _hit = false;
     _hitbox->GetCollider()->SetActive(false);
 }
-

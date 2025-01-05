@@ -20,6 +20,8 @@ public:										\
 #define INPUT		GET_SINGLE(InputManager)
 #define TIME		GET_SINGLE(TimeManager)
 #define DT			TIME->GetDeltaTime()
+#define FPS			TIME->GetFps();
+#define GAMETIME	TIME->GetGameTime();
 #define RESOURCES	GET_SINGLE(ResourceManager)
 #define INSTANCING	GET_SINGLE(InstancingManager)
 #define GUI			GET_SINGLE(ImGuiManager)

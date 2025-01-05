@@ -35,17 +35,21 @@ public:
     shared_ptr<ModelAnimator> GetModelAnimator() { return _modelAnimator; }
     void SetModelRenderer(shared_ptr<ModelRenderer> modelRenderer) { _modelRenderer = modelRenderer; }
     void SetModelAnimator(shared_ptr<ModelAnimator> modelAnimator) { _modelAnimator = modelAnimator; }
+
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
-    void SetAnimationState(AnimationState state);
+    
     void SetSecondPhase(shared_ptr<GameObject> secondPhase) { _secondPhase = secondPhase; }
     void SetHpBar(shared_ptr<GameObject> hpBar) { _hpBar = hpBar; }
     string GetObjID() { return objID; }
     void SetObjID(string str) { objID = str; }
 
+    void SetAnimationState(AnimationState state);
     void ResetToIdleState();
     void UpdateHitBox();
     void ResetHit();
     bool PlayingHitMotion = false;
+
+    void OnDeath() override;
 
 private:
     bool PlayCheckAnimating(AnimationState state);      // 해당 anim 플레이 , 플레이 중일시 true 아닐시 false
@@ -61,23 +65,16 @@ private:
     void makeBubble(Vec3 pos, Vec3 dir);
 
 public:
-    void OnDeath() override;
-    float currentTime = 0.f;            //현재 게임 시간
     float lastTime = 0.f;               //마지막 애니메이션 시간
-    float _FPS;                         //게임 FPS = 60
-    float animPlayingTime = 0.0f;       //애니메이션 플레이 타임
     float duration;
 
     Vec3 bossPos;                       //보스 위치
-    Vec3 playerPos;                     //플레이어 위치
     float distance;                     //플레이어 - 보스 거리
     Vec3 direction;                     //플레이어 - 보스 방향
-    float hp;                  //보스 hp
     float speed = 10.0f;
 
     int patternCnt = 1;
     float shootTime = 0.0f;
-    int randType;                       //랜덤한 타입
     int randPunchType;                  //랜덤한 펀치 타입
     Vec3 lastPos;
 
@@ -91,10 +88,8 @@ public:
     bool hasDealing = false;
 
     // 상태
-    bool chaseState = false;             //추격
     bool punchState = false;             //펀치 
     bool shootState = false;
-    bool attackState = false;
     bool _isDead = false;
     bool _hit = false;
 
@@ -110,7 +105,6 @@ public:
     shared_ptr<ModelRenderer> _modelRenderer;
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;
-    shared_ptr<GameObject> _player;
     shared_ptr<GameObject> _hpBar;
     string objID;
 

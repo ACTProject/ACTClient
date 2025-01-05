@@ -138,7 +138,7 @@ void ShootingMonsterController::Start()
 
     // 원거리 몬스터 스탯 초기화
     _maxHp = 50.0f;
-    _hp = 50.0f;
+    _hp = 10.0f;
     _atk = 25.0f;
     _speed = 8.0f;
 
