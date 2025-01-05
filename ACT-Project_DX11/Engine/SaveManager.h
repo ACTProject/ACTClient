@@ -31,7 +31,14 @@ public:
     // 플레이어가 키 눌렀을 때, 호출되는 함수, SaveData를 파일로 저장한다. => 나중엔 버튼이벤트로 변경할 예정.
     bool SaveGame(shared_ptr<GameObject> obj);
 
-    bool GetIsActive() { return _isActive; }
+    bool GetIsActive() { return _isActive; };
+
+    void ResizeUI(float width, float height);
+
+    float GetY() { return startY; };
+    void SetY(float y) { startY = y; };
+    float GetPadding() { return padding; };
+    void SetPadding(float pad) { padding = pad; };
 private:
     void CreateButton();
 
@@ -44,8 +51,10 @@ private:
     // 저장되있는 세이브 파일을 전부 불러오는 함수. Init에 추가했다.
     bool LoadSaveFiles();
 private:
+    float startX = 300.0f;
     float startY = 100.f;
     float padding = 60.f;
+    Vec2 size = { 180,40 };
     int index = 0;
     int _btnIndex = 0;
 

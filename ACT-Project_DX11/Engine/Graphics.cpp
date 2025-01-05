@@ -187,6 +187,7 @@ void Graphics::SetViewport(float width, float height, float x /*= 0*/, float y /
 void Graphics::OnResize(float width, float height)
 {
     UIMANAGER->ResizeButton(width,height);
+    SAVE->ResizeUI(width,height);
     // 렌더 타겟과 깊이 스텐실 뷰 해제
     if (_renderTargetView) _renderTargetView.Reset();
     if (_depthStencilView) _depthStencilView.Reset();

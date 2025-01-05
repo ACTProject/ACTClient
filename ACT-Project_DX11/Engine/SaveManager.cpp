@@ -130,12 +130,26 @@ bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
     return true;
 }
 
+void SaveManager::ResizeUI(float width, float height)
+{
+    float initWidth = GRAPHICS->GetViewport().GetWidth();
+    float initHeight = GRAPHICS->GetViewport().GetHeight();
+
+    float WidthRatio = width / initWidth;
+    float HeightRatio = height / initHeight;
+
+    startX *= WidthRatio;
+    //size = Vec2(size.x * WidthRatio,size.y* HeightRatio);
+    startY *= HeightRatio;
+    padding *= HeightRatio;
+}
+
 void SaveManager::CreateButton()
 {
     auto obj = make_shared<GameObject>();
     obj->AddComponent(make_shared<Button>());
     UIMANAGER->AddButton(obj->GetButton());
-    obj->GetButton()->Create(Vec3(300.f, startY + (padding * index), 0.1f), Vec2(180, 40), RESOURCES->Get<Material>(L"Load"));
+    obj->GetButton()->Create(Vec3(startX, startY + (padding * index), 0.1f), size, RESOURCES->Get<Material>(L"Load"));
     obj->GetButton()->SetID(_btnIndex);
     obj->SetObjectType(ObjectType::UI);
     obj->GetMeshRenderer()->SetAlphaBlend(true);

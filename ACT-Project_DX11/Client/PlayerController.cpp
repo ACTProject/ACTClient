@@ -1319,6 +1319,18 @@ void PlayerController::UpdateTrap()
 
 void PlayerController::LoadPlayer(SaveData data)
 {
+    if (_isDead)
+    {
+        _isDead = false;
+        _hp = _maxHp;
+        if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+        {
+            auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+            float hpRatio = _hp / _maxHp;
+            hpSlider->SetRatio(hpRatio);
+        }
+    }
+   
     _transform->SetLocalPosition(data.playerPos);
 }
 
@@ -1329,17 +1341,20 @@ void PlayerController::OnRope()
     // wasd 이동방향 바꾸기.
     // 애니메이션 다 멈추고 공격 없애고 회피키 없애고
     _isRope = true;
-
 }
 
 void PlayerController::OnDeath()
 {
+    if (_isDead)
+        return;
+
     // 게임 오버 메시지 출력
     std::cout << "Player has died! Game Over!" << std::endl;
 
     // 죽었을 때 UI 표시
-    // TODO
-\
+    SAVE->OpenSaveUI();
+
+
     // 플레이어 Death 애니메이션
     _isDead = true;
     _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
