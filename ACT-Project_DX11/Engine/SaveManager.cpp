@@ -132,16 +132,20 @@ bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
 
 void SaveManager::ResizeUI(float width, float height)
 {
-    float initWidth = GRAPHICS->GetViewport().GetWidth();
-    float initHeight = GRAPHICS->GetViewport().GetHeight();
-
-    float WidthRatio = width / initWidth;
-    float HeightRatio = height / initHeight;
-
-    startX *= WidthRatio;
-    //size = Vec2(size.x * WidthRatio,size.y* HeightRatio);
-    startY *= HeightRatio;
-    padding *= HeightRatio;
+    if (width > 1800)
+    {
+        startX = 860.f;
+        startY = 300.f;
+        padding = 60.f;
+        size = { 180, 40 };
+    }
+    else
+    {
+        startX = 300.f;
+        startY = 100.f;
+        padding = 60.f;
+        size = { 180, 40 };
+    }
 }
 
 void SaveManager::CreateButton()

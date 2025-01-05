@@ -66,9 +66,6 @@ void PlayerController::Update()
     // 포탈 충돌 처리
     HandlePortal();
 
-    Vec3 temp = { (float)_isRope,(float)_isRope ,(float)_isRope };
-    DEBUG->LogVec3ToConsole(temp, "rope");
-
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
