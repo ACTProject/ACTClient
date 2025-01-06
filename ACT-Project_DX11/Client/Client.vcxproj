@@ -102,6 +102,7 @@
     <FxCompile Include="..\Shaders\Bubble.fx" />
     <FxCompile Include="..\Shaders\BubbleMap.fx" />
     <FxCompile Include="..\Shaders\DepthMapShadow.fx" />
+    <FxCompile Include="..\Shaders\MonsterEffect.fx" />
     <FxCompile Include="..\Shaders\normalRender.fx" />
     <FxCompile Include="..\Shaders\EffectTest.fx" />
     <FxCompile Include="..\Shaders\Particle.fx" />

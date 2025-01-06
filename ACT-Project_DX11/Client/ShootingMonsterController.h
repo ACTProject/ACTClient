@@ -49,6 +49,10 @@ public:
     void Patrol(Vec3 Target);
     void AddBullet(Vec3 Pos, Vec3 dir);
 
+    void CreateEffect();
+    void ActiveEffect();
+    shared_ptr<GameObject> _effectObj;
+
 public:
     void OnDeath() override;
     void DropItem();

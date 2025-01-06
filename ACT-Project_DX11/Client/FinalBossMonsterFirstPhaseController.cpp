@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "FinalBossMonsterFirstPhaseController.h"
 #include "PlayerController.h"
+#include "Particle.h"
 
 #define AttackRange 8.0f
 
@@ -42,6 +43,7 @@ void FinalBossMonsterFirstPhaseController::Start()
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
     SetAnimationState(AnimationState::Idle);
+    CreateEffect();
     randPunchType = rand() % 4;
 }
 
@@ -323,6 +325,7 @@ void FinalBossMonsterFirstPhaseController::Punch()
                 playingSound = true;
             }
         }
+        ActiveEffect();
     }
     if (_hit && !hasDealing)
     {
@@ -352,6 +355,7 @@ void FinalBossMonsterFirstPhaseController::Fireball()
             SOUND->PlayEffect(L"boss_narrate_laugh_full");
             playingSound = true;
         }
+        ActiveEffect();
     }
 }
 
@@ -435,4 +439,45 @@ void FinalBossMonsterFirstPhaseController::ResetHit()
     hasDealing = false;
     _hit = false;
     _hitbox->GetCollider()->SetActive(false);
+}
+
+void FinalBossMonsterFirstPhaseController::CreateEffect()
+{
+    auto effectObj = make_shared<GameObject>();
+
+    _effectObj = effectObj;
+    _effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+    _effectObj->AddComponent(make_shared<Particle>());
+    {
+        auto shader = make_shared<Shader>(L"MonsterEffect.fx");
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(shader);
+        auto texture = RESOURCES->Load<Texture>(L"ShootingAttack", L"..\\Resources\\Textures\\Effect\\ShootingEffect.png");
+        material->SetDiffuseMap(texture);
+
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+
+        RESOURCES->Add(L"ShootingAttack", material);
+        _effectObj->GetParticle()->SetMaterial(material);
+    }
+
+    _effectObj->GetParticle()->SetDelayTime(0.f);
+    _effectObj->GetParticle()->SetLifetime(0.3f);
+    _effectObj->GetParticle()->SetfadeStart(0.0f);
+    _effectObj->GetParticle()->SetReuse(true);
+    _effectObj->GetParticle()->Add(Vec3(0.f), Vec2(10.0f, 10.0f));
+    CUR_SCENE->Add(_effectObj);
+}
+
+void FinalBossMonsterFirstPhaseController::ActiveEffect()
+{
+    Vec3 effectTransform = _transform->GetPosition();
+    effectTransform += _transform->GetLook() * 6.f;
+    effectTransform.y += 1.5f;
+
+    _effectObj->GetOrAddTransform()->SetPosition(effectTransform);
+    _effectObj->GetParticle()->SetElapsedTime(0.0f);
 }

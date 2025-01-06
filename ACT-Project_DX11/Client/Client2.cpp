@@ -642,6 +642,7 @@ void Client2::Init()
     createMaterial(L"AttackEffect8", L"..\\Resources\\Textures\\Effect\\TestEffect8.png");
     createMaterial(L"AttackEffect9", L"..\\Resources\\Textures\\Effect\\TestEffect9.png");
     createMaterial(L"AttackEffect10", L"..\\Resources\\Textures\\Effect\\TestEffect10.png");
+    createMaterial(L"AttackEffect11", L"..\\Resources\\Textures\\Effect\\TestEffect11.png");
 
     effectObj->GetParticle()->SetDelayTime(0.4f);
     effectObj->GetParticle()->SetLifetime(0.5f);

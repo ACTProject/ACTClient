@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         desc.tag = SceneTag::INGAME2;
         GAME->AddScene(desc);
     }
-
+  
     {
         GameDesc desc;
         desc.appName = L"GameCoding";

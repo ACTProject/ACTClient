@@ -253,5 +253,8 @@
     <FxCompile Include="..\Shaders\BubbleMap.fx">
       <Filter>Shaders\Week5</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shaders\MonsterEffect.fx">
+      <Filter>Shaders\Week5</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

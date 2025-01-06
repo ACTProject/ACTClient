@@ -65,6 +65,9 @@ private:
     void Fireball();
     void makeBubble(Vec3 pos, Vec3 dir);
 
+    void CreateEffect();
+    void ActiveEffect();
+    shared_ptr<GameObject> _effectObj;
 private:
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float duration;
