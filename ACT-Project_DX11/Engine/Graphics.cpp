@@ -193,12 +193,6 @@ void Graphics::OnResize(float width, float height)
     if (_depthStencilView) _depthStencilView.Reset();
     if (_depthStencilTexture) _depthStencilTexture.Reset();
 
-    // 섀도우 렌타뷰 깊이 스텐실 해제
-    //if (_shadowRenderTargetView) _shadowRenderTargetView.Reset();
-    if (_shadowDepthStencilView) _shadowDepthStencilView.Reset();
-    if (_shadowTexture) _shadowTexture.Reset();
-    //if (_SRV) _SRV.Reset();
-
     GameDesc desc = GAME->GetGameDesc();
     desc.width = width;
     desc.height = height;
@@ -217,9 +211,6 @@ void Graphics::OnResize(float width, float height)
 
     // 깊이 스텐실 뷰 다시 생성
     CreateDepthStencilView();
-
-    // 섀도우 렌타뷰 깊이스탠실 다시 생성
-    //CreateShadowDepthStencilView();
 
     // 뷰포트 업데이트
     SetViewport(width, height);
