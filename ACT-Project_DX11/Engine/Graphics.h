@@ -24,9 +24,8 @@ public:
 
 
     // 섀도우 함수.
-    //ComPtr<ID3D11RenderTargetView> GetShadowRTV() { return _shadowRenderTargetView; }
+
     ComPtr<ID3D11DepthStencilView> GetShadowDSV() { return _shadowDepthStencilView; }
-    //ComPtr<ID3D11ShaderResourceView> GetShadowColorSRV() { return _SRV; }
     ComPtr<ID3D11ShaderResourceView> GetShadowSRV() { return _DsvSRV; }
 
 

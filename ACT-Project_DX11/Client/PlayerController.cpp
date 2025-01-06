@@ -1349,18 +1349,33 @@ void PlayerController::HealPlayer()
 
 void PlayerController::LoadPlayer(SaveData data)
 {
+    if (_isDead)
+    {
+        _isDead = false;
+        _hp = _maxHp;
+        if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+        {
+            auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+            float hpRatio = _hp / _maxHp;
+            hpSlider->SetRatio(hpRatio);
+        }
+    }
+   
     _transform->SetLocalPosition(data.playerPos);
 }
 
 void PlayerController::OnDeath()
 {
+    if (_isDead)
+        return;
+
     // 게임 오버 메시지 출력
     std::cout << "Player has died! Game Over!" << std::endl;
 
     SOUND->PlayEffect(L"player_die");
 
     // 죽었을 때 UI 표시
-    // TODO
+    SAVE->OpenSaveUI();
 
     // 플레이어 Death 애니메이션
     _isDead = true;
