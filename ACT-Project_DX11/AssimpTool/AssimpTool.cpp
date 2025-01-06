@@ -242,7 +242,7 @@ void AssimpTool::Init()
             }
             {
                 shared_ptr<Converter> converter = make_shared<Converter>();
-                converter->ReadAssetFile(L"Enemy/FinalBoss/00_mrKRAB_idle.fbx");
+                converter->ReadAssetFile(L"Enemy/FinalBoss/00_mrKRAB_idle22.fbx");
                 converter->ExportAnimationData(L"Enemy/FinalBoss/00_mrKRAB_idle");
             }
             {

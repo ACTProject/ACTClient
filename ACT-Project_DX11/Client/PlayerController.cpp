@@ -84,6 +84,12 @@ void PlayerController::Update()
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
 
+    if (gameFinish)
+    {
+        FinishGame();
+        return;
+    }
+
     if (_isDead)
     {
         return;
@@ -1463,5 +1469,29 @@ void PlayerController::onChoked()
         onDamageTriggered2 = false;
         onDamageTriggered3 = false;
         onDamageTriggered4 = false;
+    }
+}
+
+void PlayerController::FinishGame()
+{
+    auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+
+    Vec3 start(52.9081f, 2.20441f, 100.422f);
+    Vec3 focus(-0.378014f, -0.0753275f, -0.92273f);
+    float duration = 7.0f;
+    // 애니메이션 필요
+    // TODO
+
+    if (!_isPlaySound)
+    {
+        SOUND->PlayEffect(L"player_finish");
+        _isPlaySound = true;
+    }
+
+    camera->StartCutscene(start, start, focus, duration);
+
+    if (INPUT->GetButton(KEY_TYPE::LBUTTON))
+    {
+        GAME->ChangeScene(0);
     }
 }

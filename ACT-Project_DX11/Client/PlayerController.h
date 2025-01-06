@@ -112,6 +112,10 @@ public:
     void onChoked();
     bool startChoke = false;
 
+    // Finish Game
+    void FinishGame();
+    bool gameFinish = false;
+
 public:
     void OnDeath() override;
 
