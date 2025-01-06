@@ -248,6 +248,11 @@ void ShootingMonsterController::Update()
         {
             if (PlayCheckAnimating(AnimationState::Attack1))
             {
+                if (!playingSound2)
+                {
+                    SOUND->PlayEffect(L"shooting_fire_vo");
+                    playingSound2 = true;
+                }
                 if (!shootCount && animPlayingTime >= duration / 2.0f)
                 {
                     if (!playingSound)
@@ -263,6 +268,7 @@ void ShootingMonsterController::Update()
             isPauseAfterPunch = true;
             pauseEndTime = currentTime + 1.0f;
             playingSound = false;
+            playingSound2 = false;
             shootCount = false;
             shootState = false;
         }

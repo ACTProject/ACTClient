@@ -123,6 +123,7 @@ void Client::Init()
             SOUND->Load(L"shooting_die", L"monster/shooting/die");
             SOUND->Load(L"shooting_fire", L"monster/shooting/fire");
             SOUND->Load(L"shooting_hit", L"monster/shooting/hit");
+            SOUND->Load(L"shooting_fire_vo", L"monster/shooting/Pistol Shrimp Blaster Fire VO 1");
         }
 
         SOUND->Play(L"bgm", true); 
@@ -745,7 +746,7 @@ void Client::Init()
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 400.0f, 0.f, 300.0f }, cnt++);
         ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
         ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
