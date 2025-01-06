@@ -280,6 +280,9 @@
     <ClCompile Include="RopeObj.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
+    <ClCompile Include="CutsceneManager.cpp">
+      <Filter>02. Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelMesh.h">
@@ -572,6 +575,9 @@
     </ClInclude>
     <ClInclude Include="RopeObj.h">
       <Filter>04. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="CutsceneManager.h">
+      <Filter>02. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
