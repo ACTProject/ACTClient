@@ -41,6 +41,7 @@ void FinalBossMonsterSecondPhaseController::Start()
     _atk = 50.0f;
     speed = 10.0f;
     _transform = GetTransform();
+    _player = SCENE->GetCurrentScene()->GetPlayer();
     randPunchType = rand() % 4;
     randType = rand() % 7;
 }
@@ -71,6 +72,7 @@ void FinalBossMonsterSecondPhaseController::Update()
         return;
     }
 
+    playerPos = _player->GetTransform()->GetPosition();
     bossPos = _transform->GetPosition();
 
     direction = bossPos - playerPos;
@@ -709,11 +711,6 @@ void FinalBossMonsterSecondPhaseController::Slam()
     }
     if (punchState)
     {
-        if (!isExecuted_2)
-        {
-            lastPos = playerPos;
-            isExecuted_2 = true;
-        }
         if (PlayCheckAnimating(AnimationState::Skill7))
         {
             if (animPlayingTime >= duration / 2.0f)
@@ -731,7 +728,6 @@ void FinalBossMonsterSecondPhaseController::Slam()
         {
             _transform->SetLocalPosition(_slamhitbox->GetTransform()->GetPosition());
             punchState = false;
-            isExecuted_2 = false;
             randType = rand() % 7;
             _hit = false;
             _slamhitbox->GetCollider()->SetActive(false);

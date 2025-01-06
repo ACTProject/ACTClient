@@ -69,6 +69,7 @@ private:
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float duration;
 
+    Vec3 playerPos;
     Vec3 bossPos;                       //보스 위치
     float distance;                     //플레이어 - 보스 거리
     Vec3 direction;                     //플레이어 - 보스 방향
@@ -100,6 +101,7 @@ private:
     bool playingSound = false;
 
     shared_ptr<Model> _enemy;
+    shared_ptr<GameObject> _player;
     shared_ptr<GameObject> _hitbox;
     shared_ptr<ModelRenderer> _modelRenderer;
     shared_ptr<ModelAnimator> _modelAnimator;
