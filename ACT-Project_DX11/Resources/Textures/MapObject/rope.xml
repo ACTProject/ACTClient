@@ -2,7 +2,7 @@
 <Materials>
     <Material>
         <Name>Netting_Nylon_Atlas_01.001</Name>
-        <DiffuseFile>blue.png</DiffuseFile>
+        <DiffuseFile></DiffuseFile>
         <SpecularFile></SpecularFile>
         <NormalFile></NormalFile>
         <Ambient R="0" G="0" B="0" A="1"/>

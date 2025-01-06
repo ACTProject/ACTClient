@@ -23,6 +23,7 @@
     <ClInclude Include="Client2.h" />
     <ClInclude Include="CreatureController.h" />
     <ClInclude Include="EffectTest.h" />
+    <ClInclude Include="Ending.h" />
     <ClInclude Include="FinalBossMonsterFirstPhaseController.h" />
     <ClInclude Include="FinalBossMonsterSecondPhaseController.h" />
     <ClInclude Include="Main.h" />
@@ -39,6 +40,7 @@
     <ClCompile Include="Client2.cpp" />
     <ClCompile Include="CreatureController.cpp" />
     <ClCompile Include="EffectTest.cpp" />
+    <ClCompile Include="Ending.cpp" />
     <ClCompile Include="FinalBossMonsterFirstPhaseController.cpp" />
     <ClCompile Include="FinalBossMonsterSecondPhaseController.cpp" />
     <ClCompile Include="Main.cpp" />

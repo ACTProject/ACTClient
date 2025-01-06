@@ -87,7 +87,6 @@ void SaveManager::OpenSaveUI()
     else
     {
         SOUND->PlayEffect(L"menu_unpause");
-        SOUND->Paused(L"bgm", false);
         for (auto& ui : saveOptionUIGroup)
         {
             ui->SetActive(false);
@@ -134,12 +133,30 @@ bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
     return true;
 }
 
+void SaveManager::ResizeUI(float width, float height)
+{
+    if (width > 1800)
+    {
+        startX = 860.f;
+        startY = 300.f;
+        padding = 60.f;
+        size = { 180, 40 };
+    }
+    else
+    {
+        startX = 300.f;
+        startY = 100.f;
+        padding = 60.f;
+        size = { 180, 40 };
+    }
+}
+
 void SaveManager::CreateButton()
 {
     auto obj = make_shared<GameObject>();
     obj->AddComponent(make_shared<Button>());
     UIMANAGER->AddButton(obj->GetButton());
-    obj->GetButton()->Create(Vec3(300.f, startY + (padding * index), 0.1f), Vec2(180, 40), RESOURCES->Get<Material>(L"Load"));
+    obj->GetButton()->Create(Vec3(startX, startY + (padding * index), 0.1f), size, RESOURCES->Get<Material>(L"Load"));
     obj->GetButton()->SetID(_btnIndex);
     obj->SetObjectType(ObjectType::UI);
     obj->GetMeshRenderer()->SetAlphaBlend(true);

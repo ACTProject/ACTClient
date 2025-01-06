@@ -21,6 +21,7 @@ public:
 	static Matrix S_UIMatView;
 	static Matrix S_UIMatProjection;
 
+	virtual void Start() override;
 	virtual void Update() override;
 	void UpdateCameraWithMouseInput();
 	void UpdateMatrix();
@@ -54,6 +55,9 @@ public:
     // 메인 카메라인지 여부 설정 및 확인
     void SetMainCamera(bool isMain) { _isMainCamera = isMain; }
     bool IsMainCamera() const { return _isMainCamera; }
+
+    // 컷신 진행중인지
+    bool IsCutSceneActive() { return _isCutsceneActive; }
 
 public:
 	void SortGameObject();
@@ -118,4 +122,18 @@ private:
 
     bool _lockMouse = true; //마우스 고정 여부
     bool _isTitle = false;
+
+    // CutScene
+public:
+    void StartCutscene(const Vec3& start, const Vec3& end, const Vec3& focus, float duration);
+    void UpdateCutscene();
+    void EndCutscene();
+
+private:
+    bool _isCutsceneActive = false;
+    Vec3 _cutsceneStartPosition;
+    Vec3 _cutsceneEndPosition;
+    Vec3 _cutsceneFocusPosition;
+    float _cutsceneDuration = 0.0f;
+    float _cutsceneElapsedTime = 0.0f;
 };

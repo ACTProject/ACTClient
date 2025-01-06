@@ -55,6 +55,8 @@ enum class AnimationState
     DodgeMedium,
     BlockHit,
     DashAtk,
+    Dance,
+    Struggle,
 	Roar, //울음,포효
 	Aggro,
     GetUP1, //뒤로 일어남

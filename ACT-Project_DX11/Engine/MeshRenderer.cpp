@@ -89,6 +89,7 @@ void MeshRenderer::RenderSingle()
         _shader->PushGlobalData(Camera::S_MatView, Camera::S_MatProjection);
 
     _shader->PushShadowData(SHADOW->GetShadowDesc());
+    _shader->GetSRV("ShadowDepthTexture")->SetResource(GRAPHICS->GetShadowSRV().Get());
 
 
     // Light

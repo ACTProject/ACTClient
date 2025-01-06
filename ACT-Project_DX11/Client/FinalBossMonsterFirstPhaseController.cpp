@@ -50,7 +50,7 @@ void FinalBossMonsterFirstPhaseController::Start()
 void FinalBossMonsterFirstPhaseController::Update()
 {
     Super::Update();
-
+    
     if (_isDead)
     {
         if (!isExecuted_3)
@@ -78,7 +78,7 @@ void FinalBossMonsterFirstPhaseController::Update()
 
     playerPos = _player->GetTransform()->GetPosition();
     bossPos = _transform->GetPosition();
-
+    //DEBUG->LogVec3ToConsole(playerPos, "");
     direction = bossPos - playerPos;
     distance = direction.Length();
 
@@ -96,6 +96,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
         {
             if (!playingSound)
             {
+                _hpBar->SetActive(true);
                 SOUND->PlayEffect(L"boss_narrate_6");
                 playingSound = true;
             }
@@ -206,9 +207,8 @@ void FinalBossMonsterFirstPhaseController::Appear()
     {
         return;
     }
-    _hpBar->SetActive(true);
-    isFirstTime = true;
-    lastTime = currentTime;
+    SOUND->PlayEffect(L"player_shutup");
+    isFirstTime = false;
     playingSound = false;
 }
 
@@ -352,6 +352,7 @@ void FinalBossMonsterFirstPhaseController::Fireball()
         {
             SOUND->Play(L"boss_bubbleMove", true);
             SOUND->PlayEffect(L"boss_bubbleBullet_vo");
+            SOUND->PlayEffect(L"boss_narrate_laugh_full");
             playingSound = true;
         }
         ActiveEffect();

@@ -164,9 +164,9 @@ RasterizerState Depth
 
 DepthStencilState NoDepthWrite
 {
-    DepthEnable = true;
+    DepthEnable = false;
     DepthWriteMask = ZERO;
-    DepthFunc = LESS;
+    DepthFunc = ALWAYS;
 };
 
 ////////////////

@@ -69,3 +69,12 @@ void TaskQueue::Stop()
     _condition.notify_all(); // 모든 대기 중인 스레드에 알림
 }
 
+void TaskQueue::Clear()
+{
+    std::lock_guard<std::mutex> lock(_queueMutex);
+    while (!_taskQueue.empty())
+    {
+        _taskQueue.pop(); // 모든 작업 제거
+    }
+}
+

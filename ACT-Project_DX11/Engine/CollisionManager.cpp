@@ -5,7 +5,8 @@
 
 void CollisionManager::Init()
 {
-
+    _colliders.clear();
+    _rigidbodies.clear();
 }
 
 // 충돌 감지 및 처리
@@ -25,6 +26,10 @@ void CollisionManager::Update()
         {
             // 동일한 콜라이더나 비활성화된 콜라이더는 무시
             if (colliderA == colliderB || !colliderB->IsActive())
+                continue;
+
+            if (colliderA->GetGameObject()->GetRigidbody() == nullptr ||
+                colliderB->GetGameObject()->GetRigidbody() == nullptr)
                 continue;
 
             // 충돌 검사 작업을 작업 큐에 추가

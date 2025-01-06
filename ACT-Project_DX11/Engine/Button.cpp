@@ -60,6 +60,20 @@ void Button::Create(Vec3 screenPos, Vec2 size, shared_ptr<class Material> materi
 	_rect.right = _screenPos.x + _size.x / 2;
 	_rect.top = _screenPos.y - _size.y / 2;
 	_rect.bottom = _screenPos.y + _size.y / 2;
+
+    if (width > 1800)
+    {
+        float WidthRatio = 1920.f / 800.f;
+        float HeightRatio = 1017.f / 600.f;
+        _screenPos = Vec3(300.f * WidthRatio, (screenPos.y -200.0f) * HeightRatio, _screenPos.z);
+        _size = Vec2(_size.x * WidthRatio, _size.y * HeightRatio);
+
+        // Picking
+        _rect.left = _screenPos.x - _size.x / 2;
+        _rect.right = _screenPos.x + _size.x / 2;
+        _rect.top = _screenPos.y - _size.y / 2;
+        _rect.bottom = _screenPos.y + _size.y / 2;
+    }
 }
 
 void Button::AddOnClickedEvent(std::function<void(void)> func)

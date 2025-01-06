@@ -76,6 +76,7 @@ private:
     bool shootCount = false;
     bool isFirstTime = false;
     bool playingSound = false;
+    bool playingSound2 = false;
 
     bool BackToStart = false;
     bool chaseState = true;

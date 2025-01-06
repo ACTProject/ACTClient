@@ -32,6 +32,8 @@ public:
      */
     void Stop();
 
+    void Clear();
+
 private:
     std::queue<std::function<void()>> _taskQueue;  // 실행할 작업을 저장하는 큐
     std::mutex _queueMutex;                        // 작업 큐의 동기화를 위한 mutex

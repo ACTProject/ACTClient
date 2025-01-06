@@ -104,6 +104,10 @@ void Client::Init()
             SOUND->Load(L"player_dashAtk_1", L"player/Kril_Heavy_Attack_XL_2");
             SOUND->Load(L"player_dashAtk_2", L"player/Player Dash Attack NewMain EQ");
             SOUND->Load(L"player_dashAtk_3", L"player/Player Dash Attack NewSlice EQ");
+            SOUND->Load(L"player_die", L"player/Kril_Die_Lg_1");
+            SOUND->Load(L"player_finish", L"player/08_Kril_3");
+            SOUND->Load(L"player_shutup", L"player/shutup");
+            SOUND->Load(L"player_intro", L"player/kril_intro");
         }
 
         //Melle
@@ -123,6 +127,7 @@ void Client::Init()
             SOUND->Load(L"shooting_die", L"monster/shooting/die");
             SOUND->Load(L"shooting_fire", L"monster/shooting/fire");
             SOUND->Load(L"shooting_hit", L"monster/shooting/hit");
+            SOUND->Load(L"shooting_fire_vo", L"monster/shooting/Pistol Shrimp Blaster Fire VO 1");
         }
 
         SOUND->Play(L"bgm", true); 
@@ -140,6 +145,15 @@ void Client::Init()
 		camera->AddComponent(make_shared<CameraController>());
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, true);
         camera->GetCamera()->SetMainCamera(true);
+
+        //// CutScene
+        //Vec3 start(91.7009f, 24.789f, 210.264f);
+        //Vec3 end(34.1963f, -2.57044f, 17.8424f);
+        //Vec3 focus(0.283715f, 0.134986f, 0.94936f);
+        //float duration = 13.0f;
+
+        //camera->GetCamera()->StartCutscene(start, end, focus, duration);
+      
 
 		CUR_SCENE->Add(camera);
 	}
@@ -530,6 +544,8 @@ void Client::Init()
     // player
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
+    //player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 5.0f));
+    //CUR_SCENE->SetMissionClear(true);
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
 	player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
@@ -558,6 +574,8 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
         playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
         playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
+        playerModel->ReadAnimation(L"Player/Crab_Dance", AnimationState::Dance);
+        playerModel->ReadAnimation(L"Player/Crab_Struggle", AnimationState::Struggle);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -746,7 +764,7 @@ void Client::Init()
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 400.0f, 0.f, 300.0f }, cnt++);
         ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
         ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
@@ -1161,7 +1179,6 @@ void Client::Init()
         }
         CUR_SCENE->Add(obj);
     }
-
 }
 
 void Client::Update()

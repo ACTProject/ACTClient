@@ -69,11 +69,17 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
+    if (CUR_SCENE->GetMainCamera()->GetCamera()->IsCutSceneActive() == true)
+    {
+        return;
+    }
+
     Super::Update();
 
     if (DEBUG->IsDebugEnabled())
         return;
 
+    SOUND->SetVolume(L"bgm", 0.3);
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
@@ -83,12 +89,23 @@ void PlayerController::Update()
         return;
     }
 
+    if (startChoke)
+    {
+        _rigidbody->SetUseGravity(false);
+        onChoked();
+        return;
+    }
+    else
+    {
+        _rigidbody->SetUseGravity(true);
+    }
+
     if (_playerActive == true)
     {
         // 입력 처리
         HandleInput();
     }
-    
+
     // 이동 처리
     HandleMovement();
 
@@ -124,8 +141,6 @@ void PlayerController::Update()
 
     // 충돌 처리
     HandleCollision();
-
-    SOUND->SetVolume(L"bgm", 0.3);
 
     // 중복 데미지 처리 방지
     if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking && !_isDashAttacking)
@@ -456,8 +471,17 @@ void PlayerController::HandleInteraction()
                     auto ui = UIMANAGER->GetUi("MissionUI");
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
-                    if (_spoil == 1)
+
+                    if (_spoil == 10)
                     {
+                        auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+                        Vec3 start(344.074f, 27.1922f, 309.091f);
+                        Vec3 end(344.074f, 27.1922f, 309.091f);
+                        Vec3 focus(0.643073f, -0.26635f, 0.717994f);
+                        float duration = 5.0f; // 컷씬 진행 시간
+
+                        camera->StartCutscene(start, end, focus, duration);
+                        
                         SOUND->PlayEffect(L"openPortal");
                         CUR_SCENE->SetMissionClear(true);
                     }
@@ -523,7 +547,7 @@ void PlayerController::HandleCollision()
             {
                 if (auto ui = UIMANAGER->GetUi("PlayerHP"))
                 {
-                    _hp -= 20;
+                    _hp -= 10;
                     _hp = std::clamp(_hp, 0.0f, _maxHp);
 
                     auto hpSlider = dynamic_pointer_cast<Slider>(ui);
@@ -554,7 +578,7 @@ void PlayerController::HandleCollision()
             if (isClear)
             {
                 SOUND->PlayEffect(L"player_enterPortal");
-                TaskQueue::GetInstance().Stop();
+                TaskQueue::GetInstance().Clear();
                 GAME->ChangeScene(2);
                 break;
             }
@@ -1354,16 +1378,33 @@ void PlayerController::HealPlayer()
 
 void PlayerController::LoadPlayer(SaveData data)
 {
+    if (_isDead)
+    {
+        _isDead = false;
+        _hp = _maxHp;
+        if (auto ui = UIMANAGER->GetUi("PlayerHP"))
+        {
+            auto hpSlider = dynamic_pointer_cast<Slider>(ui);
+            float hpRatio = _hp / _maxHp;
+            hpSlider->SetRatio(hpRatio);
+        }
+    }
+   
     _transform->SetLocalPosition(data.playerPos);
 }
 
 void PlayerController::OnDeath()
 {
+    if (_isDead)
+        return;
+
     // 게임 오버 메시지 출력
     std::cout << "Player has died! Game Over!" << std::endl;
 
+    SOUND->PlayEffect(L"player_die");
+
     // 죽었을 때 UI 표시
-    // TODO
+    SAVE->OpenSaveUI();
 
     // 플레이어 Death 애니메이션
     _isDead = true;
@@ -1390,11 +1431,64 @@ void PlayerController::OnDeath()
 
 void PlayerController::onChoked()
 {
-    if (_isDodging)
-        return;
+    const float targetY = 5.0f;
 
-    while (_transform->GetPosition().y < 5.0f)
+    // 총 이동 시간 (초)
+    const float duration = 3.0f;
+
+    // 현재 경과 시간
+    static float elapsedTime = 0.0f;
+
+    static bool onDamageTriggered1 = false;
+    static bool onDamageTriggered2 = false;
+    static bool onDamageTriggered3 = false;
+    static bool onDamageTriggered4 = false;
+
+    SetAnimationState(AnimationState::Struggle);
+
+    // 현재 y 위치 계산
+    if (elapsedTime < duration) {
+        elapsedTime += DT; // 경과 시간 증가
+        
+        // 현재 위치 = 선형 보간 (Lerp)
+        float t = elapsedTime / duration; // 0.0f ~ 1.0f
+        float currentY = t * targetY;
+
+        if (t >= 3.0f / 10.0f && !onDamageTriggered1) {
+            OnDamage(GetGameObject(), 10.0f);
+            SOUND->PlayEffect(L"player_hit2");
+            onDamageTriggered1 = true;
+        }
+        if (t >= 6.0f / 10.0f && !onDamageTriggered2) {
+            OnDamage(GetGameObject(), 10.0f);
+            SOUND->PlayEffect(L"player_hit2");
+            onDamageTriggered2 = true;
+        }
+        if (t >= 9.0f / 10.0f && !onDamageTriggered3) {
+            OnDamage(GetGameObject(), 10.0f);
+            SOUND->PlayEffect(L"player_hit2");
+            onDamageTriggered3 = true;
+        }
+        if (!onDamageTriggered4)
+        {
+            _transform->SetPosition(_transform->GetPosition() + fixedPos * 5.0f);
+            onDamageTriggered4 = true;
+        }
+
+        // 위치 설정
+        Vec3 currentPosition = _transform->GetPosition();
+        currentPosition.y = currentY;
+        _transform->SetPosition(currentPosition);
+    }
+    else
     {
-        _transform->SetPosition(_transform->GetPosition() + Vec3(0, 1, 0) * 5.0f * DT);
+        SetAnimationState(AnimationState::Idle);
+        _rigidbody->SetUseGravity(true);
+        startChoke = false;
+        elapsedTime = 0.0f;
+        onDamageTriggered1 = false;
+        onDamageTriggered2 = false;
+        onDamageTriggered3 = false;
+        onDamageTriggered4 = false;
     }
 }
