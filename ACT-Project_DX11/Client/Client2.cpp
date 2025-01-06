@@ -56,7 +56,7 @@ void Client2::Init()
         SOUND->Stop(L"bgm");
         SOUND->Load(L"bgm", L"bgm/Nephro Draft ogg");
 
-        SOUND->Load(L"player_footstep", L"plyaer/Footstep Stone 3");
+        SOUND->Load(L"player_footstep", L"player/Footstep Stone 3");
 
         //Boss
         {
@@ -77,6 +77,7 @@ void Client2::Init()
             SOUND->Load(L"boss_moenySpawn", L"monster/boss/moenyFire");
             SOUND->Load(L"boss_moenyMove", L"monster/boss/moneyMovement");
             SOUND->Load(L"boss_slam", L"monster/boss/Nephro EffortHeavy 3");
+            SOUND->Load(L"boss_slam2", L"monster/boss/Bomb Explode 1");
             SOUND->Load(L"boss_atk1", L"monster/boss/Nephro_Attack_Long_1");
             SOUND->Load(L"boss_down", L"monster/boss/down");
             SOUND->Load(L"boss_die", L"monster/boss/die");
@@ -86,7 +87,8 @@ void Client2::Init()
             SOUND->Load(L"boss_narrate_9", L"monster/boss/narrate_init");
             SOUND->Load(L"boss_narrate_8", L"monster/boss/Nephro Intro 1");
             SOUND->Load(L"boss_narrate_laugh_short", L"monster/boss/narrate_laugh_short");
-            SOUND->Load(L"boss_narrate_laugh_full", L"monster/boss/narrate_laugh_full");
+            SOUND->Load(L"boss_narrate_laugh_full", L"monster/boss/narrate_laugh_full_1");
+            SOUND->Load(L"boss_narrate_laugh_full2", L"monster/boss/narrate_laugh_full_2");
             SOUND->Load(L"boss_narrate_1", L"monster/boss/narrate_1");
             SOUND->Load(L"boss_narrate_2", L"monster/boss/narrate_2");
             SOUND->Load(L"boss_narrate_3", L"monster/boss/narrate_3");
@@ -97,6 +99,8 @@ void Client2::Init()
             SOUND->Load(L"boss_roar_1", L"monster/boss/heikea_roar");
             SOUND->Load(L"boss_roar_2", L"monster/boss/roar_2");
             SOUND->Load(L"boss_roar_3", L"monster/boss/roar_3");
+            SOUND->Load(L"boss_hurricane", L"monster/boss/FirthIntro_Wind");
+            SOUND->Load(L"boss_hurricane_vo", L"monster/boss/Nephro EffortHeavy 5");
         }
 
         SOUND->Play(L"bgm", true);

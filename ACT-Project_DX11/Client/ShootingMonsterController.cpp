@@ -124,7 +124,7 @@ void ShootingMonsterController::Start()
 
     // 원거리 몬스터 스탯 초기화
     _maxHp = 50.0f;
-    _hp = 10.0f;
+    _hp = 50.0;
     _atk = 25.0f;
     _speed = 8.0f;
 
@@ -257,6 +257,11 @@ void ShootingMonsterController::Update()
         {
             if (PlayCheckAnimating(AnimationState::Attack1))
             {
+                if (!playingSound2)
+                {
+                    SOUND->PlayEffect(L"shooting_fire_vo");
+                    playingSound2 = true;
+                }
                 if (!shootCount && animPlayingTime >= duration / 2.0f)
                 {
                     if (!playingSound)
@@ -272,6 +277,7 @@ void ShootingMonsterController::Update()
             isPauseAfterPunch = true;
             pauseEndTime = currentTime + 1.0f;
             playingSound = false;
+            playingSound2 = false;
             shootCount = false;
             shootState = false;
         }

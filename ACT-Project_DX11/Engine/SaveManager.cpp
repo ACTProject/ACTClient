@@ -87,7 +87,6 @@ void SaveManager::OpenSaveUI()
     else
     {
         SOUND->PlayEffect(L"menu_unpause");
-        SOUND->Paused(L"bgm", false);
         for (auto& ui : saveOptionUIGroup)
         {
             ui->SetActive(false);

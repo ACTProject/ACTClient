@@ -75,7 +75,7 @@ private:
     void Choke_lift();
     void Hurricane();
 
-    void UpdateHitBox(float f);
+    void UpdateHitBox(float f, float damage);
     void UpdateSlamHitBox();
     void UpdateHurricaneHitBox();
     void UpdateChokeHitBox();

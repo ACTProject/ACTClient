@@ -110,7 +110,7 @@ public:
 
     // Choke Hit
     void onChoked();
-    bool endChoke = false;
+    bool startChoke = false;
 
 public:
     void OnDeath() override;
@@ -248,7 +248,8 @@ private:
 
     // 전리품
     int _spoil = 0;
-
+public:
     bool _playerActive = true;
+    Vec3 fixedPos;
 };
 
