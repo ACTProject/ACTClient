@@ -85,7 +85,6 @@ WPARAM Game::Run(uint32 num)
 		{
 			::TranslateMessage(&_msg);
 			::DispatchMessage(&_msg);
-
 		}
 		else
 		{
@@ -95,8 +94,6 @@ WPARAM Game::Run(uint32 num)
                 _changeScene = false;
                 return Run(_num);
             }
-            //if (!GRAPHICS->GetShadowDSV())
-            //    DEBUG->Log(L"noDept0");
 			Update(_num);
 		}
 	}
