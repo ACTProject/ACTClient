@@ -15,7 +15,7 @@ void JumpObj::Start()
     {
         shared_ptr<Rigidbody> rigidBody = make_shared<Rigidbody>();
         rigidBody->SetUseGravity(false);
-        rigidBody->SetMass(1000.0f);
+        rigidBody->SetMass(2000.0f);
         obj->AddComponent(rigidBody);
 
         COLLISION->AddRigidbody(rigidBody);

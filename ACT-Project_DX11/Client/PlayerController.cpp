@@ -511,7 +511,7 @@ void PlayerController::HandleCollision()
             {
                 if (auto ui = UIMANAGER->GetUi("PlayerHP"))
                 {
-                    _hp -= 20;
+                    _hp -= 10;
                     _hp = std::clamp(_hp, 0.0f, _maxHp);
 
                     auto hpSlider = dynamic_pointer_cast<Slider>(ui);
