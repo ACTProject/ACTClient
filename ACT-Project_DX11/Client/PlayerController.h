@@ -32,6 +32,8 @@ public:
     void SetBubble(shared_ptr<Material> bubble);
     void SetEffect(shared_ptr<GameObject> effect) { _effect = effect; }
     void SetHitEffect(shared_ptr<GameObject> hitEffect) { _hitEffect = hitEffect; }
+    void SetArmorGroup(vector<shared_ptr<GameObject>> armorGroup) { _armorGroup = armorGroup; }
+    void SetShellObject(shared_ptr<GameObject> shellObj) { _shellObject = shellObj; }
 
     // Handle
     void HandleInput();         // 입력 처리
@@ -44,9 +46,8 @@ public:
     void HandleJump();          // 점프 처리
     void HandleMovement();      // 이동 처리
     void HandleInteraction();   // 상호작용 처리
-    void HandlePortal();        // 포탈 상호작용 처리
+    void HandleCollision();     // 충돌 처리 (포탈, 함정)
     void HandleHit();           // 히트 상태 처리
-    void HandleTrap();          // 함정충돌 상태 처리
     void HandleShellHit();      // Shell 히트 상태 처리
 
     // Attack
@@ -104,14 +105,12 @@ public:
     
     void HealPlayer();
 
-    void StartTrap();
-    void UpdateTrap();
-
     // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
     void LoadPlayer(SaveData data);
 
-    // rope에 매달린 상태
-    void OnRope();
+    // Choke Hit
+    void onChoked();
+    bool startChoke = false;
 
 public:
     void OnDeath() override;
@@ -130,6 +129,7 @@ private:
     shared_ptr<GameObject> _effect;
     shared_ptr<GameObject> _hitEffect;
     shared_ptr<ModelMesh> _shellModel;
+    vector<shared_ptr<GameObject>> _armorGroup;
 
 private:
 	float _FPS;
@@ -164,6 +164,7 @@ private:
     // ChargeAttack
     bool _isCharging = false;              // 차지 중인지 여부
     bool _isChargeAttacking = false;       // 차지 공격 중인지 여부
+    bool _isPlaySound = false;             // 차지 공격 사운드 플레이 여부
     float _chargeAttackDuration = 0.0f;    // 차지 공격 동작 시간
     float _chargeThreshold = 0.2f;         // 차지 공격 발동 시간 (초)
     float _chargeTimer = 0.0f;             // 차지 발동 시간 (초)
@@ -197,6 +198,7 @@ private:
     bool _isShellEquipped = false;      // 등껍질 장착 상태 여부
     bool _isBlocking = false;           // 막고 있는 상태인지 여부
     float _crawlSpeed = 2.f;            // 기어가는 속도  
+    shared_ptr<GameObject> _shellObject;
 
     // Hit
     bool _hit = false;                // 히트 상태인지 여부
@@ -224,11 +226,6 @@ private:
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
 
-    // Trap
-    bool _trap = false;
-    float _trapDuration = 0.1f;
-    float _trapTimer = 0.0f;
-
     // Bubble
     shared_ptr<Material> _bubbleMaterial;
 
@@ -237,7 +234,6 @@ private:
     float _runningInterval = 0.2f;
     float _walkingInterval = 0.3f;
 
-    bool _isRope = false;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }
@@ -252,7 +248,8 @@ private:
 
     // 전리품
     int _spoil = 0;
-
+public:
     bool _playerActive = true;
+    Vec3 fixedPos;
 };
 

@@ -56,7 +56,7 @@ void Client2::Init()
         SOUND->Stop(L"bgm");
         SOUND->Load(L"bgm", L"bgm/Nephro Draft ogg");
 
-        SOUND->Load(L"player_footstep", L"plyaer/footstep_default");
+        SOUND->Load(L"player_footstep", L"player/Footstep Stone 3");
 
         //Boss
         {
@@ -76,16 +76,19 @@ void Client2::Init()
             SOUND->Load(L"boss_bubbleBullet_vo", L"monster/boss/bubbleBullet_vo");
             SOUND->Load(L"boss_moenySpawn", L"monster/boss/moenyFire");
             SOUND->Load(L"boss_moenyMove", L"monster/boss/moneyMovement");
-            SOUND->Load(L"boss_slam", L"monster/boss/slam");
+            SOUND->Load(L"boss_slam", L"monster/boss/Nephro EffortHeavy 3");
+            SOUND->Load(L"boss_slam2", L"monster/boss/Bomb Explode 1");
+            SOUND->Load(L"boss_atk1", L"monster/boss/Nephro_Attack_Long_1");
             SOUND->Load(L"boss_down", L"monster/boss/down");
             SOUND->Load(L"boss_die", L"monster/boss/die");
             SOUND->Load(L"boss_hit1", L"monster/boss/hit1");
             SOUND->Load(L"boss_hit2", L"monster/boss/Nephro_Hurt_1");
             SOUND->Load(L"boss_hit3", L"monster/boss/Nephro_Hurt_3");
-            SOUND->Load(L"boss_narrate_init", L"monster/boss/narrate_init");
-            SOUND->Load(L"boss_narrate_intro", L"monster/boss/Nephro Intro 1");
+            SOUND->Load(L"boss_narrate_9", L"monster/boss/narrate_init");
+            SOUND->Load(L"boss_narrate_8", L"monster/boss/Nephro Intro 1");
             SOUND->Load(L"boss_narrate_laugh_short", L"monster/boss/narrate_laugh_short");
-            SOUND->Load(L"boss_narrate_laugh_full", L"monster/boss/narrate_laugh_full");
+            SOUND->Load(L"boss_narrate_laugh_full", L"monster/boss/narrate_laugh_full_1");
+            SOUND->Load(L"boss_narrate_laugh_full2", L"monster/boss/narrate_laugh_full_2");
             SOUND->Load(L"boss_narrate_1", L"monster/boss/narrate_1");
             SOUND->Load(L"boss_narrate_2", L"monster/boss/narrate_2");
             SOUND->Load(L"boss_narrate_3", L"monster/boss/narrate_3");
@@ -93,6 +96,11 @@ void Client2::Init()
             SOUND->Load(L"boss_narrate_5", L"monster/boss/narrate_5");
             SOUND->Load(L"boss_narrate_6", L"monster/boss/narrate_6");
             SOUND->Load(L"boss_narrate_7", L"monster/boss/narrate_7");
+            SOUND->Load(L"boss_roar_1", L"monster/boss/heikea_roar");
+            SOUND->Load(L"boss_roar_2", L"monster/boss/roar_2");
+            SOUND->Load(L"boss_roar_3", L"monster/boss/roar_3");
+            SOUND->Load(L"boss_hurricane", L"monster/boss/FirthIntro_Wind");
+            SOUND->Load(L"boss_hurricane_vo", L"monster/boss/Nephro EffortHeavy 5");
         }
 
         SOUND->Play(L"bgm", true);
@@ -127,7 +135,7 @@ void Client2::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, false);
 		CUR_SCENE->Add(camera);
 	}
-
+    vector<shared_ptr<GameObject>> armorGroup;
     //UI_HPBar
     {
         // Material
@@ -263,6 +271,7 @@ void Client2::Init()
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
+                armorGroup.push_back(obj);
             }
 
             CUR_SCENE->Add(obj);
@@ -309,6 +318,7 @@ void Client2::Init()
                 obj->GetMeshRenderer()->SetMesh(mesh);
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
+                armorGroup.push_back(obj);
             }
 
             CUR_SCENE->Add(obj);
@@ -332,6 +342,7 @@ void Client2::Init()
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("Armor");
+            armorGroup.push_back(obj);
             CUR_SCENE->Add(obj);
         }
     }
@@ -651,6 +662,36 @@ void Client2::Init()
     hitObj->GetParticle()->Add(Vec3(0, 0, 0), Vec2(2.0f, 2.0f));
     CUR_SCENE->Add(hitObj);
 
+    // Shell
+    auto shell = make_shared<GameObject>();
+    shell->SetObjectType(ObjectType::Shell);
+    shell->GetOrAddTransform()->SetPosition(Vec3(35, -5.f, 35));
+    shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+    shared_ptr<Model> shellModel = make_shared<Model>();
+    {
+        // CustomData -> Memory
+        shellModel->ReadModel(L"Shell/Shell_SodaCan");
+        shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+    }
+
+    // Shell::ModelRenderer
+    shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+    shell->AddComponent(mr);
+    {
+        shell->GetModelRenderer()->SetModel(shellModel);
+        shell->GetModelRenderer()->SetPass(1);
+    }
+
+    // Collider
+    auto collider = make_shared<AABBBoxCollider>();
+    collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+    collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+    OCTREE->InsertCollider(collider);
+    shell->AddComponent(collider);
+    shell->SetActive(false);
+    CUR_SCENE->Add(shell);
+
 	// Player
     {
         auto player = make_shared<GameObject>();
@@ -681,6 +722,10 @@ void Client2::Init()
             playerModel->ReadAnimation(L"Player/Crab_Hit", AnimationState::Hit1);
             playerModel->ReadAnimation(L"Player/Crab_AirAttack", AnimationState::AirAttack);
             playerModel->ReadAnimation(L"Player/Crab_AtkChargeThrust", AnimationState::AtkChargeThrust);
+            playerModel->ReadAnimation(L"Player/Crab_DodgeStepback", AnimationState::DodgeStepback);
+            playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
+            playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
+            playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
 
             // Weapon
             shared_ptr<Model> weaponModel = make_shared<Model>();
@@ -733,6 +778,22 @@ void Client2::Init()
         airhitbox->AirHitCraete(player, Vec3(3.5f, 1.0f, 3.5f));
         CUR_SCENE->Add(airhitboxGO);
 
+        // ChargeHitBox
+        shared_ptr<GameObject> chargehitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> chargehitbox = make_shared<HitBox>();
+        chargehitboxGO->AddComponent(chargehitbox);
+        chargehitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+        chargehitbox->Craete(player, Vec3(2.f, 1.f, 2.f));
+        CUR_SCENE->Add(chargehitboxGO);
+
+        // DashHitBox
+        shared_ptr<GameObject> dashhitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> dashhitbox = make_shared<HitBox>();
+        dashhitboxGO->AddComponent(dashhitbox);
+        dashhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+        dashhitbox->Craete(player, Vec3(3.f, 1.f, 3.f));
+        CUR_SCENE->Add(dashhitboxGO);
+
         // Player::PlayerScript
         shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
@@ -740,10 +801,13 @@ void Client2::Init()
         playerScript->SetModelAnimator(ma1);
         playerScript->SetHitBox(hitboxGO);
         playerScript->SetAirHitBox(airhitboxGO);
+        playerScript->SetChargeHitBox(chargehitboxGO);
+        playerScript->SetDashHitBox(dashhitboxGO);
         playerScript->SetDust(dustMaterial);
         playerScript->SetBubble(bubbleMaterial);
         playerScript->SetEffect(effectObj);
         playerScript->SetHitEffect(hitObj);
+        playerScript->SetArmorGroup(armorGroup);
 
         player->SetController(playerScript);
         player->AddComponent(playerScript);

@@ -2,6 +2,7 @@
 #include "ShootingMonsterController.h"
 #include <string>
 #include "Bullet.h"
+#include "Camera.h"
 
 #define AggroRange 30.0f
 #define ShootingRange 15.0f
@@ -56,21 +57,6 @@ void ShootingMonsterController::Rota(Vec3 objPos, Vec3 targetPos)
     _transform->SetRotation(newRotation);
 
 }
-
-//void ShootingMonsterController::Tracking(Vec3 pos, const std::vector<Node3D>& path)
-//{
-//    if (path.empty()) {
-//        return;
-//    }
-//
-//    // 경로 상의 각 노드를 따라 이동
-//    for (size_t i = 0; i < path.size(); ++i) {
-//        // 현재 위치가 목표 노드에 도달했다면 다음 노드로 이동
-//        if (i + 1 < path.size()) {
-//            //Move(path[i + 1].pos);
-//        }
-//    }
-//}
 
 void ShootingMonsterController::AddBullet(Vec3 Pos, Vec3 dir)
 {
@@ -138,19 +124,28 @@ void ShootingMonsterController::Start()
 
     // 원거리 몬스터 스탯 초기화
     _maxHp = 50.0f;
-    _hp = 50.0f;
+    _hp = 50.0;
     _atk = 25.0f;
     _speed = 8.0f;
 
     _transform = GetTransform();
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
+    _player = SCENE->GetCurrentScene()->GetPlayer();
+
+    // TEMP
+    DropItem();
 
     std::cout << "ShootingMonsterController [" << objID << "] Start()" << std::endl;
 }
 
 void ShootingMonsterController::Update()
 {
+    if (CUR_SCENE->GetMainCamera()->GetCamera()->IsCutSceneActive() == true)
+    {
+        return;
+    }
+
     Super::Update();
 
     if (_isDead)
@@ -177,18 +172,14 @@ void ShootingMonsterController::Update()
         return;
     }
 
-    _FPS = static_cast<float>(TIME->GetFps());
-    // 플레이어 위치 계산
-    _player = SCENE->GetCurrentScene()->GetPlayer();
-    PlayerPos = _player->GetTransform()->GetPosition();
+    playerPos = _player->GetTransform()->GetPosition();
     EnemyPos = _transform->GetPosition();
 
-    direction = PlayerPos - EnemyPos;
+    direction = playerPos - EnemyPos;
     distance = direction.Length();
     rangeDis = (EnemyPos - StartPos).Length();
 
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
-    float currentTime = TIME->GetGameTime(); // 현재 게임 시간
 
     // 범위 검사
     if (rangeDis > 50.f) // 초기 위치에서 너무 멀리 떨어지면 복귀
@@ -257,7 +248,7 @@ void ShootingMonsterController::Update()
 
     if (!chaseState && !isPauseAfterPunch)
     {
-        Rota(EnemyPos, PlayerPos);
+        Rota(EnemyPos, playerPos);
         if (distance < ShootingRange)
         {
             shootState = true;
@@ -266,6 +257,11 @@ void ShootingMonsterController::Update()
         {
             if (PlayCheckAnimating(AnimationState::Attack1))
             {
+                if (!playingSound2)
+                {
+                    SOUND->PlayEffect(L"shooting_fire_vo");
+                    playingSound2 = true;
+                }
                 if (!shootCount && animPlayingTime >= duration / 2.0f)
                 {
                     if (!playingSound)
@@ -281,12 +277,13 @@ void ShootingMonsterController::Update()
             isPauseAfterPunch = true;
             pauseEndTime = currentTime + 1.0f;
             playingSound = false;
+            playingSound2 = false;
             shootCount = false;
             shootState = false;
         }
         else
         {
-            Move(EnemyPos, PlayerPos, _speed);
+            Move(EnemyPos, playerPos, _speed);
         }
     }
     else
@@ -349,15 +346,13 @@ void ShootingMonsterController::DropItem()
     item->SetObjectType(ObjectType::Spoils);
     item->GetOrAddTransform()->SetPosition(EnemyPos);
     item->GetOrAddTransform()->SetLocalRotation(Vec3(XMConvertToRadians(90), 0, 0));
-    item->GetOrAddTransform()->SetScale(Vec3(0.05f));
+    item->GetOrAddTransform()->SetScale(Vec3(0.08f));
 
     std::cout << "item drop" << std::endl;
     shared_ptr<Model> objModel = make_shared<Model>();
     // Model
     objModel->ReadModel(L"Enemy/cap");
     objModel->ReadMaterial(L"Enemy/cap");
-
-    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 
     item->AddComponent(make_shared<ModelRenderer>(renderShader));
     {

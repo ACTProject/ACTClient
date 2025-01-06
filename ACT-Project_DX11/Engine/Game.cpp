@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "IExecute.h"
+#include "GameObject.h"
 
 HWND g_hWnd = nullptr;
 
@@ -146,10 +147,11 @@ void Game::ShowFps()
 
 }
 
-void Game::ChangeScene(uint32 num)
+void Game::ChangeScene(uint32 num, bool previousSceneShell, shared_ptr<GameObject> previousShellObject)
 {
     _num = num;
-
+    _isPreviousSceneShellEquipped = previousSceneShell;
+    _previousShellObject = previousShellObject;
     _changeScene = true;
 }
 

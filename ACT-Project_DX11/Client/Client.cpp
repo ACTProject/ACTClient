@@ -57,7 +57,12 @@ void Client::Init()
     // Sound
     {
         SOUND->Stop(L"bgm");
-        SOUND->Load(L"bgm", L"bgm/Scene1_bgm");
+
+        // 
+        {
+            SOUND->Load(L"bgm", L"bgm/Scene1_bgm");
+            SOUND->Load(L"openPortal", L"bgm/open_Portal");
+        }
 
         //Player
         {
@@ -84,6 +89,7 @@ void Client::Init()
             SOUND->Load(L"player_excite", L"player/Player_Excite_1");
             SOUND->Load(L"player_pickupItem", L"player/Pickup_Item_World");
             SOUND->Load(L"player_shellConfirm", L"player/ShellConfirm");
+            SOUND->Load(L"player_shellBreak", L"player/Armor Break");
             SOUND->Load(L"player_springSound", L"player/ImpactShell_SpringL11");
             SOUND->Load(L"player_impachShell", L"player/ImpactShell_MetalL11");
             SOUND->Load(L"player_scream", L"player/23_Kril_Aaaa");
@@ -95,6 +101,11 @@ void Client::Init()
             SOUND->Load(L"player_aerialAtk", L"player/aeiral_attack");
             SOUND->Load(L"player_chargeAtk", L"player/Kril_Heavy_Attack_XL_4");
             SOUND->Load(L"player_chargeUp", L"player/Firth_Charge_Up");
+            SOUND->Load(L"player_dashAtk_1", L"player/Kril_Heavy_Attack_XL_2");
+            SOUND->Load(L"player_dashAtk_2", L"player/Player Dash Attack NewMain EQ");
+            SOUND->Load(L"player_dashAtk_3", L"player/Player Dash Attack NewSlice EQ");
+            SOUND->Load(L"player_die", L"player/Kril_Die_Lg_1");
+            SOUND->Load(L"player_finish", L"player/08_Kril_3");
         }
 
         //Melle
@@ -114,6 +125,7 @@ void Client::Init()
             SOUND->Load(L"shooting_die", L"monster/shooting/die");
             SOUND->Load(L"shooting_fire", L"monster/shooting/fire");
             SOUND->Load(L"shooting_hit", L"monster/shooting/hit");
+            SOUND->Load(L"shooting_fire_vo", L"monster/shooting/Pistol Shrimp Blaster Fire VO 1");
         }
 
         SOUND->Play(L"bgm", true); 
@@ -132,6 +144,15 @@ void Client::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, true);
         camera->GetCamera()->SetMainCamera(true);
 
+        // CutScene
+        Vec3 start(91.7009f, 24.789f, 210.264f);
+        Vec3 end(34.1963f, -2.57044f, 17.8424f);
+        Vec3 focus(0.283715f, 0.134986f, 0.94936f);
+        float duration = 13.0f;
+
+        camera->GetCamera()->StartCutscene(start, end, focus, duration);
+      
+
 		CUR_SCENE->Add(camera);
 	}
 
@@ -148,7 +169,7 @@ void Client::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, false);
 		CUR_SCENE->Add(camera);
 	}
-
+    vector<shared_ptr<GameObject>> armorGroup;
     //UI_HPBar
     {
         // Material
@@ -328,7 +349,7 @@ void Client::Init()
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
             }
-
+            armorGroup.push_back(obj);
             CUR_SCENE->Add(obj);
         }
 
@@ -352,11 +373,11 @@ void Client::Init()
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
                 obj->GetMeshRenderer()->SetPass(0);
             }
-
+            armorGroup.push_back(obj);
             CUR_SCENE->Add(obj);
         }
 
-        // RedBar ArmorMesh
+        // ArmorMesh
         {
             // 슬라이더 컴포넌트 추가.
             auto obj = make_shared<GameObject>();
@@ -365,6 +386,7 @@ void Client::Init()
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("PlayerArmor");
+            armorGroup.push_back(obj);
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
@@ -720,6 +742,7 @@ void Client::Init()
     playerScript->SetBubble(bubbleMaterial);
     playerScript->SetEffect(effectObj);
     playerScript->SetHitEffect(hitObj);
+    playerScript->SetArmorGroup(armorGroup);
 
     player->SetController(playerScript);
 	player->AddComponent(playerScript);
@@ -734,7 +757,7 @@ void Client::Init()
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 65.0f, 0.f, 65.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 400.0f, 0.f, 300.0f }, cnt++);
         ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
         ENEMY->CreateMeleeMonster({ 155.0f, 0.f, 100.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);

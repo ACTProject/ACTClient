@@ -83,6 +83,7 @@ void EnemyManager::CreateMeleeMonster(Vec3 SpawnPos, int num)
         UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
         CUR_SCENE->Add(obj);
         CUR_SCENE->Add(rangoon);
+
     }
 }
 
@@ -282,11 +283,11 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
             enemyModel->ReadModel(L"Enemy/FinalBoss/mrKrab");
             enemyModel->ReadMaterial(L"Enemy/FinalBoss/angryKrab");
 
-            enemyModel->ReadAnimation(L"Enemy/FinalBoss/00_mrKRAB_idle", AnimationState::Idle);
+            enemyModel->ReadAnimation(L"Enemy/FinalBoss/00_mrKRAB_idle", AnimationState::Combat);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/01_boss_walk", AnimationState::Walk);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/02_boss_roar", AnimationState::Roar);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/03_warming_up", AnimationState::Appear);
-            enemyModel->ReadAnimation(L"Enemy/FinalBoss/04_fight_idle", AnimationState::Combat);
+            enemyModel->ReadAnimation(L"Enemy/FinalBoss/04_fight_idle", AnimationState::Idle);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/05_run_forward", AnimationState::Run);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/06_sprint", AnimationState::Run2);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/07_back_sprint", AnimationState::Run3);
@@ -330,21 +331,48 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         shared_ptr<HitBox> hitbox = make_shared<HitBox>();
         hitboxGO->AddComponent(hitbox);
         hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
-        hitbox->Craete(FinalBoss, Vec3(1.0f));
+        hitbox->Craete(FinalBoss, Vec3(2.5f));
         CUR_SCENE->Add(hitboxGO);
         BossScript->SetHitBox(hitboxGO);
+        
+        // ChokeHitBox
+        shared_ptr<GameObject> chokehitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> chokehitbox = make_shared<HitBox>();
+        chokehitboxGO->AddComponent(chokehitbox);
+        chokehitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        chokehitbox->Craete(FinalBoss, Vec3(2.0f));
+        CUR_SCENE->Add(chokehitboxGO);
+        BossScript->SetChokeHitBox(chokehitboxGO);
+
+        // SlamHitBox
+        shared_ptr<GameObject> slamhitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> slamhitbox = make_shared<HitBox>();
+        slamhitboxGO->AddComponent(slamhitbox);
+        slamhitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
+        slamhitbox->Craete(FinalBoss, Vec3(7.0f, 2.0f, 7.0f));
+        CUR_SCENE->Add(slamhitboxGO);
+        BossScript->SetSlamHitBox(slamhitboxGO);
+
+        // HurricaneHitBox
+        shared_ptr<GameObject> hurricanehitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> hurricanehitbox = make_shared<HitBox>();
+        hurricanehitboxGO->AddComponent(hurricanehitbox);
+        hurricanehitbox->SetOffSet(Vec3(0.f, 0.f, 0.f));
+        hurricanehitbox->AirHitCraete(FinalBoss, Vec3(7.0f, 3.0f, 7.0f));
+        CUR_SCENE->Add(hurricanehitboxGO);
+        BossScript->SetHurricaneHitBox(hurricanehitboxGO);
 
         // Collider
         auto collider = make_shared<SphereCollider>();
-        collider->SetRadius(2.5f);
-        collider->SetOffset(Vec3(0.f, 2.5f, 0.f));
+        collider->SetRadius(4.0f);
+        collider->SetOffset(Vec3(0.f, 4.0f, 0.f));
         OCTREE->InsertCollider(collider);
         FinalBoss->AddComponent(collider);
 
         // Rigidbody
         shared_ptr<Rigidbody> rigidBody = make_shared<Rigidbody>();
         rigidBody->SetUseGravity(true);
-        rigidBody->SetMass(2.1f);
+        rigidBody->SetMass(8.0f);
         FinalBoss->AddComponent(rigidBody);
 
         COLLISION->AddRigidbody(rigidBody);
