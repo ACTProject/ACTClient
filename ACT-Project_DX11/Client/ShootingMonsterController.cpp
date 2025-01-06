@@ -135,9 +135,6 @@ void ShootingMonsterController::Start()
     _player = SCENE->GetCurrentScene()->GetPlayer();
     CreateEffect();
 
-    // TEMP
-    DropItem();
-
     std::cout << "ShootingMonsterController [" << objID << "] Start()" << std::endl;
 }
 
@@ -150,8 +147,21 @@ void ShootingMonsterController::Update()
 
     Super::Update();
 
+    playerPos = _player->GetTransform()->GetPosition();
+    EnemyPos = _transform->GetPosition();
+
+
     if (_isDead)
     {
+        if (!isDrop)
+            DropItem();
+
+        Vec3 knockbackDirection = EnemyPos - playerPos;                  // 공격자 -> 몬스터 방향
+        knockbackDirection.Normalize();                                  // 방향 벡터 정규화
+
+        float knockbackForce = 100.0f;                                   // 밀리는 힘
+        GetGameObject()->GetRigidbody()->Addforce(knockbackDirection * knockbackForce);       // 힘 적용
+
         if (!playingSound)
         {
             SOUND->PlayEffect(L"shooting_die");
@@ -162,7 +172,6 @@ void ShootingMonsterController::Update()
             return;
         }
         playingSound = false;
-        DropItem();
         CUR_SCENE->Remove(_hpBar);
         TaskQueue::GetInstance().AddTask([this]() {
             std::cout << "Destroying object in TaskQueue..." << std::endl;
@@ -173,9 +182,6 @@ void ShootingMonsterController::Update()
 
         return;
     }
-
-    playerPos = _player->GetTransform()->GetPosition();
-    EnemyPos = _transform->GetPosition();
 
     direction = playerPos - EnemyPos;
     distance = direction.Length();
@@ -391,6 +397,7 @@ void ShootingMonsterController::DropItem()
     OCTREE->InsertCollider(collider);
     item->AddComponent(collider);
 
+    isDrop = true;
     CUR_SCENE->Add(item);
 }
 

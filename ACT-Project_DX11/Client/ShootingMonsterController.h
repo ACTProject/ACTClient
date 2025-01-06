@@ -60,9 +60,11 @@ public:
 private:
     float _speed;
 
+    bool isDrop = false;
+
     float duration;
     float distance;
-    Vec3 direction;
+    Vec3 directiowwwn;
     float rangeDis;
 
     Vec3 playerPos;                     //플레이어 위치
