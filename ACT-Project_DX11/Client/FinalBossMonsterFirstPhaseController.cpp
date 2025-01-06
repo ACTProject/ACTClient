@@ -69,9 +69,6 @@ void FinalBossMonsterFirstPhaseController::Update()
         std::cout << "FinalBoss Phase_1 has been ended!" << std::endl;
 
         Vec3 pos = bossPos;
-        TaskQueue::GetInstance().AddTask([this, pos]() {
-            ENEMY->CreateFinalPhase(pos);
-            });
 
         return;
     }
@@ -208,7 +205,7 @@ void FinalBossMonsterFirstPhaseController::Appear()
         return;
     }
     SOUND->PlayEffect(L"player_shutup");
-    isFirstTime = false;
+    isFirstTime = true;
     playingSound = false;
 }
 

@@ -67,20 +67,21 @@ void FinalBossMonsterSecondPhaseController::Update()
     {
         _transform->SetPosition(Vec3(31.0f, 0.0f, 46.0f));
 
-        auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
-        Vec3 start(37.0577f, 7.88812f, 66.2076f);
-        Vec3 end(37.0577f, 7.88812f, 66.2076f);
-        Vec3 focus(-0.209137f, - 0.16879f, - 0.963209f);
-        float duration = 10.0f;
-
-        camera->StartCutscene(start, end, focus, duration);
         _player->GetTransform()->SetPosition(Vec3(50.0f, 0.f, 93.0f));
 
-        if (!playingSound)
+        if (!isExecuted_4)
         {
+            auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+            Vec3 start(37.0577f, 7.88812f, 66.2076f);
+            Vec3 end(37.0577f, 7.88812f, 66.2076f);
+            Vec3 focus(-0.209137f, -0.16879f, -0.963209f);
+            float duration = 10.0f;
+
+            camera->StartCutscene(start, end, focus, duration);
+
             SOUND->Stop(L"bgm");
             SOUND->PlayEffect(L"boss_die");
-            playingSound = true;
+            isExecuted_4 = true;
         }
 
         SetAnimationState(AnimationState::Die);
@@ -88,11 +89,12 @@ void FinalBossMonsterSecondPhaseController::Update()
         duration = _enemy->GetAnimationDuration(AnimationState::Die) / _FPS;
         if (animPlayingTime < duration)
         {
+            Rota(bossPos, playerPos);
             lastTime = GAMETIME;
             return;
         }
 
-        if (currentTime - lastTime > 3.0f)
+        if (currentTime - lastTime > 1.0f)
         {
             auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
             if (player)
@@ -115,7 +117,7 @@ void FinalBossMonsterSecondPhaseController::Update()
 
 void FinalBossMonsterSecondPhaseController::Phase_2()
 {
-    if (!isFirstTime) // 2페이즈 시작 (안되게 해놨음)
+    if (!isFirstTime) // 2페이즈 시작
     {
         if (!Phase2Flag) // 한번만 실행
         {
@@ -125,6 +127,12 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             DEBUG->Log(L"Boss 2nd Phase Start");
             Phase2Flag = true;
             _hpBar->SetActive(true);
+            _maxHp = 500.f;
+            _hp = 500.0f;
+            _atk = 50.0f;
+            speed = 15.0f;
+            randPunchType = rand() % 4;
+            randType = rand() % 7;
         }
         if (!isExecuted)
         {
@@ -140,9 +148,9 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             playingSound = false;
             isExecuted = true;
         }
-        Rota(bossPos, playerPos);
         if (PlayCheckAnimating(AnimationState::Roar))
         {
+            Rota(bossPos, playerPos);
             if (!playingSound)
             {
                 SOUND->PlayEffect(L"boss_roar_1");

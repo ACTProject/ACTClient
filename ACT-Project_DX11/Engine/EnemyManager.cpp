@@ -383,10 +383,10 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         obj->SetObjectType(ObjectType::UI);
         obj->AddComponent(make_shared<Slider>());
         obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
-        obj->GetUI()->SetUIID("Boss2");
+        obj->GetUI()->SetUIID("Boss_2");
 
         obj->SetActive(false);
-        BossScript->SetObjID("Boss2");
+        BossScript->SetObjID("Boss_2");
         BossScript->SetHpBar(obj);
 
         FinalBoss->AddComponent(BossScript);
