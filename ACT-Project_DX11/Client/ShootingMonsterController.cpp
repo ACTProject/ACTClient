@@ -159,7 +159,7 @@ void ShootingMonsterController::Update()
         Vec3 knockbackDirection = EnemyPos - playerPos;                  // 공격자 -> 몬스터 방향
         knockbackDirection.Normalize();                                  // 방향 벡터 정규화
 
-        float knockbackForce = 100.0f;                                   // 밀리는 힘
+        float knockbackForce = 125.0f;                                   // 밀리는 힘
         GetGameObject()->GetRigidbody()->Addforce(knockbackDirection * knockbackForce);       // 힘 적용
 
         if (!playingSound)
