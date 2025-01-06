@@ -27,7 +27,7 @@ bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState st
         animPlayingTime = 0.0f;
         if (state != AnimationState::Roar)
         {
-            randType = 1;
+            randType = rand() % 7;
             std::cout << randType << std::endl;
         }
         ResetToIdleState();
