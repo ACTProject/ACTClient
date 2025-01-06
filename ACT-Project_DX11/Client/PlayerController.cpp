@@ -1499,6 +1499,7 @@ void PlayerController::FinishGame()
     if (!_isPlaySound)
     {
         SOUND->PlayEffect(L"player_finish");
+        SOUND->Play(L"EndingMusic", false);
         _isPlaySound = true;
     }
 
@@ -1506,6 +1507,7 @@ void PlayerController::FinishGame()
 
     if (INPUT->GetButton(KEY_TYPE::LBUTTON))
     {
+        SOUND->Stop(L"EndingMusic");
         GAME->ChangeScene(0);
     }
 }

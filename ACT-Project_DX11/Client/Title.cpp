@@ -42,6 +42,7 @@ void Title::Init()
         SOUND->Load(L"click", L"title/UI_Confirm_Soft");
         SOUND->Load(L"menu_pause", L"bgm/menu_pause");
         SOUND->Load(L"menu_unpause", L"bgm/menu_unpause");
+        SOUND->Load(L"EndingMusic", L"bgm/.TIDELINE BLING_10");
 
         SOUND->Play(L"bgm", true);
     }
