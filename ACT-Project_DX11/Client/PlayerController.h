@@ -142,7 +142,7 @@ private:
     float _deadTimer = 0.0f;    // 죽음 애니메이션 시간 추적
 
     // Jump
-    float _jumpSpeed = 15.f;
+    float _jumpSpeed = 20.f;
     bool _isJumping = false;
     float _jumpDuration = 0.0f; // 점프 애니메이션 지속시간 (초)
     float _jumpTimer = 0.0f;   // 점프 애니메이션 시간 추적

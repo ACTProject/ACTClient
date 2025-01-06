@@ -1064,8 +1064,6 @@ void Client2::Init()
             RESOURCES->Add(L"Alpha", material);
         }
 
-    // 그림자 문제.
-
     // Map
     {
         auto obj = make_shared<GameObject>();

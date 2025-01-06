@@ -279,7 +279,6 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
                 obj->GetModelRenderer()->SetModel(it->second->_model);
                 obj->GetModelRenderer()->SetPass(1);
             }
-
         }
 
         if (_mapSelectDesc->isCollision == true)
@@ -287,6 +286,7 @@ shared_ptr<GameObject> MapManager::Create(Vec3& pos)
             auto collider = make_shared<AABBBoxCollider>();
             collider->SetBoundingBox(BoundingBox(obj->GetTransform()->GenerateBoundingBox().Center, _mapSelectDesc->extent));
             collider->SetOffset(_mapSelectDesc->offset);
+            collider->SetColliding(true);
             obj->AddComponent(collider);
             OCTREE->InsertCollider(collider);
         }
