@@ -19,8 +19,6 @@ class ShootingMonsterController : public MonsterController
 {
     using Super = MonsterController;
 
-    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
-
     void Start() override;
     void Update() override;
 
@@ -63,6 +61,7 @@ private:
     Vec3 direction;
     float rangeDis;
 
+    Vec3 playerPos;                     //플레이어 위치
     Vec3 CurForward;
     Vec3 EnemyPos;
     Vec3 PlayerPos;

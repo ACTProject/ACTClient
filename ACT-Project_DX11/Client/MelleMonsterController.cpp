@@ -98,6 +98,7 @@ void MelleMonsterController::Start()
     _transform = GetTransform();
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
+    _player = SCENE->GetCurrentScene()->GetPlayer();
 
     std::cout << "MelleMonsterController [" << objID << "] Start()" << std::endl;
 }
@@ -106,11 +107,12 @@ void MelleMonsterController::Update()
 {
     Super::Update();
 
-    // 플레이어 위치 계산4
+    // 플레이어 위치 계산
+    playerPos = _player->GetTransform()->GetPosition();
     EnemyPos = _transform->GetPosition();
 
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
-
+    std::cout << currentTime << endl;
     direction = playerPos - EnemyPos;
     distance = direction.Length();
     rangeDis = (EnemyPos - StartPos).Length();
@@ -346,8 +348,6 @@ void MelleMonsterController::DropItem()
     // Model
     objModel->ReadModel(L"Enemy/can");
     objModel->ReadMaterial(L"Enemy/can");
-
-    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 
     item->AddComponent(make_shared<ModelRenderer>(renderShader));
     {

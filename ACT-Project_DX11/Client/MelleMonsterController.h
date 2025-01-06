@@ -68,10 +68,10 @@ private:
     bool isPauseAfterPunch = false;
     float pauseEndTime = 0.0f;
 
+    Vec3 playerPos;                     //플레이어 위치
     Vec3 StartPos;
     Vec3 CurForward;
     Vec3 EnemyPos;
-    Vec3 playerPos;
     Vec3 patrolTarget;
 
     string objID;

@@ -21,8 +21,6 @@ class FinalBossMonsterSecondPhaseController : public MonsterController
 {
     using Super = MonsterController;
 
-    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
-
     void Start() override;
     void Update() override;
 
@@ -69,10 +67,6 @@ private:
     void Sprint();
     void Run(float speed);
 
-    void UpdateHitBox(float f);
-    void UpdateSlamHitBox();
-    void UpdateHurricaneHitBox();
-    void UpdateChokeHitBox();
     void Slash();
     void Slam();
     void Punch();                            // 펀치 공격
@@ -80,6 +74,11 @@ private:
     void FireMoney();
     void Choke_lift();
     void Hurricane();
+
+    void UpdateHitBox(float f);
+    void UpdateSlamHitBox();
+    void UpdateHurricaneHitBox();
+    void UpdateChokeHitBox();
     void makeBubble(Vec3 pos, Vec3 dir);
     void makeCash(Vec3 pos, Vec3 dir);
     void checkHit(shared_ptr<BaseCollider> hitboxCollider, float damage);

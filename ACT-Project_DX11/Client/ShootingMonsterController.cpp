@@ -130,6 +130,7 @@ void ShootingMonsterController::Start()
     _transform = GetTransform();
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
+    _player = SCENE->GetCurrentScene()->GetPlayer();
 
     std::cout << "ShootingMonsterController [" << objID << "] Start()" << std::endl;
 }
@@ -162,9 +163,10 @@ void ShootingMonsterController::Update()
         return;
     }
 
+    playerPos = _player->GetTransform()->GetPosition();
     EnemyPos = _transform->GetPosition();
 
-    direction = PlayerPos - EnemyPos;
+    direction = playerPos - EnemyPos;
     distance = direction.Length();
     rangeDis = (EnemyPos - StartPos).Length();
 
@@ -237,7 +239,7 @@ void ShootingMonsterController::Update()
 
     if (!chaseState && !isPauseAfterPunch)
     {
-        Rota(EnemyPos, PlayerPos);
+        Rota(EnemyPos, playerPos);
         if (distance < ShootingRange)
         {
             shootState = true;
@@ -266,7 +268,7 @@ void ShootingMonsterController::Update()
         }
         else
         {
-            Move(EnemyPos, PlayerPos, _speed);
+            Move(EnemyPos, playerPos, _speed);
         }
     }
     else
@@ -336,8 +338,6 @@ void ShootingMonsterController::DropItem()
     // Model
     objModel->ReadModel(L"Enemy/cap");
     objModel->ReadMaterial(L"Enemy/cap");
-
-    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
 
     item->AddComponent(make_shared<ModelRenderer>(renderShader));
     {
