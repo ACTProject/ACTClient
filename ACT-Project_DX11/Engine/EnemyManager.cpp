@@ -330,7 +330,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         shared_ptr<HitBox> hitbox = make_shared<HitBox>();
         hitboxGO->AddComponent(hitbox);
         hitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
-        hitbox->Craete(FinalBoss, Vec3(1.0f));
+        hitbox->Craete(FinalBoss, Vec3(2.5f));
         CUR_SCENE->Add(hitboxGO);
         BossScript->SetHitBox(hitboxGO);
         
@@ -339,7 +339,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         shared_ptr<HitBox> chokehitbox = make_shared<HitBox>();
         chokehitboxGO->AddComponent(chokehitbox);
         chokehitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
-        chokehitbox->Craete(FinalBoss, Vec3(1.0f));
+        chokehitbox->Craete(FinalBoss, Vec3(2.0f));
         CUR_SCENE->Add(chokehitboxGO);
         BossScript->SetChokeHitBox(chokehitboxGO);
 
@@ -348,7 +348,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         shared_ptr<HitBox> slamhitbox = make_shared<HitBox>();
         slamhitboxGO->AddComponent(slamhitbox);
         slamhitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
-        slamhitbox->Craete(FinalBoss, Vec3(5.0f, 2.0f, 5.0f));
+        slamhitbox->Craete(FinalBoss, Vec3(7.0f, 2.0f, 7.0f));
         CUR_SCENE->Add(slamhitboxGO);
         BossScript->SetSlamHitBox(slamhitboxGO);
 
@@ -357,7 +357,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         shared_ptr<HitBox> hurricanehitbox = make_shared<HitBox>();
         hurricanehitboxGO->AddComponent(hurricanehitbox);
         hurricanehitbox->SetOffSet(Vec3(0.f, 0.f, 0.f));
-        hurricanehitbox->AirHitCraete(FinalBoss, Vec3(5.0f, 3.0f, 5.0f));
+        hurricanehitbox->AirHitCraete(FinalBoss, Vec3(7.0f, 3.0f, 7.0f));
         CUR_SCENE->Add(hurricanehitboxGO);
         BossScript->SetHurricaneHitBox(hurricanehitboxGO);
 

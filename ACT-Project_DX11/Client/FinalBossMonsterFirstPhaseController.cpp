@@ -349,6 +349,7 @@ void FinalBossMonsterFirstPhaseController::Fireball()
         {
             SOUND->Play(L"boss_bubbleMove", true);
             SOUND->PlayEffect(L"boss_bubbleBullet_vo");
+            SOUND->PlayEffect(L"boss_narrate_laugh_full");
             playingSound = true;
         }
     }

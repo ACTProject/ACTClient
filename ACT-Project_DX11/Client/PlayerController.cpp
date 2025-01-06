@@ -74,6 +74,7 @@ void PlayerController::Update()
     if (DEBUG->IsDebugEnabled())
         return;
 
+    SOUND->SetVolume(L"bgm", 0.3);
     _FPS = static_cast<float>(TIME->GetFps());
     _transform = GetTransform();
     _rigidbody = GetGameObject()->GetRigidbody();
@@ -89,6 +90,17 @@ void PlayerController::Update()
         HandleInput();
     }
     
+    if (startChoke)
+    {
+        _rigidbody->SetUseGravity(false);
+        onChoked();
+        return;
+    }
+    else
+    {
+        _rigidbody->SetUseGravity(true);
+    }
+
     // 이동 처리
     HandleMovement();
 
@@ -124,8 +136,6 @@ void PlayerController::Update()
 
     // 충돌 처리
     HandleCollision();
-
-    SOUND->SetVolume(L"bgm", 0.3);
 
     // 중복 데미지 처리 방지
     if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking && !_isDashAttacking)
@@ -444,7 +454,7 @@ void PlayerController::HandleInteraction()
                     auto ui = UIMANAGER->GetUi("MissionUI");
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
-                    if (_spoil == 1)
+                    if (_spoil == 10)
                     {
                         SOUND->PlayEffect(L"openPortal");
                         CUR_SCENE->SetMissionClear(true);
@@ -1333,6 +1343,8 @@ void PlayerController::OnDeath()
     // 게임 오버 메시지 출력
     std::cout << "Player has died! Game Over!" << std::endl;
 
+    SOUND->PlayEffect(L"player_die");
+
     // 죽었을 때 UI 표시
     // TODO
 
@@ -1361,11 +1373,66 @@ void PlayerController::OnDeath()
 
 void PlayerController::onChoked()
 {
-    if (_isDodging)
-        return;
-
-    while (_transform->GetPosition().y < 5.0f)
+    if (_isDodging) 
     {
-        _transform->SetPosition(_transform->GetPosition() + Vec3(0, 1, 0) * 5.0f * DT);
+        _playerActive = true;
+        startChoke = false;
+        return;
+    }
+
+    const float targetY = 5.0f;
+
+    // 총 이동 시간 (초)
+    const float duration = 3.0f;
+
+    // 현재 경과 시간
+    static float elapsedTime = 0.0f;
+
+    static bool onDamageTriggered1 = false;
+    static bool onDamageTriggered2 = false;
+    static bool onDamageTriggered3 = false;
+    static bool onDamageTriggered4 = false;
+
+    // 현재 y 위치 계산
+    if (elapsedTime < duration) {
+        elapsedTime += DT; // 경과 시간 증가
+        
+        // 현재 위치 = 선형 보간 (Lerp)
+        float t = elapsedTime / duration; // 0.0f ~ 1.0f
+        float currentY = t * targetY;
+
+        if (t >= 3.0f / 10.0f && !onDamageTriggered1) {
+            OnDamage(GetGameObject(), 10.0f);
+            SOUND->PlayEffect(L"player_hit2");
+            onDamageTriggered1 = true;
+        }
+        if (t >= 6.0f / 10.0f && !onDamageTriggered2) {
+            OnDamage(GetGameObject(), 10.0f);
+            SOUND->PlayEffect(L"player_hit2");
+            onDamageTriggered2 = true;
+        }
+        if (t >= 9.0f / 10.0f && !onDamageTriggered3) {
+            OnDamage(GetGameObject(), 10.0f);
+            SOUND->PlayEffect(L"player_hit2");
+            onDamageTriggered3 = true;
+        }
+        if (!onDamageTriggered4)
+        {
+            _transform->SetPosition(_transform->GetPosition() + fixedPos * 5.0f);
+            onDamageTriggered4 = true;
+        }
+
+        // 위치 설정
+        Vec3 currentPosition = _transform->GetPosition();
+        currentPosition.y = currentY;
+        _transform->SetPosition(currentPosition);
+    }
+    else
+    {
+        elapsedTime = 0.0f;
+        onDamageTriggered1 = false;
+        onDamageTriggered2 = false;
+        onDamageTriggered3 = false;
+        onDamageTriggered4 = false;
     }
 }
