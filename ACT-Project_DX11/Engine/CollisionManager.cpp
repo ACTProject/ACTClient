@@ -5,7 +5,8 @@
 
 void CollisionManager::Init()
 {
-
+    _colliders.clear();
+    _rigidbodies.clear();
 }
 
 // 충돌 감지 및 처리

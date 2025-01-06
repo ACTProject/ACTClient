@@ -37,6 +37,7 @@ WPARAM Game::Run(uint32 num)
     }
 	//0
     DEBUG->CreateConsoleWindow();
+    COLLISION->Init();
     // Octree
     {
         // 전체 월드 공간 옥트리

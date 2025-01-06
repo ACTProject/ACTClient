@@ -543,7 +543,9 @@ void Client::Init()
     
     // player
     player->SetObjectType(ObjectType::Player);
-	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
+	//player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
+    player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 5.0f));
+    CUR_SCENE->SetMissionClear(true);
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
 	player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
