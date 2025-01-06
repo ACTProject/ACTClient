@@ -25,6 +25,8 @@ bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState st
     if (animPlayingTime >= duration)
     {
         animPlayingTime = 0.0f;
+        randType = rand() % 7;
+        std::cout << randType << std::endl;
         ResetToIdleState();
         return false;
     }
@@ -116,7 +118,7 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
         {
             if (!playingSound)
             {
-                SOUND->PlayEffect(L"boss_getuproar");
+                SOUND->PlayEffect(L"boss_roar_1");
                 playingSound = true;
             }
             return;
@@ -128,153 +130,6 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
     if (randType >= 0 && randType < phaseActions.size()) {
         (this->*phaseActions[randType])();
     }
-
-    /*switch (randType)
-    {
-    case 1: // 펀치 콤보
-        if (distance < AttackRange)
-        {
-            punchState = true;
-        }
-        if (punchState)
-        {
-            if (PlayCheckAnimating(static_cast<AnimationState>((int)AnimationState::Attack1 + randPunchType)))
-            {
-                Punch(); // 히트 및 데미지 처리
-                return;
-            }
-            else
-            {
-                randPunchType = rand() % 4;
-                randType = 0;
-                punchState = false;
-                _hitbox->GetCollider()->SetActive(false);
-                ResetHit(); 
-            }
-        }
-        {
-            Sprint();
-            Rota(bossPos, playerPos);
-        }
-        break;
-    case 2: // 초크
-        Move(bossPos, playerPos, speed);
-        Rota(bossPos, playerPos);
-        if (distance < 5.f)
-        {
-            attackState = true;
-        }
-        if (attackState)
-        {
-            if (PlayCheckAnimating(AnimationState::Skill1))
-            {
-                Choke_lift();
-                return;
-            }
-            else
-            {
-                attackState = false;
-                randType = rand() % 8;
-            }
-        }
-        break;
-    case 3: // 버블 발사
-        if (PlayCheckAnimating(AnimationState::Skill2))
-        {
-            Fireball();
-            return;
-        }
-        else
-        {
-            shootTime = 0.0f;
-            randType = rand() % 8;
-        }
-        break;
-    case 4: // 돈다발 발사
-        if (PlayCheckAnimating(AnimationState::Skill3))
-        {
-            FireMoney();
-            return;
-        }
-        else
-        {
-            shootState = false;
-            shootTime = 0.0f;
-            randType = rand() % 8;
-        }
-        break;
-    case 5: // 큰 펀치(slash)
-        if (distance < AttackRange + 3.0f)
-        {
-            punchState = true;
-        }
-        if (punchState)
-        {
-            if (PlayCheckAnimating(AnimationState::Skill5))
-            {
-                Slash(); // 히트 및 데미지 처리
-                return;
-            }
-            else
-            {
-                punchState = false;
-                randType = rand() % 8;
-                ResetHit();
-            }
-        }
-        else
-        {
-            Sprint();
-            Rota(bossPos, playerPos);
-        }
-        break;
-    case 6: // 깔아 뭉게기
-        if (distance < 10.0f)
-        {
-            punchState = true;
-        }
-        if (punchState)
-        {
-            if (!isExecuted_2)
-            {
-                lastPos = playerPos;
-                isExecuted_2 = true;
-            }
-            if (PlayCheckAnimating(AnimationState::Skill7))
-            {
-                Slam(); // 히트 및 데미지 처리
-                return;
-            }
-            else
-            {
-                _transform->SetLocalPosition(_slamhitbox->GetTransform()->GetPosition());
-                punchState = false;
-                isExecuted_2 = false;
-                randType = 6;
-                ResetHit();
-                _slamhitbox->GetCollider()->SetActive(false);
-            }
-        }
-        else
-        {
-            Sprint();
-            Rota(bossPos, playerPos);
-        }
-        break;
-    case 7: // 허리케인
-        if (PlayCheckAnimating(AnimationState::Skill9))
-        {
-            Hurricane();
-            return;
-        }
-        else
-        {
-            randType = rand() % 8;
-        }
-        break;
-
-    }
-    */    
 
 }
 
@@ -417,7 +272,6 @@ void FinalBossMonsterSecondPhaseController::Punch()
         else
         {
             randPunchType = rand() % 4;
-            randType = rand() % 7;
             punchState = false;
             _hitbox->GetCollider()->SetActive(false);
             _hit = false;
@@ -465,7 +319,6 @@ void FinalBossMonsterSecondPhaseController::Fireball()
     else
     {
         shootTime = 0.0f;
-        randType = rand() % 7;
         playingSound = false;
     }
     
@@ -495,12 +348,13 @@ void FinalBossMonsterSecondPhaseController::FireMoney()
             makeCash({ bossPos.x + rightVec.x / 0.5f, bossPos.y, bossPos.z }, dir);
             makeCash({ bossPos.x - rightVec.x / 0.5f, bossPos.y, bossPos.z }, dir);
 
+            SOUND->PlayEffect(L"boss_moenySpawn");
             shootState = true;
         }
         if (!playingSound)
         {
             SOUND->Play(L"boss_bubbleMove", true);
-            SOUND->PlayEffect(L"boss_moenySpawn");
+            SOUND->PlayEffect(L"boss_bubbleBullet_vo");
             playingSound = true;
         }
         return;
@@ -510,7 +364,6 @@ void FinalBossMonsterSecondPhaseController::FireMoney()
         playingSound = false;
         shootState = false;
         shootTime = 0.0f;
-        randType = rand() % 7;
     }
     
 }
@@ -559,7 +412,7 @@ void FinalBossMonsterSecondPhaseController::makeCash(Vec3 pos, Vec3 dir)
 
     bullet->GetOrAddTransform()->SetPosition({ pos.x, pos.y + 3.f, pos.z });
     bullet->GetOrAddTransform()->SetLocalRotation({ 0,0,0 }); // XMConvertToRadians()
-    bullet->GetOrAddTransform()->SetScale(Vec3(0.003f));
+    bullet->GetOrAddTransform()->SetScale(Vec3(0.006f));
 
     shared_ptr<Model> objModel = make_shared<Model>();
     // Model
@@ -616,7 +469,6 @@ void FinalBossMonsterSecondPhaseController::Choke_lift()
         {
             attackState = false;
             _hit = false;
-            randType = rand() % 7;
         }
     }
     else
@@ -646,7 +498,6 @@ void FinalBossMonsterSecondPhaseController::Slash()
         {
             _hitbox->GetCollider()->SetActive(false);
             punchState = false;
-            randType = rand() % 7;
             _hit = false;
         }
     }
@@ -660,25 +511,36 @@ void FinalBossMonsterSecondPhaseController::Slash()
 
 void FinalBossMonsterSecondPhaseController::Hurricane()
 {
-    if (PlayCheckAnimating(AnimationState::Skill9))
+    if (distance < AttackRange + 5.0f)
     {
-        UpdateHurricaneHitBox();
-        Vec3 direction = playerPos - bossPos;
-        if (direction.LengthSquared() < 5.f) // EPSILON 사용
+        attackState = true;
+    }
+    if (attackState)
+    {
+        if (PlayCheckAnimating(AnimationState::Skill9))
         {
+            UpdateHurricaneHitBox();
+            Vec3 direction = playerPos - bossPos;
+            if (direction.LengthSquared() < 5.f) // EPSILON 사용
+            {
+                return;
+            }
+
+            direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
+
+            _transform->SetPosition(_transform->GetPosition() + direction * 8.0f * DT);  // 일정 거리만큼 이동
             return;
         }
-
-        direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
-
-        _transform->SetPosition(_transform->GetPosition() + direction * 8.0f * DT);  // 일정 거리만큼 이동
-        return;
+        else
+        {
+            _hurricaneHitbox->GetCollider()->SetActive(false);
+            _hit = false;
+        }
     }
     else
     {
-        randType = rand() % 7;
-        _hurricaneHitbox->GetCollider()->SetActive(false);
-        _hit = false;
+        Sprint();
+        Rota(bossPos, playerPos);
     }
     
 }
@@ -728,7 +590,6 @@ void FinalBossMonsterSecondPhaseController::Slam()
         {
             _transform->SetLocalPosition(_slamhitbox->GetTransform()->GetPosition());
             punchState = false;
-            randType = rand() % 7;
             _hit = false;
             _slamhitbox->GetCollider()->SetActive(false);
             playingSound = false;

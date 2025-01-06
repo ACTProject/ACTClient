@@ -82,6 +82,7 @@ void FinalBossMonsterFirstPhaseController::Update()
 
     Rota(bossPos, playerPos);
 
+    SOUND->SetVolume(L"bgm", 0.3f);
     Phase_1();
 }
 
@@ -93,7 +94,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
         {
             if (!playingSound)
             {
-                SOUND->PlayEffect(L"boss_narrate_intro");
+                SOUND->PlayEffect(L"boss_narrate_6");
                 playingSound = true;
             }
             Appear();
@@ -145,7 +146,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
                 {
                     if (!playingSound && patternCnt == 1)
                     {
-                        int randvoice = rand() % 7 + 1;
+                        int randvoice = rand() % 9 + 1;
                         wstring s = L"boss_narrate_" + std::to_wstring(randvoice);
                         SOUND->PlayEffect(s);
                         playingSound = true;
@@ -163,7 +164,6 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
         {
             if (PlayCheckAnimating(AnimationState::Skill2))
             {
-                // 사운드 필요
                 Fireball();
                 return;
             }

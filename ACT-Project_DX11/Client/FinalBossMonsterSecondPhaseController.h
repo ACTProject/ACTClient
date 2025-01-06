@@ -98,7 +98,6 @@ public:
     float shootTime = 0.0f;
     int randType;                       //랜덤한 타입
     int randPunchType;                  //랜덤한 펀치 타입
-    Vec3 lastPos;
 
     // 플래그
     bool isFirstTime = false;            //조우인지 여부 ( Appear 용 )

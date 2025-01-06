@@ -112,7 +112,7 @@ void MelleMonsterController::Update()
     EnemyPos = _transform->GetPosition();
 
     static float lastPatrolTime = 0.0f; // 마지막 목표 생성 시간
-    std::cout << currentTime << endl;
+
     direction = playerPos - EnemyPos;
     distance = direction.Length();
     rangeDis = (EnemyPos - StartPos).Length();

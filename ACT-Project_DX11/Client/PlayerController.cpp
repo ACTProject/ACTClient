@@ -594,8 +594,9 @@ void PlayerController::BreakShell()
     for (auto& armor : _armorGroup) {
         armor->SetActive(false);
     }
+
     // 깨지는 소리 효과 재생
-    // TO DO
+    SOUND->PlayEffect(L"player_shellBreak");
 
     // 애니메이션 상태 업데이트 (쉘 깨지는 애니메이션이 있을 경우)
     // TODO
@@ -1052,6 +1053,14 @@ void PlayerController::UpdateDashAttack()
 
     UpdateDashHitBox();
 
+    if (!_isPlaySound)
+    {
+        SOUND->PlayEffect(L"player_dashAtk_1");
+        SOUND->PlayEffect(L"player_dashAtk_2");
+        SOUND->PlayEffect(L"player_dashAtk_3");
+        _isPlaySound = true;
+    }
+
     // 대쉬 이동 처리
     if (_remainingDashDistance > 0.0f)
     {
@@ -1064,6 +1073,7 @@ void PlayerController::UpdateDashAttack()
     // 대쉬 공격 종료 처리
     if (_dashAttackTimer >= _dashAttackDuration)
     {
+        _isPlaySound = false;
         _isDashAttacking = false;
         _isPlayeringDashAttackAnimation = false;
         _remainingDashDistance = 0.f;

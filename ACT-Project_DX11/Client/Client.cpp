@@ -89,6 +89,7 @@ void Client::Init()
             SOUND->Load(L"player_excite", L"player/Player_Excite_1");
             SOUND->Load(L"player_pickupItem", L"player/Pickup_Item_World");
             SOUND->Load(L"player_shellConfirm", L"player/ShellConfirm");
+            SOUND->Load(L"player_shellBreak", L"player/Armor Break");
             SOUND->Load(L"player_springSound", L"player/ImpactShell_SpringL11");
             SOUND->Load(L"player_impachShell", L"player/ImpactShell_MetalL11");
             SOUND->Load(L"player_scream", L"player/23_Kril_Aaaa");
@@ -100,6 +101,9 @@ void Client::Init()
             SOUND->Load(L"player_aerialAtk", L"player/aeiral_attack");
             SOUND->Load(L"player_chargeAtk", L"player/Kril_Heavy_Attack_XL_4");
             SOUND->Load(L"player_chargeUp", L"player/Firth_Charge_Up");
+            SOUND->Load(L"player_dashAtk_1", L"player/Kril_Heavy_Attack_XL_2");
+            SOUND->Load(L"player_dashAtk_2", L"player/Player Dash Attack NewMain EQ");
+            SOUND->Load(L"player_dashAtk_3", L"player/Player Dash Attack NewSlice EQ");
         }
 
         //Melle
