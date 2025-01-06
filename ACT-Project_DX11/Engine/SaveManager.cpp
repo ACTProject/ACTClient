@@ -59,7 +59,9 @@ void SaveManager::CreateSaveUI()
         obj->GetButton()->Create(Vec3(100.f, 100.f, 0.1f), Vec2(180, 80), RESOURCES->Get<Material>(L"Save"));
         obj->SetObjectType(ObjectType::UI);
         obj->GetMeshRenderer()->SetAlphaBlend(true);
-        obj->GetButton()->AddOnClickedEvent([]() { SAVE->SaveGame(CUR_SCENE->GetPlayer()); });
+        obj->GetButton()->AddOnClickedEvent([]() { 
+            SAVE->SaveGame(CUR_SCENE->GetPlayer());
+            SOUND->PlayEffect(L"click"); });
         obj->SetActive(false);
         saveOptionUIGroup.push_back(obj);
     }
@@ -84,6 +86,8 @@ void SaveManager::OpenSaveUI()
     }
     else
     {
+        SOUND->PlayEffect(L"menu_unpause");
+        SOUND->Paused(L"bgm", false);
         for (auto& ui : saveOptionUIGroup)
         {
             ui->SetActive(false);
@@ -140,7 +144,10 @@ void SaveManager::CreateButton()
     obj->SetObjectType(ObjectType::UI);
     obj->GetMeshRenderer()->SetAlphaBlend(true);
     int button = _btnIndex;
-       obj->GetButton()->AddOnClickedEvent([this, button]() {  SAVE->CheckSaveFile(button); });
+       obj->GetButton()->AddOnClickedEvent([this, button]() {  
+           SAVE->CheckSaveFile(button); 
+           SOUND->PlayEffect(L"click"); 
+           });
     obj->SetActive(false);
 
     _btnIndex++;

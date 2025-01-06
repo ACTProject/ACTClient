@@ -43,15 +43,10 @@ private:
     void Move(Vec3 objPos, Vec3 targetPos, float speed);
     void Rota(Vec3 objPos, Vec3 targetPos);
     void Punch(int type);
-    //void Tracking(Vec3 pos, const std::vector<Node3D>& path);
     void ResetToIdleState();
     void ResetHit();
 
 	float _speed;
-	float _hp;
-	float _atk;
-	float _FPS;
-	float animPlayingTime = 0.0f;
     float distance;
     Vec3 direction;
     float rangeDis;
@@ -73,10 +68,10 @@ private:
     bool isPauseAfterPunch = false;
     float pauseEndTime = 0.0f;
 
+    Vec3 playerPos;                     //플레이어 위치
     Vec3 StartPos;
     Vec3 CurForward;
     Vec3 EnemyPos;
-    Vec3 PlayerPos;
     Vec3 patrolTarget;
 
     string objID;

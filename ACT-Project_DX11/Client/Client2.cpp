@@ -56,7 +56,7 @@ void Client2::Init()
         SOUND->Stop(L"bgm");
         SOUND->Load(L"bgm", L"bgm/Nephro Draft ogg");
 
-        SOUND->Load(L"player_footstep", L"plyaer/footstep_default");
+        SOUND->Load(L"player_footstep", L"plyaer/Footstep Stone 3");
 
         //Boss
         {
@@ -76,14 +76,15 @@ void Client2::Init()
             SOUND->Load(L"boss_bubbleBullet_vo", L"monster/boss/bubbleBullet_vo");
             SOUND->Load(L"boss_moenySpawn", L"monster/boss/moenyFire");
             SOUND->Load(L"boss_moenyMove", L"monster/boss/moneyMovement");
-            SOUND->Load(L"boss_slam", L"monster/boss/slam");
+            SOUND->Load(L"boss_slam", L"monster/boss/Nephro EffortHeavy 3");
+            SOUND->Load(L"boss_atk1", L"monster/boss/Nephro_Attack_Long_1");
             SOUND->Load(L"boss_down", L"monster/boss/down");
             SOUND->Load(L"boss_die", L"monster/boss/die");
             SOUND->Load(L"boss_hit1", L"monster/boss/hit1");
             SOUND->Load(L"boss_hit2", L"monster/boss/Nephro_Hurt_1");
             SOUND->Load(L"boss_hit3", L"monster/boss/Nephro_Hurt_3");
-            SOUND->Load(L"boss_narrate_init", L"monster/boss/narrate_init");
-            SOUND->Load(L"boss_narrate_intro", L"monster/boss/Nephro Intro 1");
+            SOUND->Load(L"boss_narrate_9", L"monster/boss/narrate_init");
+            SOUND->Load(L"boss_narrate_8", L"monster/boss/Nephro Intro 1");
             SOUND->Load(L"boss_narrate_laugh_short", L"monster/boss/narrate_laugh_short");
             SOUND->Load(L"boss_narrate_laugh_full", L"monster/boss/narrate_laugh_full");
             SOUND->Load(L"boss_narrate_1", L"monster/boss/narrate_1");
@@ -93,6 +94,9 @@ void Client2::Init()
             SOUND->Load(L"boss_narrate_5", L"monster/boss/narrate_5");
             SOUND->Load(L"boss_narrate_6", L"monster/boss/narrate_6");
             SOUND->Load(L"boss_narrate_7", L"monster/boss/narrate_7");
+            SOUND->Load(L"boss_roar_1", L"monster/boss/heikea_roar");
+            SOUND->Load(L"boss_roar_2", L"monster/boss/roar_2");
+            SOUND->Load(L"boss_roar_3", L"monster/boss/roar_3");
         }
 
         SOUND->Play(L"bgm", true);

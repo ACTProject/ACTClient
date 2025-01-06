@@ -40,6 +40,8 @@ void Title::Init()
         SOUND->Load(L"bgm", L"title/Lobby_Sound");
         SOUND->Load(L"hover", L"title/ClickHigh4");
         SOUND->Load(L"click", L"title/UI_Confirm_Soft");
+        SOUND->Load(L"menu_pause", L"bgm/menu_pause");
+        SOUND->Load(L"menu_unpause", L"bgm/menu_unpause");
 
         SOUND->Play(L"bgm", true);
     }

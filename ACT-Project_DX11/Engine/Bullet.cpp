@@ -63,6 +63,7 @@ void Bullet::Shooting()
 
     if (duration > 3.0f) // 3초 뒤 삭제
     {
+        SOUND->Stop(L"boss_bubbleMove");
         Remove();
     }
 

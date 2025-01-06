@@ -19,8 +19,6 @@ class ShootingMonsterController : public MonsterController
 {
     using Super = MonsterController;
 
-    shared_ptr<Shader> renderShader = make_shared<Shader>(L"23. RenderDemo.fx");
-
     void Start() override;
     void Update() override;
 
@@ -40,7 +38,6 @@ public:
     void SetHitBox(shared_ptr<GameObject> hitbox) { _hitbox = hitbox; }
 
     void ResetToIdleState();
-    void ResetHit();
     bool PlayCheckAnimating(AnimationState state);
 
     bool GetHit() { return _hit; }
@@ -49,7 +46,6 @@ public:
     void Aggro();
     void Move(Vec3 objPos, Vec3 targetPos, float speed);
     void Rota(Vec3 objPos, Vec3 targetPos);
-    //void Tracking(Vec3 pos, const std::vector<Node3D>& path);
     void Patrol(Vec3 Target);
     void AddBullet(Vec3 Pos, Vec3 dir);
 
@@ -59,26 +55,21 @@ public:
     bool PlayingHitMotion = false;
 private:
     float _speed;
-    float _hp;
-    float _atk;
 
     float duration;
     float distance;
     Vec3 direction;
     float rangeDis;
-    float dt;
-    float _FPS;
 
+    Vec3 playerPos;                     //플레이어 위치
     Vec3 CurForward;
     Vec3 EnemyPos;
     Vec3 PlayerPos;
     Vec3 patrolTarget;
     Vec3 StartPos;
 
-    float animPlayingTime = 0.0f;
     bool hasPatrolTarget = false;
     bool shootCount = false;
-    bool hasDealing = false;
     bool isFirstTime = false;
     bool playingSound = false;
 

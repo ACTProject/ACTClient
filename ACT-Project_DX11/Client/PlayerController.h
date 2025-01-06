@@ -108,6 +108,10 @@ public:
     // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
     void LoadPlayer(SaveData data);
 
+    // Choke Hit
+    void onChoked();
+    bool endChoke = false;
+
 public:
     void OnDeath() override;
 
