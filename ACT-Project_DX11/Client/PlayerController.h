@@ -51,9 +51,9 @@ public:
     void HandleShellHit();      // Shell 히트 상태 처리
 
     // Attack
-	  void StartAttack();
-	  void ContinueAttack();
-	  void PlayAttackAnimation(int stage);
+	void StartAttack();
+	void ContinueAttack();
+	void PlayAttackAnimation(int stage);
     void UpdateHitBox();
     void UpdateAirHitBox();
     void UpdateChargeHitBox();
@@ -237,6 +237,9 @@ private:
     float _footstepTimer = 0.0f;
     float _runningInterval = 0.2f;
     float _walkingInterval = 0.3f;
+
+    // Finish
+    bool _isFinish = false;
 
 public:
     // 스탯 접근자

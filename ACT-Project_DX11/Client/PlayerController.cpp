@@ -478,7 +478,7 @@ void PlayerController::HandleInteraction()
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
 
-                    if (_spoil == 10)
+                    if (_spoil == 1)
                     {
                         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
                         Vec3 start(344.074f, 27.1922f, 309.091f);
@@ -1417,22 +1417,6 @@ void PlayerController::OnDeath()
     _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
     _deadDuration /= _FPS;
     SetAnimationState(AnimationState::Die);
-
-    // 죽음 처리 이후 리스폰 또는 종료 처리
-    // TODO
-    //TaskQueue::GetInstance().AddTask([this]() {
-    //    std::this_thread::sleep_for(std::chrono::seconds(3)); // 3초 대기
-
-    //    // 선택적으로 리스폰 또는 메인 메뉴로 이동
-    //    if (_allowRespawn)
-    //    {
-    //        RespawnPlayer(); // 리스폰 함수 호출
-    //    }
-    //    else
-    //    {
-    //        Game::GetInstance().ChangeScene(SceneTag::TITLE); // 타이틀 화면으로 이동
-    //    }
-    //    });
 }
 
 void PlayerController::onChoked()
@@ -1501,13 +1485,16 @@ void PlayerController::onChoked()
 
 void PlayerController::FinishGame()
 {
+    _isFinish = true;
     auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
 
     Vec3 start(52.9081f, 2.20441f, 100.422f);
     Vec3 focus(-0.378014f, -0.0753275f, -0.92273f);
-    float duration = 7.0f;
+    float duration = 10.0f;
+
+    _transform->SetLocalRotation(Vec3{ 0.f, XMConvertToRadians(180), 0.f});
     // 애니메이션 필요
-    // TODO
+    SetAnimationState(AnimationState::Dance);
 
     if (!_isPlaySound)
     {

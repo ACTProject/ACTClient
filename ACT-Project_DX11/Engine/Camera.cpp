@@ -257,9 +257,9 @@ void Camera::UpdateMatrix()
         focusPosition = _focusPosition;
         upDirection = Vec3(0.0f, 1.0f, 0.0f);
 
-        Vec3 forward = GetForward();
-        cout << "cameraPosition : " << _cameraPosition.x << " " << _cameraPosition.y << " " << _cameraPosition.z << endl;
-        cout << "forward : " << forward.x << " " << forward.y << " " << forward.z << endl;
+        //Vec3 forward = GetForward();
+        //cout << "cameraPosition : " << _cameraPosition.x << " " << _cameraPosition.y << " " << _cameraPosition.z << endl;
+        //cout << "forward : " << forward.x << " " << forward.y << " " << forward.z << endl;
     }
     else // UI 카메라
     {

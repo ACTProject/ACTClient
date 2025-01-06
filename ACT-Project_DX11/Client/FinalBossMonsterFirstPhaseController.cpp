@@ -208,7 +208,7 @@ void FinalBossMonsterFirstPhaseController::Appear()
         return;
     }
     SOUND->PlayEffect(L"player_shutup");
-    isFirstTime = false;
+    isFirstTime = true;
     playingSound = false;
 }
 

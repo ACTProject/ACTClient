@@ -78,9 +78,6 @@
     <ClCompile Include="Client2.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Ending.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -123,9 +120,6 @@
       <Filter>Main\Creature</Filter>
     </ClInclude>
     <ClInclude Include="Client2.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Ending.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
