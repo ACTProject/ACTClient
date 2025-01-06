@@ -97,6 +97,7 @@ void Client2::Init()
             SOUND->Load(L"boss_roar_1", L"monster/boss/heikea_roar");
             SOUND->Load(L"boss_roar_2", L"monster/boss/roar_2");
             SOUND->Load(L"boss_roar_3", L"monster/boss/roar_3");
+            SOUND->Load(L"boss_hurricane", L"monster/boss/FirthIntro_Wind");
         }
 
         SOUND->Play(L"bgm", true);

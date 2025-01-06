@@ -25,8 +25,11 @@ bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState st
     if (animPlayingTime >= duration)
     {
         animPlayingTime = 0.0f;
-        randType = rand() % 7;
-        std::cout << randType << std::endl;
+        if (state != AnimationState::Roar)
+        {
+            randType = rand() % 7;
+            std::cout << randType << std::endl;
+        }
         ResetToIdleState();
         return false;
     }
@@ -412,7 +415,7 @@ void FinalBossMonsterSecondPhaseController::makeCash(Vec3 pos, Vec3 dir)
 
     bullet->GetOrAddTransform()->SetPosition({ pos.x, pos.y + 3.f, pos.z });
     bullet->GetOrAddTransform()->SetLocalRotation({ 0,0,0 }); // XMConvertToRadians()
-    bullet->GetOrAddTransform()->SetScale(Vec3(0.006f));
+    bullet->GetOrAddTransform()->SetScale(Vec3(0.004f));
 
     shared_ptr<Model> objModel = make_shared<Model>();
     // Model
@@ -446,6 +449,21 @@ void FinalBossMonsterSecondPhaseController::makeCash(Vec3 pos, Vec3 dir)
 
 void FinalBossMonsterSecondPhaseController::Choke_lift()
 {
+    if (!isExecuted_2)
+    {
+        if (PlayCheckAnimating(AnimationState::Roar))
+        {
+            if (!playingSound)
+            {
+                SOUND->PlayEffect(L"boss_roar_2");
+                playingSound = true;
+            }
+            return;
+        }
+        isExecuted_2 = true;
+        playingSound = false;
+    }
+
     if (distance < 5.f)
     {
         attackState = true;
@@ -467,6 +485,7 @@ void FinalBossMonsterSecondPhaseController::Choke_lift()
         }
         else
         {
+            isExecuted_2 = false;
             attackState = false;
             _hit = false;
         }
@@ -511,6 +530,21 @@ void FinalBossMonsterSecondPhaseController::Slash()
 
 void FinalBossMonsterSecondPhaseController::Hurricane()
 {
+    if (!isExecuted_2)
+    {
+        if (PlayCheckAnimating(AnimationState::Roar))
+        {
+            if (!playingSound)
+            {
+                SOUND->PlayEffect(L"boss_roar_2");
+                playingSound = true;
+            }
+            return;
+        }
+        isExecuted_2 = true;
+        playingSound = false;
+    }
+
     if (distance < AttackRange + 5.0f)
     {
         attackState = true;
@@ -528,11 +562,15 @@ void FinalBossMonsterSecondPhaseController::Hurricane()
 
             direction.Normalize();  // 방향 벡터를 단위 벡터로 정규화
 
-            _transform->SetPosition(_transform->GetPosition() + direction * 8.0f * DT);  // 일정 거리만큼 이동
+            _transform->SetPosition(_transform->GetPosition() + direction * 10.0f * DT);  // 일정 거리만큼 이동
+
+            SOUND->Play(L"boss_hurricane");
             return;
         }
         else
         {
+            SOUND->Stop(L"boss_hurricane");
+            isExecuted_2 = false;
             _hurricaneHitbox->GetCollider()->SetActive(false);
             _hit = false;
         }
