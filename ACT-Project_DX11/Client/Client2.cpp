@@ -774,6 +774,22 @@ void Client2::Init()
         airhitbox->AirHitCraete(player, Vec3(3.5f, 1.0f, 3.5f));
         CUR_SCENE->Add(airhitboxGO);
 
+        // ChargeHitBox
+        shared_ptr<GameObject> chargehitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> chargehitbox = make_shared<HitBox>();
+        chargehitboxGO->AddComponent(chargehitbox);
+        chargehitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+        chargehitbox->Craete(player, Vec3(2.f, 1.f, 2.f));
+        CUR_SCENE->Add(chargehitboxGO);
+
+        // DashHitBox
+        shared_ptr<GameObject> dashhitboxGO = make_shared<GameObject>();
+        shared_ptr<HitBox> dashhitbox = make_shared<HitBox>();
+        dashhitboxGO->AddComponent(dashhitbox);
+        dashhitbox->SetOffSet(Vec3(0.f, 0.6f, 0.f));
+        dashhitbox->Craete(player, Vec3(3.f, 1.f, 3.f));
+        CUR_SCENE->Add(dashhitboxGO);
+
         // Player::PlayerScript
         shared_ptr<PlayerController> playerScript = make_shared<PlayerController>();
 
@@ -781,12 +797,13 @@ void Client2::Init()
         playerScript->SetModelAnimator(ma1);
         playerScript->SetHitBox(hitboxGO);
         playerScript->SetAirHitBox(airhitboxGO);
+        playerScript->SetChargeHitBox(chargehitboxGO);
+        playerScript->SetDashHitBox(dashhitboxGO);
         playerScript->SetDust(dustMaterial);
         playerScript->SetBubble(bubbleMaterial);
         playerScript->SetEffect(effectObj);
         playerScript->SetHitEffect(hitObj);
         playerScript->SetArmorGroup(armorGroup);
-        playerScript->SetShellObject(shell);
 
         player->SetController(playerScript);
         player->AddComponent(playerScript);

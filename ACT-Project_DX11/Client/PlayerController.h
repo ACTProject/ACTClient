@@ -46,9 +46,8 @@ public:
     void HandleJump();          // 점프 처리
     void HandleMovement();      // 이동 처리
     void HandleInteraction();   // 상호작용 처리
-    void HandlePortal();        // 포탈 상호작용 처리
+    void HandleCollision();     // 충돌 처리 (포탈, 함정)
     void HandleHit();           // 히트 상태 처리
-    void HandleTrap();          // 함정충돌 상태 처리
     void HandleShellHit();      // Shell 히트 상태 처리
 
     // Attack
@@ -106,18 +105,13 @@ public:
     
     void HealPlayer();
 
-    void StartTrap();
-    void UpdateTrap();
-
     // SaveLoad -> 버튼클릭됐을 시 실행할 함수.
     void LoadPlayer(SaveData data);
-
-    // rope에 매달린 상태
-    void OnRope();
 
     // Choke Hit
     void onChoked();
     bool endChoke = false;
+
 public:
     void OnDeath() override;
 
@@ -232,11 +226,6 @@ private:
     float _dustInterval = 0.1f;
     float _dustTimer = 0.0f;
 
-    // Trap
-    bool _trap = false;
-    float _trapDuration = 0.1f;
-    float _trapTimer = 0.0f;
-
     // Bubble
     shared_ptr<Material> _bubbleMaterial;
 
@@ -245,7 +234,6 @@ private:
     float _runningInterval = 0.2f;
     float _walkingInterval = 0.3f;
 
-    bool _isRope = false;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }
