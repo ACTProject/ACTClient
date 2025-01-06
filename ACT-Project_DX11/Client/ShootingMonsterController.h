@@ -64,7 +64,7 @@ private:
 
     float duration;
     float distance;
-    Vec3 directiowwwn;
+    Vec3 direction;
     float rangeDis;
 
     Vec3 playerPos;                     //플레이어 위치

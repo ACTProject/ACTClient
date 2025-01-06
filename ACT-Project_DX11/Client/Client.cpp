@@ -149,9 +149,9 @@ void Client::Init()
         CUTSCENE->SetCamera(camera->GetCamera());
 
         // Start CutScene
-        CUTSCENE->AddEvent(CutsceneEvent({ 105.951f, 76.7523f, 63.4459f }, { 318.6f, 76.7523f, 46.3121f }, { 0.0567932f, -0.707107f, 0.704822f }, 7.0f));
+        CUTSCENE->AddEvent(CutsceneEvent({ 105.951f, 76.7523f, 63.4459f }, { 318.6f, 76.7523f, 46.3121f }, { 0.0567932f, -0.707107f, 0.704822f }, 12.0f));
         CUTSCENE->AddEvent(CutsceneEvent({ 466.166f, 46.3735f, 249.738f }, { 353.155f, 46.3735f, 275.057f }, { 0.200471f, -0.398977f, 0.894779f }, 7.0f));
-        CUTSCENE->AddEvent(CutsceneEvent({ 91.7009f, 24.789f, 210.264f }, { 34.1963f, -2.57044f, 17.8424f }, { 0.283715f, 0.134986f, 0.94936f }, 6.0f));
+        CUTSCENE->AddEvent(CutsceneEvent({ 91.7009f, 24.789f, 210.264f }, { 34.1963f, -2.57044f, 17.8424f }, { 0.283715f, 0.134986f, 0.94936f }, 5.0f));
 
 
 		CUR_SCENE->Add(camera);
