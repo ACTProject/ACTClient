@@ -69,6 +69,11 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
+    if (CUR_SCENE->GetMainCamera()->GetCamera()->IsCutSceneActive() == true)
+    {
+        return;
+    }
+
     Super::Update();
 
     if (DEBUG->IsDebugEnabled())
@@ -444,8 +449,17 @@ void PlayerController::HandleInteraction()
                     auto ui = UIMANAGER->GetUi("MissionUI");
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
-                    if (_spoil == 1)
+                    
+                    if (_spoil == 10)
                     {
+                        auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+                        Vec3 start(344.074f, 27.1922f, 309.091f);
+                        Vec3 end(344.074f, 27.1922f, 309.091f);
+                        Vec3 focus(0.643073f, -0.26635f, 0.717994f);
+                        float duration = 5.0f; // 컷씬 진행 시간
+
+                        camera->StartCutscene(start, end, focus, duration);
+                        
                         SOUND->PlayEffect(L"openPortal");
                         CUR_SCENE->SetMissionClear(true);
                     }
@@ -542,7 +556,7 @@ void PlayerController::HandleCollision()
             if (isClear)
             {
                 SOUND->PlayEffect(L"player_enterPortal");
-                TaskQueue::GetInstance().Stop();
+                TaskQueue::GetInstance().Clear();
                 GAME->ChangeScene(2);
                 break;
             }

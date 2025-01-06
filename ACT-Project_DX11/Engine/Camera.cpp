@@ -91,8 +91,20 @@ Camera::~Camera()
 
 }
 
+void Camera::Start()
+{
+
+}
+
 void Camera::Update()
 {
+    if (_isCutsceneActive)
+    {
+        UpdateCutscene();
+        return;
+    }
+
+
 	if (DEBUG->IsDebugEnabled())
 	{
 		if (!_debugInitialized) // 디버깅 모드 최초 진입
@@ -244,6 +256,10 @@ void Camera::UpdateMatrix()
         eyePosition = _cameraPosition;
         focusPosition = _focusPosition;
         upDirection = Vec3(0.0f, 1.0f, 0.0f);
+
+        Vec3 forward = GetForward();
+        cout << "cameraPosition : " << _cameraPosition.x << " " << _cameraPosition.y << " " << _cameraPosition.z << endl;
+        cout << "forward : " << forward.x << " " << forward.y << " " << forward.z << endl;
     }
     else // UI 카메라
     {
@@ -371,4 +387,43 @@ void Camera::SetMouseLock()
 void Camera::SetIsTitle(bool isTitle)
 {
     _isTitle = isTitle;
+}
+
+// CutScene
+void Camera::StartCutscene(const Vec3& start, const Vec3& end, const Vec3& focus, float duration)
+{
+    _cutsceneStartPosition = start;
+    _cutsceneEndPosition = end;
+    _cutsceneFocusPosition = focus;
+    _cutsceneDuration = duration;
+    _cutsceneElapsedTime = 0.0f;
+    _isCutsceneActive = true;
+
+    std::cout << "Cutscene started!" << std::endl;
+}
+
+void Camera::UpdateCutscene()
+{
+    _cutsceneElapsedTime += TIME->GetDeltaTime();
+    float t = _cutsceneElapsedTime / _cutsceneDuration;
+
+    if (t >= 1.0f)
+    {
+        _cameraPosition = _cutsceneEndPosition;
+        _focusPosition = _cutsceneFocusPosition + _cameraPosition;
+        EndCutscene();
+        return;
+    }
+
+    // 선형 보간 (Lerp)
+    _cameraPosition = _cutsceneStartPosition * (1.0f - t) + _cutsceneEndPosition * t;
+    _focusPosition = _cutsceneFocusPosition + _cameraPosition;
+
+    UpdateMatrix();
+}
+
+void Camera::EndCutscene()
+{
+    _isCutsceneActive = false;
+    std::cout << "Cutscene ended!" << std::endl;
 }

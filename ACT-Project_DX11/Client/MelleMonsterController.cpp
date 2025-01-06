@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MelleMonsterController.h"
 #include "PlayerController.h"
+#include "Camera.h"
 
 #define AggroRange 30.0f
 #define AttackRange 5.0f
@@ -100,12 +101,21 @@ void MelleMonsterController::Start()
     patrolTarget = StartPos;
     _player = SCENE->GetCurrentScene()->GetPlayer();
 
+    // TEMP
+    DropItem();
+
     std::cout << "MelleMonsterController [" << objID << "] Start()" << std::endl;
 }
 
 void MelleMonsterController::Update()
 {
     Super::Update();
+
+
+    if (CUR_SCENE->GetMainCamera()->GetCamera()->IsCutSceneActive() == true)
+    {
+        return;
+    }
 
     // 플레이어 위치 계산
     playerPos = _player->GetTransform()->GetPosition();
