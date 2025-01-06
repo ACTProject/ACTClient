@@ -57,36 +57,52 @@ void FinalBossMonsterSecondPhaseController::Update()
     {
         int a = 0;
     }
+    _isDead = true;
+    _transform = GetTransform();
+    _player = SCENE->GetCurrentScene()->GetPlayer();
+    playerPos = _player->GetTransform()->GetPosition();
+    bossPos = _transform->GetPosition();
 
     if (_isDead)
     {
         _transform->SetPosition(Vec3(31.0f, 0.0f, 46.0f));
+
         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
-        
-        if (PlayCheckAnimating(AnimationState::Die))
+        Vec3 start(37.0577f, 7.88812f, 66.2076f);
+        Vec3 end(37.0577f, 7.88812f, 66.2076f);
+        Vec3 focus(-0.209137f, - 0.16879f, - 0.963209f);
+        float duration = 10.0f;
+
+        camera->StartCutscene(start, end, focus, duration);
+        _player->GetTransform()->SetPosition(Vec3(50.0f, 0.f, 93.0f));
+
+        if (!playingSound)
         {
-            if (!playingSound)
-            {
-                SOUND->PlayEffect(L"boss_die");
-                playingSound = true;
-            }
-            lastTime = currentTime;
+            SOUND->Stop(L"bgm");
+            SOUND->PlayEffect(L"boss_die");
+            playingSound = true;
+        }
+
+        SetAnimationState(AnimationState::Die);
+        animPlayingTime += DT;
+        duration = _enemy->GetAnimationDuration(AnimationState::Die) / _FPS;
+        if (animPlayingTime < duration)
+        {
+            lastTime = GAMETIME;
             return;
         }
+        cout << currentTime << "  ----  " << lastTime << endl;
         if (currentTime - lastTime > 3.0f)
         {
-            SOUND->PlayEffect(L"player_finish");
-            GAME->ChangeScene(0);
-            Super::OnDeath();
-            std::cout << "FinalBoss has been defeated! Game Over!" << std::endl;
+            auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());
+            if (player)
+            {
+                player->FinishGame();
+                std::cout << "FinalBoss has been defeated! Game Over!" << std::endl;
+            }
         }
         return;
     }
-
-    _player = SCENE->GetCurrentScene()->GetPlayer();
-    _transform = GetTransform();
-    playerPos = _player->GetTransform()->GetPosition();
-    bossPos = _transform->GetPosition();
 
     direction = bossPos - playerPos;
     distance = direction.Length();
