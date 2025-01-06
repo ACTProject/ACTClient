@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MelleMonsterController.h"
 #include "PlayerController.h"
+#include "Particle.h"
 
 #define AggroRange 30.0f
 #define AttackRange 5.0f
@@ -65,7 +66,15 @@ void MelleMonsterController::Punch(int type)
             SOUND->PlayEffect(s);
             playingSound = true;
         }
+        if (type < 2)
+            type = 1;
+        else
+            type = 2;
+        wstring ws = L"MelleAttack" + std::to_wstring(type);
+        _effectObj->GetParticle()->SetMaterial(RESOURCES->Get<Material>(ws));
+        ActiveEffect();
         UpdateHitBox();
+        
     }
 }
 
@@ -99,6 +108,7 @@ void MelleMonsterController::Start()
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
     _player = SCENE->GetCurrentScene()->GetPlayer();
+    CreateEffect();
 
     std::cout << "MelleMonsterController [" << objID << "] Start()" << std::endl;
 }
@@ -166,6 +176,7 @@ void MelleMonsterController::Update()
 
     if (distance <= AggroRange)
     {
+        _hpBar->SetActive(true);
         chaseState = false;
     } // 탐지 범위 안에 있을 때
 
@@ -259,6 +270,28 @@ void MelleMonsterController::Update()
             patrolTarget = Vec3(randomX, EnemyPos.y, randomZ);
         }
     }
+    if (_hpBar->IsActive())
+    {
+        if (distance >= AggroRange)
+        {
+            _hpBar->SetActive(false);
+        }
+        auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+        Vec3 cameraPos = camera->GetCameraPosition();
+        Vec3 monsterPos = _transform->GetPosition();
+        Vec3 toMonster = monsterPos - cameraPos;
+        toMonster.Normalize();
+        // 카메라의 전방 벡터 (Forward Vector)
+        Vec3 cameraForward = camera->GetForward();
+        cameraForward.Normalize();
+
+        // 몬스터가 카메라 뒤에 있는지 확인
+        float dotProduct = cameraForward.Dot(toMonster);
+        if (dotProduct < 0.0f) // 내적이 음수면 카메라 뒤에 있음
+        {
+            _hpBar->SetActive(false);
+        }
+    }
 
 }
 
@@ -269,12 +302,10 @@ void MelleMonsterController::UpdateHitBox()
 
     auto hitboxCollider = _hitbox->GetCollider();
     hitboxCollider->SetActive(true);
-
     _hitbox->GetTransform()->SetPosition(_transform->GetPosition()
         + _hitbox->GetHitBox()->GetOffSet() + _transform->GetLook() * 5.0f);
 
     vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
-
     for (const auto& collider : nearbyColliders)
     {
         ObjectType type = collider->GetGameObject()->GetObjectType();
@@ -362,4 +393,60 @@ void MelleMonsterController::DropItem()
     item->AddComponent(collider);
 
     CUR_SCENE->Add(item);
+}
+
+void MelleMonsterController::CreateEffect()
+{
+    auto effectObj = make_shared<GameObject>();
+
+    _effectObj = effectObj;
+    _effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+    _effectObj->AddComponent(make_shared<Particle>());
+    {
+        auto shader = make_shared<Shader>(L"MonsterEffect.fx");
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(shader);
+        auto texture = RESOURCES->Load<Texture>(L"MelleAttack1", L"..\\Resources\\Textures\\Effect\\MelleEffect1.png");
+        material->SetDiffuseMap(texture);
+
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+
+        RESOURCES->Add(L"MelleAttack1", material);
+        _effectObj->GetParticle()->SetMaterial(material);
+    }
+    {
+        auto shader = make_shared<Shader>(L"MonsterEffect.fx");
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(shader);
+        auto texture = RESOURCES->Load<Texture>(L"MelleAttack2", L"..\\Resources\\Textures\\Effect\\MelleEffect2.png");
+        material->SetDiffuseMap(texture);
+
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+
+        RESOURCES->Add(L"MelleAttack2", material);
+        _effectObj->GetParticle()->SetMaterial(material);
+    }
+    
+    _effectObj->GetParticle()->SetDelayTime(0.f);
+    _effectObj->GetParticle()->SetLifetime(0.3f);
+    _effectObj->GetParticle()->SetfadeStart(0.0f);
+    _effectObj->GetParticle()->SetReuse(true);
+    _effectObj->GetParticle()->Add(Vec3(0.f), Vec2(3.0f, 3.0f));
+    CUR_SCENE->Add(_effectObj);
+}
+
+void MelleMonsterController::ActiveEffect()
+{
+    Vec3 effectTransform = _transform->GetPosition();
+    effectTransform += _transform->GetLook() * 4.f;
+    effectTransform.y += 1.5f;
+   
+    _effectObj->GetOrAddTransform()->SetPosition(effectTransform);
+    _effectObj->GetParticle()->SetElapsedTime(0.0f);
 }

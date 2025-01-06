@@ -130,6 +130,18 @@ void PlayerController::Update()
     // 중복 데미지 처리 방지
     if (!_isAttacking && !_isAirAttacking && !_isChargeAttacking && !_isDashAttacking)
         _isHit = false;
+
+    if (_effect->GetParticle()->GetLifetime() > _effect->GetParticle()->GetElapsedTime())
+    {
+        Vec3 effectTransform = _transform->GetPosition();
+        effectTransform += _transform->GetLook() * 2.f;
+        effectTransform.y += 2.f;
+        if (_isChargeAttacking || _isDashAttacking)
+        {
+            effectTransform += _transform->GetLook() * 2.f;
+        }
+        _effect->GetOrAddTransform()->SetPosition(effectTransform);
+    }
 }
 
 void PlayerController::HandleInput()
@@ -912,7 +924,9 @@ void PlayerController::SetAttackReaource()
     default:
         break;
     }
-
+    _effect->GetParticle()->SetDelayTime(0.4f);
+    _effect->GetParticle()->SetLifetime(0.5f);
+    _effect->GetParticle()->SetfadeStart(0.45f);
     if (_isAirAttacking)
     {
         if (dot > 0.0f)
@@ -925,17 +939,27 @@ void PlayerController::SetAttackReaource()
             _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect10"));
             _effect->GetParticle()->SetLeft(false);
         }
-        _effect->GetParticle()->SetDelayTime(0.f);
+        _effect->GetParticle()->SetDelayTime(0.3f);
     }
 
-    _effect->GetParticle()->SetDelayTime(0.4f);
-    
+    else if (_isChargeAttacking || _isDashAttacking)
+    {
+        _effect->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"AttackEffect11"));
+        _effect->GetParticle()->SetDelayTime(0.7f);
+        _effect->GetParticle()->SetLifetime(0.8f);
+        _effect->GetParticle()->SetfadeStart(0.75f);
+    }
+
 }
 void PlayerController::ActiveEffect(shared_ptr<GameObject> effect)
 {
     Vec3 effectTransform = _transform->GetPosition();
     effectTransform += _transform->GetLook() * 2.f;
     effectTransform.y += 2.f;
+    if (_isChargeAttacking || _isDashAttacking)
+    {
+        effectTransform += _transform->GetLook() * 2.f;
+    }
     effect->GetOrAddTransform()->SetPosition(effectTransform);
     effect->GetParticle()->SetElapsedTime(0.0f);
 }
@@ -990,6 +1014,8 @@ void PlayerController::StartChargeAttack()
 
     _isPlayeringChargeAttackAnimation = true;
     SetAnimationState(AnimationState::AtkChargeThrust);
+    SetAttackReaource();
+    ActiveEffect(_effect);
 
     SOUND->PlayEffect(L"player_chargeUp");
 }
@@ -1036,6 +1062,9 @@ void PlayerController::StartDashAttack()
 
     _isPlayeringDashAttackAnimation = true;
     SetAnimationState(AnimationState::DashAtk);
+
+    SetAttackReaource();
+    ActiveEffect(_effect);
 
     // 대쉬 방향과 속도 설정
     Vec3 forward = _transform->GetLook(); // 플레이어가 바라보는 방향

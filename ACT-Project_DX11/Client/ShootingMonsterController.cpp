@@ -2,6 +2,8 @@
 #include "ShootingMonsterController.h"
 #include <string>
 #include "Bullet.h"
+#include "Particle.h"
+#include "Camera.h"
 
 #define AggroRange 30.0f
 #define ShootingRange 15.0f
@@ -131,6 +133,7 @@ void ShootingMonsterController::Start()
     StartPos = _transform->GetPosition();
     patrolTarget = StartPos;
     _player = SCENE->GetCurrentScene()->GetPlayer();
+    CreateEffect();
 
     std::cout << "ShootingMonsterController [" << objID << "] Start()" << std::endl;
 }
@@ -195,6 +198,7 @@ void ShootingMonsterController::Update()
 
     if (distance <= AggroRange)
     {
+        _hpBar->SetActive(true);
         chaseState = false;
     } // 탐지 범위 안에 있을 때
 
@@ -255,6 +259,7 @@ void ShootingMonsterController::Update()
                         SOUND->PlayEffect(L"shooting_fire");
                         playingSound = true;
                     }
+                    ActiveEffect();
                     AddBullet(EnemyPos, direction);
                     shootCount = true;
                 }
@@ -288,6 +293,27 @@ void ShootingMonsterController::Update()
             float randomX = StartPos.x + (rand() % 2000 / 1000.0f - 1.0f) * radius;
             float randomZ = StartPos.z + (rand() % 2000 / 1000.0f - 1.0f) * radius;
             patrolTarget = Vec3(randomX, EnemyPos.y, randomZ);
+        }
+    }
+    if (_hpBar->IsActive())
+    {
+        if (distance >= AggroRange)
+        {
+            _hpBar->SetActive(false);
+        }
+        auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+        Vec3 cameraPos = camera->GetCameraPosition();
+        Vec3 monsterPos = _transform->GetPosition();
+        Vec3 toMonster = monsterPos - cameraPos;
+        toMonster.Normalize();
+        Vec3 cameraForward = camera->GetForward();
+        cameraForward.Normalize();
+
+        // 몬스터가 카메라 뒤에 있는지 확인
+        float dotProduct = cameraForward.Dot(toMonster);
+        if (dotProduct < 0.0f)
+        {
+            _hpBar->SetActive(false);
         }
     }
 }
@@ -352,4 +378,45 @@ void ShootingMonsterController::DropItem()
     item->AddComponent(collider);
 
     CUR_SCENE->Add(item);
+}
+
+void ShootingMonsterController::CreateEffect()
+{
+    auto effectObj = make_shared<GameObject>();
+
+    _effectObj = effectObj;
+    _effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
+    _effectObj->AddComponent(make_shared<Particle>());
+    {
+        auto shader = make_shared<Shader>(L"MonsterEffect.fx");
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(shader);
+        auto texture = RESOURCES->Load<Texture>(L"ShootingAttack", L"..\\Resources\\Textures\\Effect\\ShootingEffect.png");
+        material->SetDiffuseMap(texture);
+
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+
+        RESOURCES->Add(L"ShootingAttack", material);
+        _effectObj->GetParticle()->SetMaterial(material);
+    }
+
+    _effectObj->GetParticle()->SetDelayTime(0.f);
+    _effectObj->GetParticle()->SetLifetime(0.3f);
+    _effectObj->GetParticle()->SetfadeStart(0.0f);
+    _effectObj->GetParticle()->SetReuse(true);
+    _effectObj->GetParticle()->Add(Vec3(0.f), Vec2(3.0f, 3.0f));
+    CUR_SCENE->Add(_effectObj);
+}
+
+void ShootingMonsterController::ActiveEffect()
+{
+    Vec3 effectTransform = _transform->GetPosition();
+    effectTransform += _transform->GetLook() * 3.f;
+    effectTransform.y += 1.5f;
+
+    _effectObj->GetOrAddTransform()->SetPosition(effectTransform);
+    _effectObj->GetParticle()->SetElapsedTime(0.0f);
 }
