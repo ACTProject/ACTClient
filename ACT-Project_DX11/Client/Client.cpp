@@ -146,13 +146,13 @@ void Client::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, true);
         camera->GetCamera()->SetMainCamera(true);
 
-        // CutScene
-        Vec3 start(91.7009f, 24.789f, 210.264f);
-        Vec3 end(34.1963f, -2.57044f, 17.8424f);
-        Vec3 focus(0.283715f, 0.134986f, 0.94936f);
-        float duration = 13.0f;
+        //// CutScene
+        //Vec3 start(91.7009f, 24.789f, 210.264f);
+        //Vec3 end(34.1963f, -2.57044f, 17.8424f);
+        //Vec3 focus(0.283715f, 0.134986f, 0.94936f);
+        //float duration = 13.0f;
 
-        camera->GetCamera()->StartCutscene(start, end, focus, duration);
+        //camera->GetCamera()->StartCutscene(start, end, focus, duration);
       
 
 		CUR_SCENE->Add(camera);
@@ -574,6 +574,8 @@ void Client::Init()
         playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
         playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
         playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
+        playerModel->ReadAnimation(L"Player/Crab_Dance", AnimationState::Dance);
+        playerModel->ReadAnimation(L"Player/Crab_Struggle", AnimationState::Struggle);
 
 		// Weapon
 		shared_ptr<Model> weaponModel = make_shared<Model>();

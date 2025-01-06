@@ -21,13 +21,6 @@ void Octree::Clear()
     _root.reset();
 }
 
-//void Octree::InsertTerrain(const TerrainTriangle& triangle)
-//{
-//	if (_root)
-//	{
-//		_root->InsertTerrain(triangle);
-//	}
-//}
 
 void Octree::InsertCollider(std::shared_ptr<BaseCollider> collider)
 {
@@ -44,15 +37,6 @@ void Octree::RemoveCollider(std::shared_ptr<BaseCollider> collider)
         _root->RemoveCollider(collider);
     }
 }
-
-//std::vector<TerrainTriangle> Octree::QueryTerrain(const BaseCollider& rangeCollider)
-//{
-//	if (_root)
-//	{
-//		return _root->QueryTerrain(rangeCollider);
-//	}
-//	return {};
-//}
 
 std::vector<std::shared_ptr<BaseCollider>> Octree::QueryColliders(const shared_ptr<BaseCollider>& rangeCollider)
 {

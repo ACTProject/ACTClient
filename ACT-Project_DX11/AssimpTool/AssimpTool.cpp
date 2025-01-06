@@ -128,6 +128,16 @@ void AssimpTool::Init()
             converter->ReadAssetFile(L"Player/Crab_DashAtk.fbx");
             converter->ExportAnimationData(L"Player/Crab_DashAtk");
         }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Player/Crab_Dance.fbx");
+            converter->ExportAnimationData(L"Player/Crab_Dance");
+        }
+        {
+            shared_ptr<Converter> converter = make_shared<Converter>();
+            converter->ReadAssetFile(L"Player/Crab_Struggle.fbx");
+            converter->ExportAnimationData(L"Player/Crab_Struggle");
+        }
 	}
     
 	// Enemy
@@ -242,7 +252,7 @@ void AssimpTool::Init()
             }
             {
                 shared_ptr<Converter> converter = make_shared<Converter>();
-                converter->ReadAssetFile(L"Enemy/FinalBoss/00_mrKRAB_idle.fbx");
+                converter->ReadAssetFile(L"Enemy/FinalBoss/00_mrKRAB_idle22.fbx");
                 converter->ExportAnimationData(L"Enemy/FinalBoss/00_mrKRAB_idle");
             }
             {

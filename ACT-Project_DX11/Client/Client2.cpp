@@ -336,21 +336,27 @@ void Client2::Init()
             // 슬라이더 컴포넌트 추가.
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
-            obj->GetUI()->SetUIID("HP");
+            obj->GetUI()->SetUIID("PlayerHP");
+
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+
             CUR_SCENE->Add(obj);
         }
 
-        // RedBar ARmor Mesh
+        // RedBar ArmorMesh
         {
             // 슬라이더 컴포넌트 추가.
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
+            obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
             obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
-            obj->GetUI()->SetUIID("Armor");
+            obj->GetUI()->SetUIID("PlayerArmor");
             armorGroup.push_back(obj);
+            UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
             CUR_SCENE->Add(obj);
         }
     }
@@ -671,35 +677,219 @@ void Client2::Init()
     CUR_SCENE->Add(hitObj);
 
     // Shell
-    auto shell = make_shared<GameObject>();
-    shell->SetObjectType(ObjectType::Shell);
-    shell->GetOrAddTransform()->SetPosition(Vec3(35, -5.f, 35));
-    shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
-
-    shared_ptr<Model> shellModel = make_shared<Model>();
     {
-        // CustomData -> Memory
-        shellModel->ReadModel(L"Shell/Shell_SodaCan");
-        shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(12.f, -0.5f, -3.f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
+    }
+    // Shell
+    {
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(-18.f, -0.5f, 22.f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
     }
 
-    // Shell::ModelRenderer
-    shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
-    shell->AddComponent(mr);
+    // Shell
     {
-        shell->GetModelRenderer()->SetModel(shellModel);
-        shell->GetModelRenderer()->SetPass(1);
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(-25.f, -0.5f, 63.f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
     }
 
-    // Collider
-    auto collider = make_shared<AABBBoxCollider>();
-    collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
-    collider->SetOffset(Vec3(0.f, 1.f, 0.f));
-    OCTREE->InsertCollider(collider);
-    shell->AddComponent(collider);
-    shell->SetActive(false);
-    CUR_SCENE->Add(shell);
+    // Shell
+    {
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(3.f, -0.5f, 98.f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
+    }
+
+    // Shell
+    {
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(82.f, -0.5f, 76.f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
+    }
+
+    // Shell
+    {
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(88.f, -0.5f, 33.f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
+    }
+    // Shell
+    {
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(62.f, -0.5f, 2.f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
+    }
 	// Player
     {
         auto player = make_shared<GameObject>();
@@ -734,6 +924,8 @@ void Client2::Init()
             playerModel->ReadAnimation(L"Player/Crab_DodgeMedium", AnimationState::DodgeMedium);
             playerModel->ReadAnimation(L"Player/Crab_BlockHit", AnimationState::BlockHit);
             playerModel->ReadAnimation(L"Player/Crab_DashAtk", AnimationState::DashAtk);
+            playerModel->ReadAnimation(L"Player/Crab_Dance", AnimationState::Dance);
+            playerModel->ReadAnimation(L"Player/Crab_Struggle", AnimationState::Struggle);
 
             // Weapon
             shared_ptr<Model> weaponModel = make_shared<Model>();

@@ -89,12 +89,6 @@ void PlayerController::Update()
         return;
     }
 
-    if (_playerActive == true)
-    {
-        // 입력 처리
-        HandleInput();
-    }
-    
     if (startChoke)
     {
         _rigidbody->SetUseGravity(false);
@@ -104,6 +98,12 @@ void PlayerController::Update()
     else
     {
         _rigidbody->SetUseGravity(true);
+    }
+
+    if (_playerActive == true)
+    {
+        // 입력 처리
+        HandleInput();
     }
 
     // 이동 처리
@@ -1402,13 +1402,6 @@ void PlayerController::OnDeath()
 
 void PlayerController::onChoked()
 {
-    if (_isDodging) 
-    {
-        _playerActive = true;
-        startChoke = false;
-        return;
-    }
-
     const float targetY = 5.0f;
 
     // 총 이동 시간 (초)
@@ -1421,6 +1414,8 @@ void PlayerController::onChoked()
     static bool onDamageTriggered2 = false;
     static bool onDamageTriggered3 = false;
     static bool onDamageTriggered4 = false;
+
+    SetAnimationState(AnimationState::Struggle);
 
     // 현재 y 위치 계산
     if (elapsedTime < duration) {
@@ -1458,6 +1453,9 @@ void PlayerController::onChoked()
     }
     else
     {
+        SetAnimationState(AnimationState::Idle);
+        _rigidbody->SetUseGravity(true);
+        startChoke = false;
         elapsedTime = 0.0f;
         onDamageTriggered1 = false;
         onDamageTriggered2 = false;

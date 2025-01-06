@@ -27,7 +27,7 @@ bool FinalBossMonsterSecondPhaseController::PlayCheckAnimating(AnimationState st
         animPlayingTime = 0.0f;
         if (state != AnimationState::Roar)
         {
-            randType = rand() % 7;
+            randType = 1;
             std::cout << randType << std::endl;
         }
         ResetToIdleState();
@@ -748,7 +748,7 @@ void FinalBossMonsterSecondPhaseController::UpdateChokeHitBox()
                 continue;
 
             auto player = dynamic_pointer_cast<PlayerController>(controller);
-            if (player)
+            if (player && !player->GetIsInvincible())
             {
                 _hit = true;
                 player->_playerActive = false;
