@@ -41,8 +41,8 @@ void FinalBossMonsterSecondPhaseController::Start()
 {
     Super::Start();
 
-    _maxHp = 20.f;
-    _hp = 20.0f;
+    _maxHp = 500.f;
+    _hp = 500.0f;
     _atk = 50.0f;
     speed = 15.0f;
     randPunchType = rand() % 4;
@@ -57,7 +57,7 @@ void FinalBossMonsterSecondPhaseController::Update()
     {
         int a = 0;
     }
-    _isDead = true;
+
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
     playerPos = _player->GetTransform()->GetPosition();
@@ -91,7 +91,7 @@ void FinalBossMonsterSecondPhaseController::Update()
             lastTime = GAMETIME;
             return;
         }
-        cout << currentTime << "  ----  " << lastTime << endl;
+
         if (currentTime - lastTime > 3.0f)
         {
             auto player = dynamic_pointer_cast<PlayerController>(_player->GetController());

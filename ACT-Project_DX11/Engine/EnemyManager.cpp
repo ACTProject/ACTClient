@@ -270,7 +270,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
-        FinalBoss->SetActive(true);
+        FinalBoss->SetActive(false);
         FinalBoss->SetObjectType(ObjectType::Monster);
 
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
