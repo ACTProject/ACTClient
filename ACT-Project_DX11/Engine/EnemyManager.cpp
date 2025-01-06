@@ -175,11 +175,11 @@ void EnemyManager::CreateFinalBoss(Vec3 SpawnPos)
             enemyModel->ReadModel(L"Enemy/FinalBoss/mrKrab");
             enemyModel->ReadMaterial(L"Enemy/FinalBoss/mrKrab");
 
-            enemyModel->ReadAnimation(L"Enemy/FinalBoss/00_mrKRAB_idle", AnimationState::Idle);
+            enemyModel->ReadAnimation(L"Enemy/FinalBoss/00_mrKRAB_idle", AnimationState::Combat);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/01_boss_walk", AnimationState::Walk);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/02_boss_roar", AnimationState::Roar);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/03_warming_up", AnimationState::Appear);
-            enemyModel->ReadAnimation(L"Enemy/FinalBoss/04_fight_idle", AnimationState::Combat);
+            enemyModel->ReadAnimation(L"Enemy/FinalBoss/04_fight_idle", AnimationState::Idle);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/05_run_forward", AnimationState::Run);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/06_sprint", AnimationState::Run2);
             enemyModel->ReadAnimation(L"Enemy/FinalBoss/07_back_sprint", AnimationState::Run3);
@@ -270,8 +270,8 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
 {
     auto FinalBoss = make_shared<GameObject>(); // MR_Krab
     {
-        FinalBoss->SetActive(false);
-        FinalBoss->SetObjectType(ObjectType::Boss2);
+        FinalBoss->SetActive(true);
+        FinalBoss->SetObjectType(ObjectType::Monster);
 
         FinalBoss->GetOrAddTransform()->SetPosition(SpawnPos);
         FinalBoss->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
@@ -349,7 +349,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         shared_ptr<HitBox> slamhitbox = make_shared<HitBox>();
         slamhitboxGO->AddComponent(slamhitbox);
         slamhitbox->SetOffSet(Vec3(0.f, 0.0f, 0.f));
-        slamhitbox->Craete(FinalBoss, Vec3(7.0f, 2.0f, 7.0f));
+        slamhitbox->Craete(FinalBoss, Vec3(5.0f, 2.0f, 5.0f));
         CUR_SCENE->Add(slamhitboxGO);
         BossScript->SetSlamHitBox(slamhitboxGO);
 
@@ -358,7 +358,7 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         shared_ptr<HitBox> hurricanehitbox = make_shared<HitBox>();
         hurricanehitboxGO->AddComponent(hurricanehitbox);
         hurricanehitbox->SetOffSet(Vec3(0.f, 0.f, 0.f));
-        hurricanehitbox->AirHitCraete(FinalBoss, Vec3(7.0f, 3.0f, 7.0f));
+        hurricanehitbox->AirHitCraete(FinalBoss, Vec3(5.0f, 3.0f, 5.0f));
         CUR_SCENE->Add(hurricanehitboxGO);
         BossScript->SetHurricaneHitBox(hurricanehitboxGO);
 
@@ -383,10 +383,10 @@ shared_ptr<GameObject> EnemyManager::CreateFinalPhase(Vec3 SpawnPos)
         obj->SetObjectType(ObjectType::UI);
         obj->AddComponent(make_shared<Slider>());
         obj->GetUI()->Create(Vec3(-250, 253, 0.1f), Vec2(500, 8), RESOURCES->Get<Material>(L"RedBar"));
-        obj->GetUI()->SetUIID("Boss");
+        obj->GetUI()->SetUIID("Boss2");
 
         obj->SetActive(false);
-        BossScript->SetObjID("Boss");
+        BossScript->SetObjID("Boss2");
         BossScript->SetHpBar(obj);
 
         FinalBoss->AddComponent(BossScript);

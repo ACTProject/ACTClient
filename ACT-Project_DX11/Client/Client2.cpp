@@ -119,6 +119,14 @@ void Client2::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, true);
         camera->GetCamera()->SetMainCamera(true);
 
+        // CutScene
+        Vec3 start(43.4162f, 5.72609f, 77.2965f);
+        Vec3 end(33.0786f, 6.01206f, 51.8149f);
+        Vec3 focus(0.375908, -0.0103984f, 0.926599f);
+        float duration = 7.0f;
+
+        camera->GetCamera()->StartCutscene(start, end, focus, duration);
+
 		CUR_SCENE->Add(camera);
 	}
 
@@ -697,7 +705,7 @@ void Client2::Init()
         auto player = make_shared<GameObject>();
 
         player->SetObjectType(ObjectType::Player);
-        player->GetOrAddTransform()->SetPosition(Vec3(3, 0, 3));
+        player->GetOrAddTransform()->SetPosition(Vec3(10, 0, 10));
         player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
         player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
@@ -818,7 +826,8 @@ void Client2::Init()
 
     // Enemy
     {
-        ENEMY->CreateFinalBoss({ 30.0f,0.f,100.0f });
+        ENEMY->CreateFinalPhase({ 50.0f,0.f, 93.0f });
+        //ENEMY->CreateFinalPhase({ 30.0f,0.f, 50.0f });
     }
    
 	// Skybox

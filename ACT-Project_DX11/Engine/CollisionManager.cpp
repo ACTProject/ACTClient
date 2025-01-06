@@ -27,6 +27,10 @@ void CollisionManager::Update()
             if (colliderA == colliderB || !colliderB->IsActive())
                 continue;
 
+            if (colliderA->GetGameObject()->GetRigidbody() == nullptr ||
+                colliderB->GetGameObject()->GetRigidbody() == nullptr)
+                continue;
+
             // 충돌 검사 작업을 작업 큐에 추가
             TaskQueue::GetInstance().AddTask([this, colliderA, colliderB]() {
                 if (colliderA->Intersects(colliderB))
