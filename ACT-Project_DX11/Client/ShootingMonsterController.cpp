@@ -2,6 +2,7 @@
 #include "ShootingMonsterController.h"
 #include <string>
 #include "Bullet.h"
+#include "Camera.h"
 
 #define AggroRange 30.0f
 #define ShootingRange 15.0f
@@ -132,11 +133,19 @@ void ShootingMonsterController::Start()
     patrolTarget = StartPos;
     _player = SCENE->GetCurrentScene()->GetPlayer();
 
+    // TEMP
+    DropItem();
+
     std::cout << "ShootingMonsterController [" << objID << "] Start()" << std::endl;
 }
 
 void ShootingMonsterController::Update()
 {
+    if (CUR_SCENE->GetMainCamera()->GetCamera()->IsCutSceneActive() == true)
+    {
+        return;
+    }
+
     Super::Update();
 
     if (_isDead)
