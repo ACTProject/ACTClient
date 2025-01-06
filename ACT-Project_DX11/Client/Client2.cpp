@@ -1019,7 +1019,7 @@ void Client2::Init()
 
     // Enemy
     {
-        ENEMY->CreateFinalPhase({ 50.0f,0.f, 93.0f });
+        ENEMY->CreateFinalBoss({ 50.0f,0.f, 93.0f });
         //ENEMY->CreateFinalPhase({ 30.0f,0.f, 50.0f });
     }
    
