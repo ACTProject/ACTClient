@@ -1149,7 +1149,6 @@ void Client::Init()
         }
         CUR_SCENE->Add(obj);
     }
-
 }
 
 void Client::Update()

@@ -7,7 +7,6 @@
 void Shadow::Init()
 {
     shadowShader = make_shared<Shader>(_shaderName);
-    testShadowShader = make_shared<Shader>(L"ShadowDebug.fx");
 
     float fWidthLength = 512 * 512;
     float fHeightLength = 512 * 512;
@@ -52,9 +51,11 @@ void Shadow::Update()
 
 void Shadow::DebugShadow()
 {
-    /*auto obj = make_shared<GameObject>();
-    obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.6, 0.6, 0.1f));
-    obj->GetOrAddTransform()->SetLocalScale(Vec3(0.5, 0.5, 0));
+    testShadowShader = make_shared<Shader>(L"ShadowDebug.fx");
+
+    auto obj = make_shared<GameObject>();
+    obj->GetOrAddTransform()->SetLocalPosition(Vec3(0.5, 0.5, 0.1f));
+    obj->GetOrAddTransform()->SetLocalScale(Vec3(1, 1, 0));
     obj->AddComponent(make_shared<MeshRenderer>());
 
     obj->SetLayerIndex(Layer_UI);
@@ -62,16 +63,16 @@ void Shadow::DebugShadow()
         {
             shared_ptr<Material> material = make_shared<Material>();
             material->SetShader(testShadowShader);
-            auto texture = RESOURCES->Load<Texture>(L"RedBar", L"..\\Resources\\Textures\\UI\\Front_HPBar2.png");
+            auto texture = RESOURCES->Load<Texture>(L"alpa", L"..\\Resources\\Textures\\Terrain\\Alpha01.png");
             material->SetDiffuseMap(texture);
             MaterialDesc& desc = material->GetMaterialDesc();
             desc.ambient = Vec4(1.f);
             desc.diffuse = Vec4(1.f);
             desc.specular = Vec4(1.f);
-            RESOURCES->Add(L"Shadow", material);
+            RESOURCES->Add(L"alpa", material);
         }
         obj->GetMeshRenderer()->SetShader(testShadowShader);
-        obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"RedBar"));
+        obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"alpa"));
     }
     {
         auto mesh = make_shared<Mesh>();
@@ -81,7 +82,7 @@ void Shadow::DebugShadow()
         obj->GetMeshRenderer()->SetTechnique(0);
         obj->GetMeshRenderer()->SetPass(0);
     }
-    CUR_SCENE->Add(obj);*/
+    CUR_SCENE->Add(obj);
 }
 
 void Shadow::RenderShadow()

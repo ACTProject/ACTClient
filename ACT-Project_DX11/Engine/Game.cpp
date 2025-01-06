@@ -12,7 +12,7 @@ WPARAM Game::Run(uint32 num)
     {
         _num = num;
     }
-	assert(_scenes[_num].app != nullptr);
+    assert(_scenes[_num].app != nullptr);
 
     if (g_hWnd == nullptr)
     {
@@ -31,7 +31,9 @@ WPARAM Game::Run(uint32 num)
     _scenes[_num].hWnd = g_hWnd;
     // Save Data Load
     if (_scenes[_num].tag == SceneTag::TITLE)
+    {
         SAVE->Init();
+    }
 	//0
     DEBUG->CreateConsoleWindow();
     // Octree
@@ -73,7 +75,6 @@ WPARAM Game::Run(uint32 num)
         ///////////////////
     }
 
-
     _init = true;
 
 	while (_msg.message != WM_QUIT)
@@ -82,17 +83,18 @@ WPARAM Game::Run(uint32 num)
 		{
 			::TranslateMessage(&_msg);
 			::DispatchMessage(&_msg);
+
 		}
 		else
 		{
             if (_changeScene)
             {
-                //MAP->ExportMapObj();
                 CUR_SCENE->Clear();
-                
                 _changeScene = false;
                 return Run(_num);
             }
+            //if (!GRAPHICS->GetShadowDSV())
+            //    DEBUG->Log(L"noDept0");
 			Update(_num);
 		}
 	}

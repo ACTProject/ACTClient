@@ -21,7 +21,7 @@ float4 PS(MeshOutput input) : SV_TARGET
     //Shadow
     float ShadowAmount = 0.0f;
     float3 ShadowTexColor = input.TexShadow.xyz / input.TexShadow.w;
-    const float delta = 1.0f / 4096;
+    const float delta = 1.0f / 2048;
     const int g_iNumKernel = 5;
     int iHalf = (g_iNumKernel - 1) / 2;
     

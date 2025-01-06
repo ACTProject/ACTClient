@@ -32,9 +32,10 @@ void Graphics::RenderShadowBegin()
     viewPortNum = 1;
 
     _oldVp.Set(_vp.GetWidth(), _vp.GetHeight());
-    SetViewport(4096, 4096);
+    SetViewport(2048, 2048);
 
     _deviceContext->OMSetRenderTargets(0, nullptr, _shadowDepthStencilView.Get());
+
 
     //렌타뷰, 뎁스뷰, 뷰포트 초기화
     Clear();
@@ -132,8 +133,8 @@ void Graphics::CreateShadowDepthStencilView()
     {
         D3D11_TEXTURE2D_DESC DescDepth;
         ZeroMemory(&DescDepth, sizeof(D3D11_TEXTURE2D_DESC));
-        DescDepth.Width = 4096;//static_cast<uint32>(GAME->GetGameDesc().width);
-        DescDepth.Height = 4096;// static_cast<uint32>(GAME->GetGameDesc().height);
+        DescDepth.Width = 2048;//static_cast<uint32>(GAME->GetGameDesc().width);
+        DescDepth.Height = 2048;// static_cast<uint32>(GAME->GetGameDesc().height);
         DescDepth.MipLevels = 1;
         DescDepth.ArraySize = 1;
         DescDepth.SampleDesc.Count = 1;
@@ -155,7 +156,7 @@ void Graphics::CreateShadowDepthStencilView()
         dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
         dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
-        HRESULT hr = DEVICE->CreateDepthStencilView(_shadowTexture.Get(), &dsvDesc, _shadowDepthStencilView.ReleaseAndGetAddressOf());
+        HRESULT hr = DEVICE->CreateDepthStencilView(_shadowTexture.Get(), &dsvDesc, _shadowDepthStencilView.GetAddressOf());
         CHECK(hr);
     }
     //SRV
@@ -165,7 +166,7 @@ void Graphics::CreateShadowDepthStencilView()
         srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
         srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Texture2D.MipLevels = 1;
-        HRESULT hr = DEVICE->CreateShaderResourceView(_shadowTexture.Get(), &srvDesc, _DsvSRV.ReleaseAndGetAddressOf());
+        HRESULT hr = DEVICE->CreateShaderResourceView(_shadowTexture.Get(), &srvDesc, _DsvSRV.GetAddressOf());
         CHECK(hr);
     }
 }
@@ -173,9 +174,8 @@ void Graphics::CreateShadowDepthStencilView()
 
 bool Graphics::Clear()
 {
-    _deviceContext->ClearDepthStencilView(_shadowDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0, 0);
-
     _vp.RSSetViewport();
+    _deviceContext->ClearDepthStencilView(_shadowDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
     return true;
 }
 
