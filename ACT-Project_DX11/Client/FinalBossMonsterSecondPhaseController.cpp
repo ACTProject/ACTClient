@@ -41,8 +41,8 @@ void FinalBossMonsterSecondPhaseController::Start()
 {
     Super::Start();
 
-    _maxHp = 500.f;
-    _hp = 500.0f;
+    _maxHp = 20.f;
+    _hp = 20.0f;
     _atk = 50.0f;
     speed = 15.0f;
     randPunchType = rand() % 4;
@@ -60,6 +60,9 @@ void FinalBossMonsterSecondPhaseController::Update()
 
     if (_isDead)
     {
+        _transform->SetPosition(Vec3(31.0f, 0.0f, 46.0f));
+        auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
+        
         if (PlayCheckAnimating(AnimationState::Die))
         {
             if (!playingSound)
@@ -493,6 +496,7 @@ void FinalBossMonsterSecondPhaseController::Choke_lift()
         }
         else
         {
+            _chokeHitbox->GetCollider()->SetActive(false);
             isExecuted_3 = false;
             isExecuted_2 = false;
             attackState = false;

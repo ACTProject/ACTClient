@@ -106,6 +106,8 @@ void Client::Init()
             SOUND->Load(L"player_dashAtk_3", L"player/Player Dash Attack NewSlice EQ");
             SOUND->Load(L"player_die", L"player/Kril_Die_Lg_1");
             SOUND->Load(L"player_finish", L"player/08_Kril_3");
+            SOUND->Load(L"player_shutup", L"player/shutup");
+            SOUND->Load(L"player_intro", L"player/kril_intro");
         }
 
         //Melle
