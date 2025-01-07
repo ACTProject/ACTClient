@@ -19,6 +19,9 @@ void UIManager::RemoveButton(shared_ptr<GameObject> obj)
     if (obj->GetButton() == nullptr)
         return;
 
+    if (obj->GetUI() != nullptr && obj->GetUI()->GetUIState() == UiState::STATIC)
+        return;
+
     auto btn = obj->GetButton();
 
     auto it = find(_buttonList.begin(),_buttonList.end(), btn);

@@ -20,6 +20,8 @@ public:
 
     bool Init();
 public:
+    void SetAllActive();
+
     // 버튼을 눌렀을 때, 발생할 함수포인터 저장.
     void AddLoadEvent(SaveDataFuncPtr func);
     void AddScene();
@@ -42,6 +44,7 @@ public:
 private:
     void CreateButton();
 
+
     // 어느 세이브파일이 선택됐는지 걸러주는 함수.
     // 만약 구조에서 나중엔 그냥 선택된 SaveData구조체를 넘겨줄 수 도.
     bool CheckSaveFile(int key);
@@ -51,7 +54,7 @@ private:
     // 저장되있는 세이브 파일을 전부 불러오는 함수. Init에 추가했다.
     bool LoadSaveFiles();
 private:
-    float startX = 300.0f;
+    float startX = 350.0f;
     float startY = 100.f;
     float padding = 60.f;
     Vec2 size = { 180,40 };

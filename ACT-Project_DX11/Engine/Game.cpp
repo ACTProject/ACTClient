@@ -64,6 +64,7 @@ WPARAM Game::Run(uint32 num)
     {
         MAP->ClearMap();
         MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists02.txt");
+        SAVE->AddScene();
     }
 
 	SCENE->Start();

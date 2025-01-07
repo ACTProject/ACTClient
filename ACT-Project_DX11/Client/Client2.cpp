@@ -1015,6 +1015,8 @@ void Client2::Init()
 
         CUR_SCENE->Add(player);
         CUR_SCENE->SetPlayer(player);
+        SAVE->SaveGame(player);
+        SAVE->SetAllActive();
     }
 
     // Enemy
