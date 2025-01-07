@@ -478,7 +478,7 @@ void PlayerController::HandleInteraction()
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
 
-                    if (_spoil == 10)
+                    if (_spoil == 4)
                     {
                         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
                         Vec3 start(344.074f, 27.1922f, 309.091f);
@@ -553,7 +553,7 @@ void PlayerController::HandleCollision()
             {
                 if (auto ui = UIMANAGER->GetUi("PlayerHP"))
                 {
-                    _hp -= 10;
+                    _hp -= 20;
                     _hp = std::clamp(_hp, 0.0f, _maxHp);
 
                     auto hpSlider = dynamic_pointer_cast<Slider>(ui);
@@ -1404,7 +1404,10 @@ void PlayerController::LoadPlayer(SaveData data)
             hpSlider->SetRatio(hpRatio);
         }
     }
-   
+    if (auto ui = UIMANAGER->GetUi("PlayerDead"))
+    {
+        ui->GetGameObject()->SetActive(false);
+    }
     _transform->SetLocalPosition(data.playerPos);
 }
 
@@ -1426,6 +1429,11 @@ void PlayerController::OnDeath()
     _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
     _deadDuration /= _FPS;
     SetAnimationState(AnimationState::Die);
+
+    if (auto ui = UIMANAGER->GetUi("PlayerDead"))
+    {
+        ui->GetGameObject()->SetActive(true);
+    }
 }
 
 void PlayerController::onChoked()
