@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Materials>
     <Material>
-        <Name>Homeshell_mat.002</Name>
+        <Name>Homeshell_mat.006</Name>
         <DiffuseFile>HomeShell_AlbedoTransparency.png</DiffuseFile>
         <SpecularFile>HomeShell_AlbedoTransparency.png</SpecularFile>
         <NormalFile>HomeShell_AlbedoTransparency.png</NormalFile>

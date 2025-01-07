@@ -296,7 +296,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, -0.1f));
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, -0.3f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
@@ -385,7 +385,7 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, -0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
+            obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, -0.3f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("PlayerArmor");
             armorGroup.push_back(obj);
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
@@ -440,6 +440,37 @@ void Client::Init()
         CUR_SCENE->Add(shell);
     }
     
+    // Shell
+    //{
+    //    auto shell = make_shared<GameObject>();
+    //    shell->SetObjectType(ObjectType::Shell);
+    //    shell->GetOrAddTransform()->SetPosition(Vec3(41, -3, 46));
+    //    shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+    //    shared_ptr<Model> shellModel = make_shared<Model>();
+    //    {
+    //        // CustomData -> Memory
+    //        shellModel->ReadModel(L"Shell/Shell_Home");
+    //        shellModel->ReadMaterial(L"Shell/Shell_Home");
+    //    }
+
+    //    // Shell::ModelRenderer
+    //    shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+    //    shell->AddComponent(mr);
+    //    {
+    //        shell->GetModelRenderer()->SetModel(shellModel);
+    //        shell->GetModelRenderer()->SetPass(1);
+    //    }
+
+    //    // Collider
+    //    auto collider = make_shared<AABBBoxCollider>();
+    //    collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
+    //    collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+    //    OCTREE->InsertCollider(collider);
+    //    shell->AddComponent(collider);
+    //    CUR_SCENE->Add(shell);
+    //}
+
     // player
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
@@ -1085,6 +1116,44 @@ void Client::Init()
             obj->GetMeshRenderer()->SetAlphaBlend(true);
             obj->GetMeshRenderer()->SetPass(0);
         }
+        CUR_SCENE->Add(obj);
+    }
+
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"Dead", L"..\\Resources\\Textures\\UI\\dead.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Dead", material);
+    }
+    {
+        // 죽음 ui
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->SetLayerIndex(Layer_UI);
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(180, 90, -0.5f));
+        obj->GetOrAddTransform()->SetScale(Vec3(300, 200, 1));
+        obj->AddComponent(make_shared<MeshRenderer>());
+        obj->AddComponent(make_shared<Ui>(UiType::NONE));
+        obj->SetLayerIndex(Layer_UI);
+        {
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Dead"));
+        }
+        {
+            auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+            obj->GetMeshRenderer()->SetMesh(mesh);
+            obj->GetMeshRenderer()->SetAlphaBlend(true);
+            obj->GetMeshRenderer()->SetPass(0);
+        }
+
+        obj->GetUI()->SetUIID("PlayerDead");
+        obj->SetActive(false);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
         CUR_SCENE->Add(obj);
     }
 }
