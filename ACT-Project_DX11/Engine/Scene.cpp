@@ -44,7 +44,7 @@ void Scene::Update()
 
     UpdateUI();
 
-    if (INPUT->GetButtonDown(KEY_TYPE::TILDE))
+    if (INPUT->GetButtonDown(KEY_TYPE::ESC))
     {
         SOUND->PlayEffect(L"menu_pause");
         SAVE->OpenSaveUI();

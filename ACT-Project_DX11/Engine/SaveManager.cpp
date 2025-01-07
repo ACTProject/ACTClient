@@ -27,6 +27,101 @@ void SaveManager::AddScene()
 void SaveManager::CreateSaveUI()
 {
     shared_ptr<Shader> renderUIShader = make_shared<Shader>(L"23. RenderDemoUI.fx");
+    //Option
+    {
+        // option Material
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(renderUIShader);
+            auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\option.png");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"Option", material);
+        }
+        //Button Material
+        {
+            {
+                shared_ptr<Material> material = make_shared<Material>();
+                material->SetShader(renderUIShader);
+                auto texture = RESOURCES->Load<Texture>(L"Continue", L"..\\Resources\\Textures\\UI\\continue.png");
+                material->SetDiffuseMap(texture);
+                MaterialDesc& desc = material->GetMaterialDesc();
+                desc.ambient = Vec4(1.f);
+                desc.diffuse = Vec4(1.f);
+                desc.specular = Vec4(1.f);
+                RESOURCES->Add(L"Continue", material);
+            }
+            {
+                shared_ptr<Material> material = make_shared<Material>();
+                material->SetShader(renderUIShader);
+                auto texture = RESOURCES->Load<Texture>(L"GameEnd", L"..\\Resources\\Textures\\UI\\gameEnd.png");
+                material->SetDiffuseMap(texture);
+                MaterialDesc& desc = material->GetMaterialDesc();
+                desc.ambient = Vec4(1.f);
+                desc.diffuse = Vec4(1.f);
+                desc.specular = Vec4(1.f);
+                RESOURCES->Add(L"GameEnd", material);
+            }
+        }
+        ////////////////////////////////////
+        // Option Mesh
+        {
+            {
+                auto obj = make_shared<GameObject>();
+                obj->AddComponent(make_shared<Ui>(UiType::BUTTON));
+                obj->GetUI()->SetUIState(UiState::STATIC);
+                
+                obj->AddComponent(make_shared<Button>());
+                UIMANAGER->AddButton(obj->GetButton());
+                //obj->GetButton()->Create(Vec3(400.f, 250.f, -0.4f), Vec2(595, 404), RESOURCES->Get<Material>(L"Option"));
+                obj->GetButton()->Create(Vec3(400.f, 250.f, -0.3f), Vec2(750, 550), RESOURCES->Get<Material>(L"Option"));
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+
+                saveOptionUIGroup.push_back(obj);
+            }
+
+
+            // Mesh
+            {
+                auto obj = make_shared<GameObject>();
+                obj->AddComponent(make_shared<Ui>(UiType::BUTTON));
+                obj->GetUI()->SetUIState(UiState::STATIC);
+
+                obj->AddComponent(make_shared<Button>());
+                UIMANAGER->AddButton(obj->GetButton());
+                //obj->GetButton()->Create(Vec3(532, 359, -0.3f), Vec2(175, 38), nullptr);
+                obj->GetButton()->Create(Vec3(562, 399, -0.4f), Vec2(228, 56), nullptr);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"GameEnd")); });
+                obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(nullptr); });
+                obj->GetButton()->AddOnClickedEvent([obj]() { if (obj->IsActive())GAME->GameEnd(); });
+
+                saveOptionUIGroup.push_back(obj);
+            }
+
+            // Mesh
+            {
+                auto obj = make_shared<GameObject>();
+                obj->AddComponent(make_shared<Ui>(UiType::BUTTON));
+                obj->GetUI()->SetUIState(UiState::STATIC);
+
+                obj->AddComponent(make_shared<Button>());
+                UIMANAGER->AddButton(obj->GetButton());
+                //obj->GetButton()->Create(Vec3(532, 308, -0.3f), Vec2(175, 38), nullptr);
+                obj->GetButton()->Create(Vec3(562, 325, -0.4f), Vec2(228, 56), nullptr);
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Continue")); });
+                obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(nullptr); });
+                obj->GetButton()->AddOnClickedEvent([]() {SAVE->SetAllActive(); });
+                saveOptionUIGroup.push_back(obj);
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////
     ////// save Material
     {
         shared_ptr<Material> material = make_shared<Material>();
@@ -50,13 +145,15 @@ void SaveManager::CreateSaveUI()
         desc.specular = Vec4(1.f);
         RESOURCES->Add(L"Load", material);
     }
-    //////////////////
+    ////////////////// MESH //////////////////////////////////////////
     {
         auto obj = make_shared<GameObject>();
+        obj->AddComponent(make_shared<Ui>(UiType::BUTTON));
+        obj->GetUI()->SetUIState(UiState::STATIC);
         obj->AddComponent(make_shared<Button>());
         UIMANAGER->AddButton(obj->GetButton());
 
-        obj->GetButton()->Create(Vec3(100.f, 100.f, 0.1f), Vec2(180, 80), RESOURCES->Get<Material>(L"Save"));
+        obj->GetButton()->Create(Vec3(150.f, 100.f, -0.4f), Vec2(180, 80), RESOURCES->Get<Material>(L"Save"));
         obj->SetObjectType(ObjectType::UI);
         obj->GetMeshRenderer()->SetAlphaBlend(true);
         obj->GetButton()->AddOnClickedEvent([]() { 
@@ -109,7 +206,6 @@ bool SaveManager::SaveGame(shared_ptr<GameObject> obj)
     {
         data.fileIndex = _saveFileIndex;
         data.playerPos = obj->GetOrAddTransform()->GetLocalPosition();
-
     }
 
     // 구조체 파일 출력
@@ -137,14 +233,14 @@ void SaveManager::ResizeUI(float width, float height)
 {
     if (width > 1800)
     {
-        startX = 860.f;
+        startX = 910.f;
         startY = 300.f;
         padding = 60.f;
         size = { 180, 40 };
     }
     else
     {
-        startX = 300.f;
+        startX = 350.0f;
         startY = 100.f;
         padding = 60.f;
         size = { 180, 40 };
@@ -154,15 +250,18 @@ void SaveManager::ResizeUI(float width, float height)
 void SaveManager::CreateButton()
 {
     auto obj = make_shared<GameObject>();
+    obj->AddComponent(make_shared<Ui>(UiType::BUTTON));
+    obj->GetUI()->SetUIState(UiState::STATIC);
     obj->AddComponent(make_shared<Button>());
     UIMANAGER->AddButton(obj->GetButton());
-    obj->GetButton()->Create(Vec3(startX, startY + (padding * index), 0.1f), size, RESOURCES->Get<Material>(L"Load"));
+    obj->GetButton()->Create(Vec3(startX, startY + (padding * index), -0.4f), size, RESOURCES->Get<Material>(L"Load"));
     obj->GetButton()->SetID(_btnIndex);
     obj->SetObjectType(ObjectType::UI);
     obj->GetMeshRenderer()->SetAlphaBlend(true);
     int button = _btnIndex;
        obj->GetButton()->AddOnClickedEvent([this, button]() {  
            SAVE->CheckSaveFile(button); 
+           SAVE->SetAllActive();
            SOUND->PlayEffect(L"click"); 
            });
     obj->SetActive(false);
@@ -170,6 +269,15 @@ void SaveManager::CreateButton()
     _btnIndex++;
     index++;
     saveOptionUIGroup.push_back(obj);
+}
+
+void SaveManager::SetAllActive()
+{
+    _isActive = false;
+    for (auto ui : saveOptionUIGroup)
+    {
+        ui->SetActive(false);
+    }
 }
 
 bool SaveManager::CheckSaveFile(int key)

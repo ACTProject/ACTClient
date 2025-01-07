@@ -478,7 +478,7 @@ void PlayerController::HandleInteraction()
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
 
-                    if (_spoil == 10)
+                    if (_spoil == 4)
                     {
                         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
                         Vec3 start(344.074f, 27.1922f, 309.091f);
