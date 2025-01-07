@@ -2,6 +2,7 @@
 #include "FinalBossMonsterFirstPhaseController.h"
 #include "PlayerController.h"
 #include "Particle.h"
+#include "MathUtils.h"
 
 #define AttackRange 8.0f
 
@@ -136,6 +137,7 @@ void FinalBossMonsterFirstPhaseController::Phase_1()
                     patternCnt++;
                     punchState = false;
                     playingSound = false;
+                    _bubble = true;
                     ResetHit();
                 }
             }
@@ -322,7 +324,11 @@ void FinalBossMonsterFirstPhaseController::Punch()
                 playingSound = true;
             }
         }
-        ActiveEffect();
+        if (_bubble)
+        {
+            CreateBubbleEffect(20, Vec3(3.f, 1.f, 1.f), 1.f, 7.f);
+            _bubble = false;
+        }
     }
     if (_hit && !hasDealing)
     {
@@ -352,7 +358,6 @@ void FinalBossMonsterFirstPhaseController::Fireball()
             SOUND->PlayEffect(L"boss_narrate_laugh_full");
             playingSound = true;
         }
-        ActiveEffect();
     }
 }
 
@@ -446,10 +451,10 @@ void FinalBossMonsterFirstPhaseController::CreateEffect()
     _effectObj->GetOrAddTransform()->SetLocalPosition(Vec3(0.f));
     _effectObj->AddComponent(make_shared<Particle>());
     {
-        auto shader = make_shared<Shader>(L"MonsterEffect.fx");
+        auto shader = make_shared<Shader>(L"Bubble.fx");
         shared_ptr<Material> material = make_shared<Material>();
         material->SetShader(shader);
-        auto texture = RESOURCES->Load<Texture>(L"ShootingAttack", L"..\\Resources\\Textures\\Effect\\ShootingEffect.png");
+        auto texture = RESOURCES->Load<Texture>(L"Bubble", L"..\\Resources\\Textures\\Effect\\bubble.png");
         material->SetDiffuseMap(texture);
 
         MaterialDesc& desc = material->GetMaterialDesc();
@@ -457,24 +462,55 @@ void FinalBossMonsterFirstPhaseController::CreateEffect()
         desc.diffuse = Vec4(1.f);
         desc.specular = Vec4(1.f);
 
-        RESOURCES->Add(L"ShootingAttack", material);
+        _bubbleMaterial = material;
+        RESOURCES->Add(L"Bubble", material);
         _effectObj->GetParticle()->SetMaterial(material);
     }
 
-    _effectObj->GetParticle()->SetDelayTime(0.f);
+    /*_effectObj->GetParticle()->SetDelayTime(0.f);
     _effectObj->GetParticle()->SetLifetime(0.3f);
     _effectObj->GetParticle()->SetfadeStart(0.0f);
     _effectObj->GetParticle()->SetReuse(true);
     _effectObj->GetParticle()->Add(Vec3(0.f), Vec2(10.0f, 10.0f));
-    CUR_SCENE->Add(_effectObj);
+    CUR_SCENE->Add(_effectObj);*/
 }
-
-void FinalBossMonsterFirstPhaseController::ActiveEffect()
+void FinalBossMonsterFirstPhaseController::CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook)
 {
-    Vec3 effectTransform = _transform->GetPosition();
-    effectTransform += _transform->GetLook() * 6.f;
-    effectTransform.y += 1.5f;
+    for (int i = 0; i < numBubbles; i++)
+    {
+        auto obj = make_shared<GameObject>();
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
+        obj->AddComponent(make_shared<Particle>());
 
-    _effectObj->GetOrAddTransform()->SetPosition(effectTransform);
-    _effectObj->GetParticle()->SetElapsedTime(0.0f);
+        Vec3 bubblePosition = _transform->GetPosition();
+        bubblePosition += _transform->GetLook() * positionLook;
+        bubblePosition.y += positionY;
+
+        float angle = MathUtils::Random(0.0f, 2.0f * 3.141592f);
+        float radius = MathUtils::Random(0.0f, bubbleSpread.x);
+
+        bubblePosition.x += cos(angle) * radius;
+        bubblePosition.z += sin(angle) * radius;
+
+        bubblePosition.y += MathUtils::Random(-bubbleSpread.y / 2, bubbleSpread.y / 2);
+
+
+        float randomSize = MathUtils::Random(0.6f, 0.8f);
+
+        obj->GetParticle()->SetMaterial(_bubbleMaterial);
+        obj->GetParticle()->SetLifetime(1.0f);
+        obj->GetParticle()->SetfadeStart(0.3f);
+        obj->GetParticle()->Add(bubblePosition, Vec2(randomSize));
+        CUR_SCENE->Add(obj);
+    }
 }
+
+//void FinalBossMonsterFirstPhaseController::ActiveEffect()
+//{
+//    Vec3 effectTransform = _transform->GetPosition();
+//    effectTransform += _transform->GetLook() * 6.f;
+//    effectTransform.y += 1.5f;
+//
+//    _effectObj->GetOrAddTransform()->SetPosition(effectTransform);
+//    _effectObj->GetParticle()->SetElapsedTime(0.0f);
+//}

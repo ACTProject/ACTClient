@@ -66,8 +66,11 @@ private:
     void makeBubble(Vec3 pos, Vec3 dir);
 
     void CreateEffect();
-    void ActiveEffect();
+    //void ActiveEffect();
+    void CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook);
     shared_ptr<GameObject> _effectObj;
+    shared_ptr<Material> _bubbleMaterial;
+    bool _bubble = true;
 private:
     float lastTime = 0.f;               //마지막 애니메이션 시간
     float duration;
