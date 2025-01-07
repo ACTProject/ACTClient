@@ -37,6 +37,7 @@ WPARAM Game::Run(uint32 num)
     }
 	//0
     //DEBUG->CreateConsoleWindow();
+
     COLLISION->Init();
     // Octree
     {
@@ -129,8 +130,6 @@ void Game::Update(uint32 _num)
 	GRAPHICS->RenderEnd();
 
     SOUND->Update();
-
-
 }
 
 void Game::ShowFps()

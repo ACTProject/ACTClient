@@ -41,6 +41,18 @@ void SaveManager::CreateSaveUI()
             desc.specular = Vec4(1.f);
             RESOURCES->Add(L"Option", material);
         }
+        // char Material
+        {
+            shared_ptr<Material> material = make_shared<Material>();
+            material->SetShader(renderUIShader);
+            auto texture = RESOURCES->Load<Texture>(L"Charecter01", L"..\\Resources\\Textures\\UI\\char.png");
+            material->SetDiffuseMap(texture);
+            MaterialDesc& desc = material->GetMaterialDesc();
+            desc.ambient = Vec4(1.f);
+            desc.diffuse = Vec4(1.f);
+            desc.specular = Vec4(1.f);
+            RESOURCES->Add(L"Charecter01", material);
+        }
         //Button Material
         {
             {
@@ -76,13 +88,22 @@ void SaveManager::CreateSaveUI()
                 
                 obj->AddComponent(make_shared<Button>());
                 UIMANAGER->AddButton(obj->GetButton());
-                //obj->GetButton()->Create(Vec3(400.f, 250.f, -0.4f), Vec2(595, 404), RESOURCES->Get<Material>(L"Option"));
                 obj->GetButton()->Create(Vec3(400.f, 250.f, -0.3f), Vec2(750, 550), RESOURCES->Get<Material>(L"Option"));
                 obj->GetMeshRenderer()->SetAlphaBlend(true);
 
                 saveOptionUIGroup.push_back(obj);
             }
+            {
+                auto obj = make_shared<GameObject>();
+                obj->AddComponent(make_shared<Ui>(UiType::BUTTON));
+                obj->GetUI()->SetUIState(UiState::STATIC);
 
+                obj->AddComponent(make_shared<Button>());
+                UIMANAGER->AddButton(obj->GetButton());
+                obj->GetButton()->Create(Vec3(572, 120, -0.4f), Vec2(220, 120), RESOURCES->Get<Material>(L"Charecter01"));
+                obj->GetMeshRenderer()->SetAlphaBlend(true);
+                saveOptionUIGroup.push_back(obj);
+            }
 
             // Mesh
             {

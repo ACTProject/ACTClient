@@ -316,17 +316,13 @@ void PlayerController::HandleMovement()
 
             _transform->SetRotation(_transform->GetLocalRotation() + Vec3(0, angle, 0));
         }
-        _dustTimer += TIME->GetDeltaTime();
-        if (_dustTimer >= _dustInterval) {
-            CreateDustEffect();
-            _dustTimer = 0.0f; // 타이머 초기화
-        }
 
         float _footstepInterval = (speed == _speed) ? _walkingInterval : _runningInterval;
         _footstepTimer += DT;
         if (_footstepTimer >= _footstepInterval)
         {
             SOUND->PlayEffect(L"player_footstep");
+            CreateDustEffect();
             _footstepTimer = 0.0f;
         }
     }
@@ -478,7 +474,7 @@ void PlayerController::HandleInteraction()
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
 
-                    if (_spoil == 10)
+                    if (_spoil == 4)
                     {
                         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
                         Vec3 start(344.074f, 27.1922f, 309.091f);
@@ -553,7 +549,7 @@ void PlayerController::HandleCollision()
             {
                 if (auto ui = UIMANAGER->GetUi("PlayerHP"))
                 {
-                    _hp -= 10;
+                    _hp -= 20;
                     _hp = std::clamp(_hp, 0.0f, _maxHp);
 
                     auto hpSlider = dynamic_pointer_cast<Slider>(ui);
@@ -1337,6 +1333,8 @@ void PlayerController::CreateDustEffect()
     Vec3 dustPosition = _transform->GetPosition();
 
     dustObject->GetParticle()->SetMaterial(_dustMaterial);
+    dustObject->GetParticle()->SetLifetime(3.0f);
+    dustObject->GetParticle()->SetfadeStart(1.0f);
     dustObject->GetParticle()->Add(dustPosition, Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(dustObject);
 }
@@ -1404,7 +1402,10 @@ void PlayerController::LoadPlayer(SaveData data)
             hpSlider->SetRatio(hpRatio);
         }
     }
-   
+    if (auto ui = UIMANAGER->GetUi("PlayerDead"))
+    {
+        ui->GetGameObject()->SetActive(false);
+    }
     _transform->SetLocalPosition(data.playerPos);
 }
 
@@ -1426,6 +1427,11 @@ void PlayerController::OnDeath()
     _deadDuration = _player->GetAnimationDuration(static_cast<AnimationState>((int)AnimationState::Die)); // 히트 동작 시간
     _deadDuration /= _FPS;
     SetAnimationState(AnimationState::Die);
+
+    if (auto ui = UIMANAGER->GetUi("PlayerDead"))
+    {
+        ui->GetGameObject()->SetActive(true);
+    }
 }
 
 void PlayerController::onChoked()

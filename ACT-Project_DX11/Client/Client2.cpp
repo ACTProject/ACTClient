@@ -1140,9 +1140,45 @@ void Client2::Init()
         CUR_SCENE->Add(obj);
     }
 
-    MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists02.txt");
 
-   
+    {
+        shared_ptr<Material> material = make_shared<Material>();
+        material->SetShader(renderUIShader);
+        auto texture = RESOURCES->Load<Texture>(L"Dead", L"..\\Resources\\Textures\\UI\\dead.png");
+        material->SetDiffuseMap(texture);
+        MaterialDesc& desc = material->GetMaterialDesc();
+        desc.ambient = Vec4(1.f);
+        desc.diffuse = Vec4(1.f);
+        desc.specular = Vec4(1.f);
+        RESOURCES->Add(L"Dead", material);
+    }
+    {
+        // 죽음 ui
+        auto obj = make_shared<GameObject>();
+        obj->SetObjectType(ObjectType::UI);
+        obj->SetLayerIndex(Layer_UI);
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-270, -190, 0.1f));
+        obj->GetOrAddTransform()->SetScale(Vec3(300, 200, 1));
+        obj->AddComponent(make_shared<MeshRenderer>());
+        obj->SetLayerIndex(Layer_UI);
+        {
+            obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Dead"));
+        }
+        {
+            auto mesh = RESOURCES->Get<Mesh>(L"Quad");
+            obj->GetMeshRenderer()->SetMesh(mesh);
+            obj->GetMeshRenderer()->SetAlphaBlend(true);
+            obj->GetMeshRenderer()->SetPass(0);
+        }
+
+        obj->GetUI()->SetUIID("PlayerDead");
+        obj->SetActive(false);
+
+        UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
+        CUR_SCENE->Add(obj);
+    }
+
+    MAP->ImportMapObj(L"../Resources/MapFile/MapObjectLists02.txt");
 }
 
 void Client2::Update()
