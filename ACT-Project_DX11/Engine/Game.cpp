@@ -114,9 +114,7 @@ void Game::Update(uint32 _num)
 {
 	TIME->Update();
 	INPUT->Update();
-	//ShowFps();
-
-
+	ShowFps();
 
     GRAPHICS->RenderBegin();
 	GUI->Update();
@@ -140,7 +138,7 @@ void Game::ShowFps()
 	uint32 fps = GET_SINGLE(TimeManager)->GetFps();
 
 	WCHAR text[100] = L"";
-	::wsprintf(text, L"FPS : %d", fps);
+	::wsprintf(text, L"ANOTHER CRAB'S TREASURE");
 
 	::SetWindowText(_scenes[_num].hWnd, text);
 
