@@ -316,17 +316,13 @@ void PlayerController::HandleMovement()
 
             _transform->SetRotation(_transform->GetLocalRotation() + Vec3(0, angle, 0));
         }
-        _dustTimer += TIME->GetDeltaTime();
-        if (_dustTimer >= _dustInterval) {
-            CreateDustEffect();
-            _dustTimer = 0.0f; // 타이머 초기화
-        }
 
         float _footstepInterval = (speed == _speed) ? _walkingInterval : _runningInterval;
         _footstepTimer += DT;
         if (_footstepTimer >= _footstepInterval)
         {
             SOUND->PlayEffect(L"player_footstep");
+            CreateDustEffect();
             _footstepTimer = 0.0f;
         }
     }
@@ -1337,6 +1333,8 @@ void PlayerController::CreateDustEffect()
     Vec3 dustPosition = _transform->GetPosition();
 
     dustObject->GetParticle()->SetMaterial(_dustMaterial);
+    dustObject->GetParticle()->SetLifetime(3.0f);
+    dustObject->GetParticle()->SetfadeStart(1.0f);
     dustObject->GetParticle()->Add(dustPosition, Vec2(4.0f, 4.0f));
     CUR_SCENE->Add(dustObject);
 }
