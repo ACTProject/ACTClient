@@ -83,6 +83,13 @@ private:
     void makeCash(Vec3 pos, Vec3 dir);
     void checkHit(shared_ptr<BaseCollider> hitboxCollider, float damage);
 
+    void CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook);
+    shared_ptr<GameObject> _effectObj;
+    shared_ptr<Material> _bubbleMaterial;
+    bool _bubble = true;
+    float _hurricaneTime = 0.f;
+    bool _isSlam = false;
+
 public:
     void OnDeath() override;
     float lastTime = 0.f;               //마지막 애니메이션 시간

@@ -3,6 +3,7 @@
 #include "PlayerController.h"
 #include "Particle.h"
 #include "Camera.h"
+#include "MathUtils.h"
 
 #define AggroRange 30.0f
 #define AttackRange 5.0f
@@ -71,9 +72,12 @@ void MelleMonsterController::Punch(int type)
             type = 1;
         else
             type = 2;
-        wstring ws = L"MelleAttack" + std::to_wstring(type);
-        _effectObj->GetParticle()->SetMaterial(RESOURCES->Get<Material>(ws));
-        ActiveEffect();
+        if (_bubble)
+        {
+            CreateBubbleEffect(15, Vec3(3.f, 1.f, 1.f), 1.f, 3.f);
+            _bubble = false;
+        }
+        
         UpdateHitBox();
         
     }
@@ -256,6 +260,7 @@ void MelleMonsterController::Update()
                 atkType = rand() % 3;
                 playingSound = false;
                 punchState = false;
+                _bubble = true;
                 ResetHit();
             }
         }
@@ -436,10 +441,10 @@ void MelleMonsterController::CreateEffect()
         _effectObj->GetParticle()->SetMaterial(material);
     }
     {
-        auto shader = make_shared<Shader>(L"MonsterEffect.fx");
+        auto shader = make_shared<Shader>(L"Bubble.fx");
         shared_ptr<Material> material = make_shared<Material>();
         material->SetShader(shader);
-        auto texture = RESOURCES->Load<Texture>(L"MelleAttack2", L"..\\Resources\\Textures\\Effect\\MelleEffect2.png");
+        auto texture = RESOURCES->Load<Texture>(L"Bubble", L"..\\Resources\\Textures\\Effect\\bubble.png");
         material->SetDiffuseMap(texture);
 
         MaterialDesc& desc = material->GetMaterialDesc();
@@ -447,7 +452,8 @@ void MelleMonsterController::CreateEffect()
         desc.diffuse = Vec4(1.f);
         desc.specular = Vec4(1.f);
 
-        RESOURCES->Add(L"MelleAttack2", material);
+        RESOURCES->Add(L"Bubble", material);
+        _bubbleMaterial = material;
         _effectObj->GetParticle()->SetMaterial(material);
     }
     
@@ -467,4 +473,35 @@ void MelleMonsterController::ActiveEffect()
    
     _effectObj->GetOrAddTransform()->SetPosition(effectTransform);
     _effectObj->GetParticle()->SetElapsedTime(0.0f);
+}
+
+void MelleMonsterController::CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook)
+{
+    for (int i = 0; i < numBubbles; i++)
+    {
+        auto obj = make_shared<GameObject>();
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
+        obj->AddComponent(make_shared<Particle>());
+
+        Vec3 bubblePosition = _transform->GetPosition();
+        bubblePosition += _transform->GetLook() * positionLook;
+        bubblePosition.y += positionY;
+
+        float angle = MathUtils::Random(0.0f, 2.0f * 3.141592f);
+        float radius = MathUtils::Random(0.0f, bubbleSpread.x);
+
+        bubblePosition.x += cos(angle) * radius;
+        bubblePosition.z += sin(angle) * radius;
+
+        bubblePosition.y += MathUtils::Random(-bubbleSpread.y / 2, bubbleSpread.y / 2);
+
+
+        float randomSize = MathUtils::Random(0.2f, 0.4f);
+
+        obj->GetParticle()->SetMaterial(_bubbleMaterial);
+        obj->GetParticle()->SetLifetime(1.0f);
+        obj->GetParticle()->SetfadeStart(0.3f);
+        obj->GetParticle()->Add(bubblePosition, Vec2(randomSize));
+        CUR_SCENE->Add(obj);
+    }
 }

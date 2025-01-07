@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "FinalBossMonsterSecondPhaseController.h"
 #include "PlayerController.h"
+#include "MathUtils.h"
+#include "Particle.h"
 
 #define AttackRange 8.0f
 
@@ -105,6 +107,7 @@ void FinalBossMonsterSecondPhaseController::Update()
         }
         return;
     }
+
 
     direction = bossPos - playerPos;
     distance = direction.Length();
@@ -300,6 +303,11 @@ void FinalBossMonsterSecondPhaseController::Punch()
                         playingSound = true;
                     }
                 }
+                if (_bubble)
+                {
+                    CreateBubbleEffect(20, Vec3(3.f, 1.f, 1.f), 1.f, 7.f);
+                    _bubble = false;
+                }
             }
             return;
         }
@@ -311,6 +319,7 @@ void FinalBossMonsterSecondPhaseController::Punch()
             _hit = false;
             playingSound = false;
             isExecuted_3 = false;
+            _bubble = true;
         }
     }
     else
@@ -557,6 +566,11 @@ void FinalBossMonsterSecondPhaseController::Slash()
             if (animPlayingTime >= duration / 2.0f)
             {
                 UpdateHitBox(10.0f, _atk * 2.0f);
+                if (_bubble)
+                {
+                    CreateBubbleEffect(30, Vec3(5.f, 1.f, 1.f), 1.f, 7.f);
+                    _bubble = false;
+                }
             }
             return;
         }
@@ -567,6 +581,7 @@ void FinalBossMonsterSecondPhaseController::Slash()
             _hitbox->GetCollider()->SetActive(false);
             punchState = false;
             _hit = false;
+            _bubble = true;
         }
     }
     else
@@ -627,6 +642,18 @@ void FinalBossMonsterSecondPhaseController::Hurricane()
                 SOUND->PlayEffect(L"boss_hurricane_vo");
                 playingSound = true;
             }
+            if (_bubble)
+            {
+                CreateBubbleEffect(70, Vec3(5.f, 10.f, 5.f), 1.f, 0.f);
+                _bubble = false;
+            }
+            if (_hurricaneTime > 0.7f)
+            {
+                _hurricaneTime = 0.f;
+                _bubble = true;
+            }
+
+            _hurricaneTime += DT;
             return;
         }
         else
@@ -637,6 +664,8 @@ void FinalBossMonsterSecondPhaseController::Hurricane()
             playingSound = false;
             _hurricaneHitbox->GetCollider()->SetActive(false);
             _hit = false;
+            _bubble = true;
+            _hurricaneTime = 0.f;
         }
     }
     else
@@ -691,6 +720,12 @@ void FinalBossMonsterSecondPhaseController::Slam()
                     SOUND->PlayEffect(L"boss_slam2");
                     playingSound = true;
                 }
+                if (_bubble)
+                {
+                    _isSlam = true;
+                    CreateBubbleEffect(40, Vec3(7.f, 1.f, 7.f), 1.f, 0.f);
+                    _bubble = false;
+                }
             }
             return;
         }
@@ -702,6 +737,8 @@ void FinalBossMonsterSecondPhaseController::Slam()
             _slamhitbox->GetCollider()->SetActive(false);
             playingSound = false;
             isExecuted_3 = false;
+            _bubble = true;
+            _isSlam = false;
         }
     }
     else
@@ -832,5 +869,43 @@ void FinalBossMonsterSecondPhaseController::checkHit(shared_ptr<BaseCollider> hi
                 player->OnDamage(GetGameObject(), damage);
             }
         }
+    }
+}
+
+void FinalBossMonsterSecondPhaseController::CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook)
+{
+    for (int i = 0; i < numBubbles; i++)
+    {
+        auto obj = make_shared<GameObject>();
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(0, 0, 0));
+        obj->AddComponent(make_shared<Particle>());
+
+        Vec3 bubblePosition = _transform->GetPosition();
+        if (_isSlam)
+        {
+            Vec3 bLeft = DirectX::XMVectorNegate(_transform->GetRight());
+
+            bubblePosition = _transform->GetPosition() + _slamhitbox->GetHitBox()->GetOffSet() + (_transform->GetLook() + bLeft) * 8.0f;
+        }
+        
+        bubblePosition += _transform->GetLook() * positionLook;
+        bubblePosition.y += positionY;
+
+        float angle = MathUtils::Random(0.0f, 2.0f * 3.141592f);
+        float radius = MathUtils::Random(0.0f, bubbleSpread.x);
+
+        bubblePosition.x += cos(angle) * radius;
+        bubblePosition.z += sin(angle) * radius;
+
+        bubblePosition.y += MathUtils::Random(-bubbleSpread.y / 2, bubbleSpread.y / 2);
+
+
+        float randomSize = MathUtils::Random(0.6f, 0.8f);
+
+        obj->GetParticle()->SetMaterial(RESOURCES->Get<Material>(L"Bubble"));
+        obj->GetParticle()->SetLifetime(1.0f);
+        obj->GetParticle()->SetfadeStart(0.3f);
+        obj->GetParticle()->Add(bubblePosition, Vec2(randomSize));
+        CUR_SCENE->Add(obj);
     }
 }

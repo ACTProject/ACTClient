@@ -1344,7 +1344,7 @@ void PlayerController::CreateDustEffect()
 void PlayerController::SetBubble(shared_ptr<Material> bubble)
 {
     _bubbleMaterial = bubble;
-    RESOURCES->Add(L"Dust", bubble);
+    RESOURCES->Add(L"Bubble", bubble);
 }
 void PlayerController::CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook)
 {

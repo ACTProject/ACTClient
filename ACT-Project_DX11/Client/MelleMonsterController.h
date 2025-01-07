@@ -48,7 +48,10 @@ private:
 
     void CreateEffect();
     void ActiveEffect();
+    void CreateBubbleEffect(int numBubbles, Vec3 bubbleSpread, float positionY, float positionLook);
     shared_ptr<GameObject> _effectObj;
+    shared_ptr<Material> _bubbleMaterial;
+    bool _bubble = true;
 
 	float _speed;
     bool isDrop = false;

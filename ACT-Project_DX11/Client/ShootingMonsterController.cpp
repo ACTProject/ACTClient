@@ -435,7 +435,7 @@ void ShootingMonsterController::CreateEffect()
 void ShootingMonsterController::ActiveEffect()
 {
     Vec3 effectTransform = _transform->GetPosition();
-    effectTransform += _transform->GetLook() * 3.f;
+    effectTransform += _transform->GetLook() * 2.f;
     effectTransform.y += 1.5f;
 
     _effectObj->GetOrAddTransform()->SetPosition(effectTransform);
