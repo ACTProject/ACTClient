@@ -605,7 +605,7 @@ void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];
     _player->AddDummyBoneAndAttach(shellModel, L"Shell", L"ShellDummy");
     _shellModel = make_shared<ModelMesh>(shellModel);
-    _shellHp = 200.0f;
+    _shellHp = 250.0f;
     
 
     if (auto ui = UIMANAGER->GetUi("PlayerArmor"))
