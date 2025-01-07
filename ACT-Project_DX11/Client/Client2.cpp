@@ -1170,7 +1170,7 @@ void Client2::Init()
             obj->GetMeshRenderer()->SetAlphaBlend(true);
             obj->GetMeshRenderer()->SetPass(0);
         }
-
+        obj->AddComponent(make_shared<Ui>(UiType::NONE));
         obj->GetUI()->SetUIID("PlayerDead");
         obj->SetActive(false);
 

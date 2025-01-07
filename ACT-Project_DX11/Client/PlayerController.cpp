@@ -474,7 +474,7 @@ void PlayerController::HandleInteraction()
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
 
-                    if (_spoil == 4)
+                    if (_spoil == 10)
                     {
                         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
                         Vec3 start(344.074f, 27.1922f, 309.091f);
@@ -1515,7 +1515,7 @@ void PlayerController::FinishGame()
 
         Vec3 start(52.9081f, 2.20441f, 100.422f);
         Vec3 focus(-0.378014f, -0.0753275f, -0.92273f);
-        float duration = 10.0f;
+        float duration = 100.0f;
         camera->StartCutscene(start, start, focus, duration);
 
         _isExecuted_1 = true;
