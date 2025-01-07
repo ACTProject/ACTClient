@@ -127,7 +127,7 @@ public:
     shared_ptr<ModelAnimator> _modelAnimator;
     shared_ptr<Transform> _transform;
     shared_ptr<GameObject> _player;
-    shared_ptr<ModelBone> rightHand;
+    shared_ptr<Rigidbody> _rigidbody;
     shared_ptr<GameObject> _hpBar;
     string objID;
     AnimationState _currentAnimationState = AnimationState::Idle;

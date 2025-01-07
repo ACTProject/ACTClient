@@ -40,9 +40,9 @@ void PlayerController::Start()
     Super::Start();
 
     // 플레이어 스탯 초기화
-    _maxHp = 400.f;
-    _hp = 400.0f;
-    _atk = 20.0f;
+    _maxHp = 1000.f;
+    _hp = 1000.0f;
+    _atk = 200.0f;
     _shellMaxHp = 200.0f;
     _shellHp = 200.0f;
 
@@ -478,7 +478,7 @@ void PlayerController::HandleInteraction()
                     wstring wstr = to_wstring(_spoil);
                     ui->GetGameObject()->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(wstr));
 
-                    if (_spoil == 1)
+                    if (_spoil == 10)
                     {
                         auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
                         Vec3 start(344.074f, 27.1922f, 309.091f);
@@ -1486,28 +1486,35 @@ void PlayerController::onChoked()
 void PlayerController::FinishGame()
 {
     _isFinish = true;
-    auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
-
-    Vec3 start(52.9081f, 2.20441f, 100.422f);
-    Vec3 focus(-0.378014f, -0.0753275f, -0.92273f);
-    float duration = 10.0f;
-
+    
     _transform->SetLocalRotation(Vec3{ 0.f, XMConvertToRadians(180), 0.f});
     // 애니메이션 필요
     SetAnimationState(AnimationState::Dance);
 
-    if (!_isPlaySound)
+    if (!_isExecuted_1)
     {
         SOUND->PlayEffect(L"player_finish");
-        SOUND->Play(L"EndingMusic", false);
-        _isPlaySound = true;
-    }
+        SOUND->Play(L"EndingMusic", false); 
+        
+        auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
 
-    camera->StartCutscene(start, start, focus, duration);
+        Vec3 start(52.9081f, 2.20441f, 100.422f);
+        Vec3 focus(-0.378014f, -0.0753275f, -0.92273f);
+        float duration = 10.0f;
+        camera->StartCutscene(start, start, focus, duration);
+
+        _isExecuted_1 = true;
+    }
 
     if (INPUT->GetButton(KEY_TYPE::LBUTTON))
     {
         SOUND->Stop(L"EndingMusic");
         GAME->ChangeScene(0);
     }
+}
+
+void PlayerController::HitHurricane(Vec3 dir)
+{
+    float knockbackForce = 5000.0f;
+    _rigidbody->Addforce(dir * knockbackForce);
 }

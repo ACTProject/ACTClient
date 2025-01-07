@@ -152,13 +152,13 @@ void MelleMonsterController::Update()
         DropItem();
 
         CUR_SCENE->Remove(_hpBar);
+        std::cout << "Melle Monster [" << objID << "] Died!" << std::endl;
         TaskQueue::GetInstance().AddTask([this]() {
             std::cout << "Destroying object in TaskQueue..." << std::endl;
             _hpBar->Destroy();
         });
         
         Super::OnDeath();
-        std::cout << "Melle Monster [" << objID << "] Died!" << std::endl;
 
         return;
     }
