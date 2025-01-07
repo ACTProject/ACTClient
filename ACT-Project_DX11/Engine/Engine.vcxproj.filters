@@ -109,15 +109,6 @@
     <ClCompile Include="Light.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>04. Component</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelAnimator.cpp">
-      <Filter>04. Component</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelRenderer.cpp">
-      <Filter>04. Component</Filter>
-    </ClCompile>
     <ClCompile Include="MonoBehaviour.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
@@ -184,9 +175,6 @@
     <ClCompile Include="Billboard.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>04. Component</Filter>
-    </ClCompile>
     <ClCompile Include="Rigidbody.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
@@ -201,9 +189,6 @@
     </ClCompile>
     <ClCompile Include="MapManager.cpp">
       <Filter>02. Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Slider.cpp">
-      <Filter>04. Component</Filter>
     </ClCompile>
     <ClCompile Include="CollisionManager.cpp">
       <Filter>02. Manager</Filter>
@@ -244,9 +229,6 @@
     <ClCompile Include="UIManager.cpp">
       <Filter>02. Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Ui.cpp">
-      <Filter>04. Component</Filter>
-    </ClCompile>
     <ClCompile Include="Particle.cpp">
       <Filter>04. Component</Filter>
     </ClCompile>
@@ -282,6 +264,36 @@
     </ClCompile>
     <ClCompile Include="CutsceneManager.cpp">
       <Filter>02. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogManager.cpp">
+      <Filter>02. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Slider.cpp">
+      <Filter>04. Component\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui.cpp">
+      <Filter>04. Component\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>04. Component\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueUi.cpp">
+      <Filter>04. Component\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRenderer.cpp">
+      <Filter>04. Component\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>04. Component\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelAnimator.cpp">
+      <Filter>04. Component\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageUi.cpp">
+      <Filter>04. Component\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="TextUi.cpp">
+      <Filter>04. Component\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -393,15 +405,6 @@
     <ClInclude Include="Light.h">
       <Filter>04. Component</Filter>
     </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>04. Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelAnimator.h">
-      <Filter>04. Component</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelRenderer.h">
-      <Filter>04. Component</Filter>
-    </ClInclude>
     <ClInclude Include="MonoBehaviour.h">
       <Filter>04. Component</Filter>
     </ClInclude>
@@ -480,9 +483,6 @@
     <ClInclude Include="Billboard.h">
       <Filter>04. Component</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>04. Component</Filter>
-    </ClInclude>
     <ClInclude Include="Rigidbody.h">
       <Filter>04. Component</Filter>
     </ClInclude>
@@ -497,9 +497,6 @@
     </ClInclude>
     <ClInclude Include="MapManager.h">
       <Filter>02. Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Slider.h">
-      <Filter>04. Component</Filter>
     </ClInclude>
     <ClInclude Include="DebugManager.h">
       <Filter>02. Manager</Filter>
@@ -540,9 +537,6 @@
     <ClInclude Include="UIManager.h">
       <Filter>02. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Ui.h">
-      <Filter>04. Component</Filter>
-    </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>04. Component</Filter>
     </ClInclude>
@@ -578,6 +572,36 @@
     </ClInclude>
     <ClInclude Include="CutsceneManager.h">
       <Filter>02. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogManager.h">
+      <Filter>02. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Slider.h">
+      <Filter>04. Component\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui.h">
+      <Filter>04. Component\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>04. Component\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueUi.h">
+      <Filter>04. Component\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>04. Component\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelAnimator.h">
+      <Filter>04. Component\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRenderer.h">
+      <Filter>04. Component\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="TextUi.h">
+      <Filter>04. Component\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageUi.h">
+      <Filter>04. Component\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -628,6 +652,12 @@
     </Filter>
     <Filter Include="99. Headers\Math">
       <UniqueIdentifier>{79c6e3d6-232d-4de6-8eac-7870fb7cb259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Component\UI">
+      <UniqueIdentifier>{ea3f5576-3050-4832-aacd-e0a2904ca34c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Component\Render">
+      <UniqueIdentifier>{54300a40-bff6-473a-abb5-4445ab1776c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

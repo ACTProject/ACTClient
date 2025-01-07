@@ -38,6 +38,7 @@ public:										\
 #define UIMANAGER   GET_SINGLE(UIManager)
 #define SAVE        GET_SINGLE(SaveManager)
 #define CUTSCENE    GET_SINGLE(CutsceneManager)
+#define DIALOG      GET_SINGLE(DialogManager)
 
 #define MAX_RENDER_DISTANCE 150.f
 #define FRUSTUM_PADDING 5.0f

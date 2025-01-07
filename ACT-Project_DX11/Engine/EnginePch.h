@@ -84,6 +84,7 @@ using namespace Microsoft::WRL;
 #include "TaskQueue.h"
 #include "SaveManager.h"
 #include "CutsceneManager.h"
+#include "DialogManager.h"
 
 // Engine
 #include "VertexData.h"

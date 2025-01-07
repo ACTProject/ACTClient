@@ -20,6 +20,7 @@ class Bullet;
 class Raycast;
 class Particle;
 class DynamicObj;
+class FontRenderer;
 
 enum class ObjectType
 {
@@ -59,6 +60,7 @@ public:
 	shared_ptr<MeshRenderer> GetMeshRenderer();
 	shared_ptr<ModelRenderer> GetModelRenderer();
 	shared_ptr<ModelAnimator> GetModelAnimator();
+	shared_ptr<FontRenderer> GetFontRenderer();
 	shared_ptr<Light> GetLight();
 	shared_ptr<BaseCollider> GetCollider();
 	shared_ptr<Terrain> GetTerrain();

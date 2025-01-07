@@ -177,10 +177,13 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="CutsceneManager.h" />
     <ClInclude Include="DebugManager.h" />
+    <ClInclude Include="DialogManager.h" />
+    <ClInclude Include="DialogueUi.h" />
     <ClInclude Include="DynamicObj.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="HealObj.h" />
     <ClInclude Include="HitBox.h" />
+    <ClInclude Include="ImageUi.h" />
     <ClInclude Include="JumpObj.h" />
     <ClInclude Include="MapManager.h" />
     <ClInclude Include="MyCoroutine.h" />
@@ -250,6 +253,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="TaskQueue.h" />
     <ClInclude Include="Technique.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TextUi.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureBuffer.h" />
     <ClInclude Include="TimeManager.h" />
@@ -276,10 +280,13 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="CutsceneManager.cpp" />
     <ClCompile Include="DebugManager.cpp" />
+    <ClCompile Include="DialogManager.cpp" />
+    <ClCompile Include="DialogueUi.cpp" />
     <ClCompile Include="DynamicObj.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="HealObj.cpp" />
     <ClCompile Include="HitBox.cpp" />
+    <ClCompile Include="ImageUi.cpp" />
     <ClCompile Include="JumpObj.cpp" />
     <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="MyCoroutine.cpp" />
@@ -372,6 +379,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="TaskQueue.cpp" />
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TextUi.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureBuffer.cpp" />
     <ClCompile Include="TimeManager.cpp" />

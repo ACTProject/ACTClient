@@ -149,9 +149,9 @@ void Client::Init()
         CUTSCENE->SetCamera(camera->GetCamera());
 
         // Start CutScene
-        CUTSCENE->AddEvent(CutsceneEvent({ 105.951f, 76.7523f, 63.4459f }, { 318.6f, 76.7523f, 46.3121f }, { 0.0567932f, -0.707107f, 0.704822f }, 12.0f));
-        CUTSCENE->AddEvent(CutsceneEvent({ 466.166f, 46.3735f, 249.738f }, { 353.155f, 46.3735f, 275.057f }, { 0.200471f, -0.398977f, 0.894779f }, 7.0f));
-        CUTSCENE->AddEvent(CutsceneEvent({ 91.7009f, 24.789f, 210.264f }, { 34.1963f, -2.57044f, 17.8424f }, { 0.283715f, 0.134986f, 0.94936f }, 5.0f));
+        //CUTSCENE->AddEvent(CutsceneEvent({ 105.951f, 76.7523f, 63.4459f }, { 318.6f, 76.7523f, 46.3121f }, { 0.0567932f, -0.707107f, 0.704822f }, 12.0f));
+        //CUTSCENE->AddEvent(CutsceneEvent({ 466.166f, 46.3735f, 249.738f }, { 353.155f, 46.3735f, 275.057f }, { 0.200471f, -0.398977f, 0.894779f }, 7.0f));
+        //CUTSCENE->AddEvent(CutsceneEvent({ 91.7009f, 24.789f, 210.264f }, { 34.1963f, -2.57044f, 17.8424f }, { 0.283715f, 0.134986f, 0.94936f }, 5.0f));
 
 
 		CUR_SCENE->Add(camera);
@@ -434,6 +434,37 @@ void Client::Init()
         // Collider
         auto collider = make_shared<AABBBoxCollider>();
         collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f,0.5f,1.f)));
+        collider->SetOffset(Vec3(0.f, 1.f, 0.f));
+        OCTREE->InsertCollider(collider);
+        shell->AddComponent(collider);
+        CUR_SCENE->Add(shell);
+    }
+
+    // Shell
+    {
+        auto shell = make_shared<GameObject>();
+        shell->SetObjectType(ObjectType::Shell);
+        shell->GetOrAddTransform()->SetPosition(Vec3(186.5f, -3.0f, 24.7f));
+        shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
+
+        shared_ptr<Model> shellModel = make_shared<Model>();
+        {
+            // CustomData -> Memory
+            shellModel->ReadModel(L"Shell/Shell_SodaCan");
+            shellModel->ReadMaterial(L"Shell/Shell_SodaCan");
+        }
+
+        // Shell::ModelRenderer
+        shared_ptr<ModelRenderer> mr = make_shared<ModelRenderer>(renderShader);
+        shell->AddComponent(mr);
+        {
+            shell->GetModelRenderer()->SetModel(shellModel);
+            shell->GetModelRenderer()->SetPass(1);
+        }
+
+        // Collider
+        auto collider = make_shared<AABBBoxCollider>();
+        collider->SetBoundingBox(BoundingBox(Vec3(0.f), Vec3(0.5f, 0.5f, 1.f)));
         collider->SetOffset(Vec3(0.f, 1.f, 0.f));
         OCTREE->InsertCollider(collider);
         shell->AddComponent(collider);
