@@ -663,7 +663,7 @@ void Client::Init()
     {
         int cnt = 0;
         ENEMY->CreateMeleeMonster({ 35.0f, 0.f, 165.0f }, cnt++);
-        ENEMY->CreateMeleeMonster({ 80.0f, 0.f, 150.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 96.0f, 0.f, 136.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 105.0f, 0.f, 105.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 400.0f, 0.f, 300.0f }, cnt++);
         ENEMY->CreateMeleeMonster({305.0f, 0.f, 130.0f}, cnt++);
@@ -671,6 +671,10 @@ void Client::Init()
         ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 180.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 365.0f, 0.f, 285.0f }, cnt++);
         ENEMY->CreateMeleeMonster({ 425.0f, 0.f, 270.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 200.0f, 0.f, 112.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 222.0f, 0.f, 124.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 275.0f, 0.f, 186.0f }, cnt++);
+        ENEMY->CreateMeleeMonster({ 359.0f, 0.f, 226.0f }, cnt++);
 
         cnt = 0;
         ENEMY->CreateShootingMonster({ 44.0f, 0.f, 95.0f }, cnt++);
@@ -678,10 +682,13 @@ void Client::Init()
         ENEMY->CreateShootingMonster({ 410.0f, 0.f, 60.0f }, cnt++);
         ENEMY->CreateShootingMonster({ 435.0f, 0.f, 100.0f }, cnt++);
         ENEMY->CreateShootingMonster({ 400.0f, 0.f, 130.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 165.0f, 0.f, 150.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 155.0f, 0.f, 145.0f }, cnt++);
         ENEMY->CreateShootingMonster({ 234.0f, 0.f, 170.0f }, cnt++);
-        ENEMY->CreateShootingMonster({ 287.0f, 0.f, 254.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 305.0f, 0.f, 235.0f }, cnt++);
         ENEMY->CreateShootingMonster({ 405.0f, 0.f, 330.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 272.0f, 0.f, 150.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 315.0f, 0.f, 160.0f }, cnt++);
+        ENEMY->CreateShootingMonster({ 384.0f, 0.f, 264.0f }, cnt++);
 
     }
     

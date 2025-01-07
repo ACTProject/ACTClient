@@ -116,6 +116,8 @@ public:
     void FinishGame();
     bool gameFinish = false;
 
+    void HitHurricane(Vec3 dir);
+
 public:
     void OnDeath() override;
 
@@ -240,7 +242,7 @@ private:
 
     // Finish
     bool _isFinish = false;
-
+    bool _isExecuted_1 = false;
 public:
     // 스탯 접근자
     float GetShellMaxHP() const { return _shellMaxHp; }

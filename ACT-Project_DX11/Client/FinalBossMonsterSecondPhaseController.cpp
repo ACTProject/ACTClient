@@ -71,6 +71,7 @@ void FinalBossMonsterSecondPhaseController::Update()
 
         if (!isExecuted_4)
         {
+            std::cout << "FinalBoss has been defeated! Game Over!" << std::endl;
             auto camera = CUR_SCENE->GetMainCamera()->GetCamera();
             Vec3 start(37.0577f, 7.88812f, 66.2076f);
             Vec3 end(37.0577f, 7.88812f, 66.2076f);
@@ -100,7 +101,6 @@ void FinalBossMonsterSecondPhaseController::Update()
             if (player)
             {
                 player->FinishGame();
-                std::cout << "FinalBoss has been defeated! Game Over!" << std::endl;
             }
         }
         return;
@@ -742,8 +742,32 @@ void FinalBossMonsterSecondPhaseController::UpdateHurricaneHitBox()
     hitboxCollider->SetActive(true);
 
     _hurricaneHitbox->GetTransform()->SetPosition(_transform->GetPosition() + _hurricaneHitbox->GetHitBox()->GetOffSet());
+    
+    vector<shared_ptr<BaseCollider>> nearbyColliders = OCTREE->QueryColliders(hitboxCollider);
 
-    checkHit(hitboxCollider, _atk * 2.0f);
+    for (const auto& collider : nearbyColliders)
+    {
+        ObjectType type = collider->GetGameObject()->GetObjectType();
+        if (type != ObjectType::Player)
+            continue;
+
+        if (hitboxCollider->Intersects(collider))
+        {
+            auto controller = collider->GetGameObject()->GetController();
+            if (!controller)
+                continue;
+
+            auto player = dynamic_pointer_cast<PlayerController>(controller);
+            if (player)
+            {
+                _hit = true;
+                player->OnDamage(GetGameObject(), _atk * 2.0f);
+                Vec3 dir = playerPos - bossPos;
+                dir.Normalize();
+                player->HitHurricane(dir);
+            }
+        }
+    }
 }
 
 void FinalBossMonsterSecondPhaseController::UpdateChokeHitBox()

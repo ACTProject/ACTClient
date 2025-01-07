@@ -173,12 +173,12 @@ void ShootingMonsterController::Update()
         }
         playingSound = false;
         CUR_SCENE->Remove(_hpBar);
+        std::cout << "Shooting Monster [" << objID << "] Died!" << std::endl;
         TaskQueue::GetInstance().AddTask([this]() {
             std::cout << "Destroying object in TaskQueue..." << std::endl;
             _hpBar->Destroy();
         });
         Super::OnDeath();
-        std::cout << "Shooting Monster [" << objID << "] Died!" << std::endl;
 
         return;
     }
