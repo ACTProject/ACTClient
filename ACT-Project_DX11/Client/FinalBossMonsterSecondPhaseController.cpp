@@ -53,11 +53,6 @@ void FinalBossMonsterSecondPhaseController::Update()
 {
     Super::Update();
 
-    if (INPUT->GetButton(KEY_TYPE::KEY_4))
-    {
-        int a = 0;
-    }
-
     _transform = GetTransform();
     _player = SCENE->GetCurrentScene()->GetPlayer();
     playerPos = _player->GetTransform()->GetPosition();
@@ -148,18 +143,6 @@ void FinalBossMonsterSecondPhaseController::Phase_2()
             playingSound = false;
             isExecuted = true;
         }
-        if (PlayCheckAnimating(AnimationState::Roar))
-        {
-            Rota(bossPos, playerPos);
-            if (!playingSound)
-            {
-                SOUND->PlayEffect(L"boss_roar_1");
-                playingSound = true;
-            }
-            return;
-        }
-        playingSound = false;
-        isFirstTime = true; // 플래그
     }
 
     if (randType >= 0 && randType < phaseActions.size()) {
@@ -427,7 +410,7 @@ void FinalBossMonsterSecondPhaseController::makeBubble(Vec3 pos, Vec3 dir)
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
     bulletComponent->SetDirection({ dir.x,dir.y - 3.0f,dir.z });
-    bulletComponent->SetSpeed(30.0f);
+    bulletComponent->SetSpeed(40.0f);
     bulletComponent->Add(objModel);
 
     // HitBox
@@ -465,7 +448,7 @@ void FinalBossMonsterSecondPhaseController::makeCash(Vec3 pos, Vec3 dir)
     shared_ptr<Bullet> bulletComponent = make_shared<Bullet>();
     bulletComponent->Add(objModel);
     bulletComponent->SetDirection(dir);
-    bulletComponent->SetSpeed(30.0f);
+    bulletComponent->SetSpeed(40.0f);
     bulletComponent->Add(objModel);
 
     // HitBox
