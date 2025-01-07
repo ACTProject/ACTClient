@@ -146,14 +146,13 @@ void Client::Init()
 		camera->GetCamera()->SetCullingMaskLayerOnOff(Layer_UI, true);
         camera->GetCamera()->SetMainCamera(true);
 
-        // CutScene
-        Vec3 start(91.7009f, 24.789f, 210.264f);
-        Vec3 end(34.1963f, -2.57044f, 17.8424f);
-        Vec3 focus(0.283715f, 0.134986f, 0.94936f);
-        float duration = 13.0f;
+        CUTSCENE->SetCamera(camera->GetCamera());
 
-        camera->GetCamera()->StartCutscene(start, end, focus, duration);
-      
+        // Start CutScene
+        CUTSCENE->AddEvent(CutsceneEvent({ 105.951f, 76.7523f, 63.4459f }, { 318.6f, 76.7523f, 46.3121f }, { 0.0567932f, -0.707107f, 0.704822f }, 12.0f));
+        CUTSCENE->AddEvent(CutsceneEvent({ 466.166f, 46.3735f, 249.738f }, { 353.155f, 46.3735f, 275.057f }, { 0.200471f, -0.398977f, 0.894779f }, 7.0f));
+        CUTSCENE->AddEvent(CutsceneEvent({ 91.7009f, 24.789f, 210.264f }, { 34.1963f, -2.57044f, 17.8424f }, { 0.283715f, 0.134986f, 0.94936f }, 5.0f));
+
 
 		CUR_SCENE->Add(camera);
 	}
@@ -272,7 +271,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.2f));
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.0f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
@@ -297,7 +296,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, 0.f));
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(healPosition.x, healPosition.y, -0.1f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 29.75, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
@@ -323,7 +322,7 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
+            obj->GetUI()->Create(Vec3(healPosition.x - 75.f, healPosition.y - 1.f, -0.2f), Vec2(161, 10), RESOURCES->Get<Material>(L"hpBar"));
             obj->GetUI()->SetUIID("PlayerHP");
 
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
@@ -336,7 +335,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.2f));
+            obj->GetOrAddTransform()->SetPosition(Vec3(armorPosition.x, armorPosition.y, 0.f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
@@ -360,7 +359,7 @@ void Client::Init()
             auto obj = make_shared<GameObject>();
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
-            obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, 0.f));
+            obj->GetOrAddTransform()->SetLocalPosition(Vec3(armorPosition.x, armorPosition.y, -0.2f));
             obj->GetOrAddTransform()->SetScale(Vec3(197.5, 46, 100));
             obj->AddComponent(make_shared<MeshRenderer>());
 
@@ -386,7 +385,7 @@ void Client::Init()
             obj->SetObjectType(ObjectType::UI);
             obj->SetLayerIndex(Layer_UI);
             obj->AddComponent(make_shared<Slider>());
-            obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, 0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
+            obj->GetUI()->Create(Vec3(armorPosition.x - 75.f, armorPosition.y - 9.f, -0.1f), Vec2(161, 10), RESOURCES->Get<Material>(L"BlueBar"));
             obj->GetUI()->SetUIID("PlayerArmor");
             armorGroup.push_back(obj);
             UIMANAGER->AddUI(obj->GetUI()->GetUIID(), obj->GetUI());
@@ -394,107 +393,7 @@ void Client::Init()
         }
     }
 
-    //Option
-    {
-        // option Material
-        {
-            shared_ptr<Material> material = make_shared<Material>();
-            material->SetShader(renderUIShader);
-            auto texture = RESOURCES->Load<Texture>(L"Option", L"..\\Resources\\Textures\\UI\\option.png");
-            material->SetDiffuseMap(texture);
-            MaterialDesc& desc = material->GetMaterialDesc();
-            desc.ambient = Vec4(1.f);
-            desc.diffuse = Vec4(1.f);
-            desc.specular = Vec4(1.f);
-            RESOURCES->Add(L"Option", material);
-        }
-        //Button Material
-        {
-            {
-                shared_ptr<Material> material = make_shared<Material>();
-                material->SetShader(renderUIShader);
-                auto texture = RESOURCES->Load<Texture>(L"Continue", L"..\\Resources\\Textures\\UI\\continue.png");
-                material->SetDiffuseMap(texture);
-                MaterialDesc& desc = material->GetMaterialDesc();
-                desc.ambient = Vec4(1.f);
-                desc.diffuse = Vec4(1.f);
-                desc.specular = Vec4(1.f);
-                RESOURCES->Add(L"Continue", material);
-            }
-            {
-                shared_ptr<Material> material = make_shared<Material>();
-                material->SetShader(renderUIShader);
-                auto texture = RESOURCES->Load<Texture>(L"GameEnd", L"..\\Resources\\Textures\\UI\\gameEnd.png");
-                material->SetDiffuseMap(texture);
-                MaterialDesc& desc = material->GetMaterialDesc();
-                desc.ambient = Vec4(1.f);
-                desc.diffuse = Vec4(1.f);
-                desc.specular = Vec4(1.f);
-                RESOURCES->Add(L"GameEnd", material);
-            }
-        }
-        // Option Mesh
-        {
-            vector<shared_ptr<GameObject>> optionGroup;
-
-            {
-                auto obj = make_shared<GameObject>();
-                obj->AddComponent(make_shared<Button>());
-                UIMANAGER->AddButton(obj->GetButton());
-                obj->GetButton()->Create(Vec3(400.f, 250.f, 0.4f), Vec2(595, 404), RESOURCES->Get<Material>(L"Option"));
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
-                obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
-
-                obj->SetActive(!obj->IsActive());
-                optionGroup.push_back(obj);
-               // CUR_SCENE->Add(obj);
-            }
-
-
-            // Mesh
-            {
-                auto obj = make_shared<GameObject>();
-                obj->AddComponent(make_shared<Button>());
-                UIMANAGER->AddButton(obj->GetButton());
-                obj->GetButton()->Create(Vec3(532, 359, 0.3f), Vec2(175, 38), nullptr);
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
-                obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"GameEnd")); });
-                obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(nullptr); });
-                obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
-                obj->GetButton()->AddOnClickedEvent([obj]() { if (obj->IsActive())GAME->GameEnd(); });
-                
-                obj->SetActive(!obj->IsActive());
-                optionGroup.push_back(obj);
-                //CUR_SCENE->Add(obj);
-            }
-
-            // Mesh
-            {
-                auto obj = make_shared<GameObject>();
-                obj->AddComponent(make_shared<Button>());
-                UIMANAGER->AddButton(obj->GetButton());
-                obj->GetButton()->Create(Vec3(532, 308, 0.3f), Vec2(175, 38), nullptr);
-                obj->GetMeshRenderer()->SetAlphaBlend(true);
-                obj->GetButton()->AddOnHoverEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(RESOURCES->Get<Material>(L"Continue")); });
-                obj->GetButton()->AddOnHoverEndEvent([obj]() { obj->GetMeshRenderer()->SetMaterial(nullptr); });
-                obj->GetButton()->AddOnKeyPressEvent(KEY_TYPE::ESC, [obj]() { obj->SetActive(!obj->IsActive()); });
-                //obj->GetButton()->AddOnClickedEvent([obj]() { obj->SetVisible(); });
-                optionGroup.push_back(obj);
-                obj->GetButton()->AddOnClickedEvent([optionGroup]() {
-                    if (optionGroup[0]->IsActive())
-                    {
-                        for (auto& uiObject : optionGroup) {
-                            uiObject->SetActive(!uiObject->IsActive());
-                        }
-                    }
-                    });
-
-                obj->SetActive(!obj->IsActive());
-
-               // CUR_SCENE->Add(obj);
-            }
-        }
-    }
+   
 	// Light
 	{
 		auto light = make_shared<GameObject>();
@@ -514,7 +413,7 @@ void Client::Init()
     {
         auto shell = make_shared<GameObject>();
         shell->SetObjectType(ObjectType::Shell);
-        shell->GetOrAddTransform()->SetPosition(Vec3(35, -5.f, 35));
+        shell->GetOrAddTransform()->SetPosition(Vec3(186.5f,-3.0f,24.7f));
         shell->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
         shared_ptr<Model> shellModel = make_shared<Model>();
@@ -545,7 +444,7 @@ void Client::Init()
     player->SetObjectType(ObjectType::Player);
 	player->GetOrAddTransform()->SetPosition(Vec3(40, 0, 40));
     //player->GetOrAddTransform()->SetPosition(Vec3(424.f - 5.0f, 1.f, 335.f - 5.0f));
-    CUR_SCENE->SetMissionClear(true);
+    //CUR_SCENE->SetMissionClear(true);
 	player->GetOrAddTransform()->SetLocalRotation(Vec3(0, 0, 0)); // XMConvertToRadians()
 	player->GetOrAddTransform()->SetScale(Vec3(0.01f));
 
@@ -756,6 +655,8 @@ void Client::Init()
 
 	CUR_SCENE->Add(player);
 	CUR_SCENE->SetPlayer(player);
+    SAVE->SaveGame(player);
+    SAVE->SetAllActive();
 
 
     // Enemy
@@ -1130,7 +1031,7 @@ void Client::Init()
         obj->AddComponent(make_shared<Ui>(UiType::NONE));
         obj->GetUI()->SetUIID("MissionUI");
         obj->SetLayerIndex(Layer_UI);
-        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-310, -190, 0));
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-310, -190, 0.1f));
         obj->GetOrAddTransform()->SetScale(Vec3(14, 14, 1));
         obj->AddComponent(make_shared<MeshRenderer>());
         obj->SetLayerIndex(Layer_UI);
@@ -1151,7 +1052,7 @@ void Client::Init()
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
         obj->SetLayerIndex(Layer_UI);
-        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-290, -190, 0));
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-290, -190, 0.1f));
         obj->GetOrAddTransform()->SetScale(Vec3(12, 12, 1));
         obj->AddComponent(make_shared<MeshRenderer>());
         obj->SetLayerIndex(Layer_UI);
@@ -1171,7 +1072,7 @@ void Client::Init()
         auto obj = make_shared<GameObject>();
         obj->SetObjectType(ObjectType::UI);
         obj->SetLayerIndex(Layer_UI);
-        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-270, -190, 0));
+        obj->GetOrAddTransform()->SetLocalPosition(Vec3(-270, -190, 0.1f));
         obj->GetOrAddTransform()->SetScale(Vec3(16, 14, 1));
         obj->AddComponent(make_shared<MeshRenderer>());
         obj->SetLayerIndex(Layer_UI);

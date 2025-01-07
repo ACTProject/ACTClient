@@ -60,6 +60,8 @@ public:
 private:
     float _speed;
 
+    bool isDrop = false;
+
     float duration;
     float distance;
     Vec3 direction;

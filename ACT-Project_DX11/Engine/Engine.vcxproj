@@ -175,6 +175,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="CutsceneManager.h" />
     <ClInclude Include="DebugManager.h" />
     <ClInclude Include="DynamicObj.h" />
     <ClInclude Include="EnemyManager.h" />
@@ -273,6 +274,7 @@ xcopy /Y "$(SolutionDir)Engine\*.inl" "$(SolutionDir)Libraries\Include\Engine"</
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
+    <ClCompile Include="CutsceneManager.cpp" />
     <ClCompile Include="DebugManager.cpp" />
     <ClCompile Include="DynamicObj.cpp" />
     <ClCompile Include="EnemyManager.cpp" />

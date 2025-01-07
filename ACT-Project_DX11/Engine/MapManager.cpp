@@ -890,7 +890,7 @@ void MapManager::ClearMap()
     _mapPreviewObj = nullptr;
     _mapBillBoard = nullptr;
 
-    _fileTextList.clear();
+    //_fileTextList.clear();
 
     // terrain은 이거 전에 set해놔서 reset기달.
     _terrain.reset();
@@ -900,8 +900,8 @@ void MapManager::ClearMap()
         RemoveMapObj(obj);
     }
     _mapObjList.clear();
-    _mapInfoList.clear();
-    _mapInitInfoList.clear();
+    //_mapInfoList.clear();
+    //_mapInitInfoList.clear();
 }
 
 

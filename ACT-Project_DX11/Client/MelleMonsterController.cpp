@@ -111,9 +111,6 @@ void MelleMonsterController::Start()
     _player = SCENE->GetCurrentScene()->GetPlayer();
     CreateEffect();
 
-    // TEMP
-    DropItem();
-
     std::cout << "MelleMonsterController [" << objID << "] Start()" << std::endl;
 }
 
@@ -139,6 +136,16 @@ void MelleMonsterController::Update()
 
     if (_isDead)
     {
+        if (!isDrop)
+            DropItem();
+
+        // 공격자로 부터 밀리는 로직
+        Vec3 knockbackDirection = EnemyPos - playerPos;                  // 공격자 -> 몬스터 방향
+        knockbackDirection.Normalize();                                  // 방향 벡터 정규화
+
+        float knockbackForce = 150.0f;                                   // 밀리는 힘
+        GetGameObject()->GetRigidbody()->Addforce(knockbackDirection * knockbackForce);       // 힘 적용
+
         if (!playingSound)
         {
             SOUND->PlayEffect(L"melle_die");
@@ -149,7 +156,6 @@ void MelleMonsterController::Update()
             return;
         }
         playingSound = false;
-        DropItem();
 
         CUR_SCENE->Remove(_hpBar);
         std::cout << "Melle Monster [" << objID << "] Died!" << std::endl;
@@ -401,6 +407,8 @@ void MelleMonsterController::DropItem()
     collider->SetOffset(Vec3(0.f, 0.5f, 0.f));
     OCTREE->InsertCollider(collider);
     item->AddComponent(collider);
+
+    isDrop = true;
 
     CUR_SCENE->Add(item);
 }

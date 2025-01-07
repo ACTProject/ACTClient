@@ -9,6 +9,13 @@ enum class UiType
 
     END,
 };
+enum class UiState
+{
+    NONE,
+    STATIC,
+
+    END,
+};
 
 class Ui : public Component
 {
@@ -29,10 +36,13 @@ public:
     const string& GetUIID() const { return _uiID; }
     void SetPositionUI(Vec3 addPos) { _addPos = addPos; }
 
+    void SetUIState(const UiState id) { _state = id; }
+    const UiState GetUIState() const { return _state; }
 protected:
     void PreUpdate();
 protected:
     UiType _type = UiType::NONE;
+    UiState _state = UiState::NONE;
     bool _isVisible = true;
     Vec3 _addPos = { 0, 3.0f ,0 };
 

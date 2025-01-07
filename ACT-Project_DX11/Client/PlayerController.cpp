@@ -609,6 +609,15 @@ void PlayerController::InteractWithShell(shared_ptr<GameObject> gameObject)
     ModelMesh& shellModel = *gameObject->GetModelRenderer()->GetModel()->GetMeshes()[0];
     _player->AddDummyBoneAndAttach(shellModel, L"Shell", L"ShellDummy");
     _shellModel = make_shared<ModelMesh>(shellModel);
+    _shellHp = 200.0f;
+    
+
+    if (auto ui = UIMANAGER->GetUi("PlayerArmor"))
+    {
+        auto shellSlider = dynamic_pointer_cast<Slider>(ui);
+        float shellRatio = _shellHp / _shellMaxHp;
+        shellSlider->SetRatio(shellRatio);
+    }
 
     SOUND->PlayEffect(L"player_shellConfirm");
     // Shell 오브젝트 비활성화

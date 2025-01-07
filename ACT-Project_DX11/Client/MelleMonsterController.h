@@ -51,6 +51,7 @@ private:
     shared_ptr<GameObject> _effectObj;
 
 	float _speed;
+    bool isDrop = false;
     float distance;
     Vec3 direction;
     float rangeDis;

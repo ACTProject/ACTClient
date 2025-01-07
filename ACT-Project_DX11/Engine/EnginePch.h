@@ -83,6 +83,7 @@ using namespace Microsoft::WRL;
 #include "UIManager.h"
 #include "TaskQueue.h"
 #include "SaveManager.h"
+#include "CutsceneManager.h"
 
 // Engine
 #include "VertexData.h"

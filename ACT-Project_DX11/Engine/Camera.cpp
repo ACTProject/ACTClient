@@ -103,6 +103,15 @@ void Camera::Update()
         UpdateCutscene();
         return;
     }
+    else
+    {
+        if (_isMainCamera && !CUTSCENE->IsQueueEmpty())
+        {
+            CUTSCENE->PlayNext();
+            UpdateCutscene();
+            return;
+        }
+    }
 
 
 	if (DEBUG->IsDebugEnabled())
