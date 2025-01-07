@@ -36,7 +36,7 @@ WPARAM Game::Run(uint32 num)
         SAVE->Init();
     }
 	//0
-    DEBUG->CreateConsoleWindow();
+    //DEBUG->CreateConsoleWindow();
     COLLISION->Init();
     // Octree
     {
@@ -114,7 +114,7 @@ void Game::Update(uint32 _num)
 {
 	TIME->Update();
 	INPUT->Update();
-	ShowFps();
+	//ShowFps();
 
 
 
@@ -140,7 +140,7 @@ void Game::ShowFps()
 	uint32 fps = GET_SINGLE(TimeManager)->GetFps();
 
 	WCHAR text[100] = L"";
-	::wsprintf(text, L"ANOTHER CRAB'S TREASURE");
+	::wsprintf(text, L"FPS : %d", fps);
 
 	::SetWindowText(_scenes[_num].hWnd, text);
 

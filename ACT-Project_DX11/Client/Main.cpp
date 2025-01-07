@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     {
         GameDesc desc;
-        desc.appName = L"GameCoding";
+        desc.appName = L"ANOTHER CRAB'S TREASURE";
         desc.hInstance = hInstance;
         desc.vsync = false;
         desc.hWnd = NULL;
