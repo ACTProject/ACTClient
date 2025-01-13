@@ -104,9 +104,9 @@ void MelleMonsterController::Start()
     Super::Start();
 
     // 근접 몬스터 스탯 초기화
-    _maxHp = 80.0f;
-    _hp = 80.0f;
-    _atk = 15.0f;
+    _maxHp = 100.0f;
+    _hp = 100.0f;
+    _atk = 25.0f;
     _speed = 8.0f;
 
     _transform = GetTransform();
@@ -163,10 +163,7 @@ void MelleMonsterController::Update()
 
         CUR_SCENE->Remove(_hpBar);
         std::cout << "Melle Monster [" << objID << "] Died!" << std::endl;
-        TaskQueue::GetInstance().AddTask([this]() {
-            std::cout << "Destroying object in TaskQueue..." << std::endl;
-            _hpBar->Destroy();
-        });
+        _hpBar->Destroy();
         
         Super::OnDeath();
 

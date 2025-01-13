@@ -37,8 +37,8 @@ bool FinalBossMonsterFirstPhaseController::PlayCheckAnimating(AnimationState sta
 void FinalBossMonsterFirstPhaseController::Start()
 {
     Super::Start();
-    _maxHp = 350.f;
-    _hp = 350.0f;
+    _maxHp = 400.f;
+    _hp = 400.0f;
     _atk = 40.0f;
 
     _transform = GetTransform();

@@ -10,7 +10,7 @@ void Ui::SetOwner(weak_ptr<GameObject> obj)
 void Ui::PreUpdate()
 {
     shared_ptr<GameObject> owner = _owner.lock();
-    if (owner != nullptr)
+    if (owner != nullptr && owner->IsActive())
     {
         Vec3 pos = owner->GetTransform()->GetLocalPosition();
         pos += _addPos;

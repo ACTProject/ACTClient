@@ -42,7 +42,7 @@ void PlayerController::Start()
     // 플레이어 스탯 초기화
     _maxHp = 500.f;
     _hp = 500.0f;
-    _atk = 20.0f;
+    _atk = 25.0f;
     _shellMaxHp = 250.0f;
     _shellHp = 250.0f;
 
@@ -525,7 +525,6 @@ void PlayerController::HandleInteraction()
             if (collider->GetGameObject()->GetDynamicObj()->GetDynamicType() == DynamicType::Save)
             {
                 SAVE->OpenSaveUI();
-                _playerActive = !_playerActive;
                 break;
             }
         }
@@ -549,7 +548,7 @@ void PlayerController::HandleCollision()
             {
                 if (auto ui = UIMANAGER->GetUi("PlayerHP"))
                 {
-                    _hp -= 20;
+                    _hp -= 10;
                     _hp = std::clamp(_hp, 0.0f, _maxHp);
 
                     auto hpSlider = dynamic_pointer_cast<Slider>(ui);
@@ -1059,12 +1058,11 @@ void PlayerController::UpdateChargeAttack()
 {
     float dt = TIME->GetDeltaTime();
 
-    _chargeAttackTimer += dt;
-
-    UpdateChargeHitBox();
+    _chargeAttackTimer += dt;   
 
     if (_chargeAttackTimer >= _chargeAttackDuration * 3 / 5)
     {
+        UpdateChargeHitBox();
         if (!_isPlaySound)
         {
             SOUND->PlayEffect(L"player_chargeAtk");
@@ -1074,7 +1072,7 @@ void PlayerController::UpdateChargeAttack()
 
     // 차지 공격 종료 처리
     if (_chargeAttackTimer >= _chargeAttackDuration)
-    {
+    {       
         _isChargeAttacking = false;
         _isPlayeringChargeAttackAnimation = false;
         _isCharging = false;

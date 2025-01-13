@@ -113,6 +113,8 @@ void Camera::Update()
         }
     }
 
+    auto uiCamera = CUR_SCENE->GetUICamera();
+    uiCamera->SetActive(true);
 
 	if (DEBUG->IsDebugEnabled())
 	{
@@ -413,6 +415,9 @@ void Camera::StartCutscene(const Vec3& start, const Vec3& end, const Vec3& focus
 
 void Camera::UpdateCutscene()
 {
+    auto uiCamera = CUR_SCENE->GetUICamera();
+    uiCamera->SetActive(false);
+
     _cutsceneElapsedTime += TIME->GetDeltaTime();
     float t = _cutsceneElapsedTime / _cutsceneDuration;
 

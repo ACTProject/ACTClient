@@ -124,9 +124,9 @@ void ShootingMonsterController::Start()
     Super::Start();
 
     // 원거리 몬스터 스탯 초기화
-    _maxHp = 50.0f;
-    _hp = 50.0;
-    _atk = 25.0f;
+    _maxHp = 75.0f;
+    _hp = 75.0;
+    _atk = 35.0f;
     _speed = 8.0f;
 
     _transform = GetTransform();
@@ -174,10 +174,7 @@ void ShootingMonsterController::Update()
         playingSound = false;
         CUR_SCENE->Remove(_hpBar);
         std::cout << "Shooting Monster [" << objID << "] Died!" << std::endl;
-        TaskQueue::GetInstance().AddTask([this]() {
-            std::cout << "Destroying object in TaskQueue..." << std::endl;
-            _hpBar->Destroy();
-        });
+        _hpBar->Destroy();
         Super::OnDeath();
 
         return;
